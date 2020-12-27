@@ -1,0 +1,14 @@
+<Meshes>
+  <Mesh>
+    <name>Cylinder</name>
+    <file>Coin.fbx</file>
+  </Mesh>
+  <Mesh>
+    <name>Cube</name>
+    <file>Cube.fbx</file>
+  </Mesh>
+  <Mesh>
+    <name>Sphere</name>
+    <file>Sphere.fbx</file>
+  </Mesh>
+</Meshes>

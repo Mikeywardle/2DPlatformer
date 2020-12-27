@@ -1,0 +1,7 @@
+<Textures>
+  <Texture>
+    <name>PlayerShip</name>
+    <file>PlayerShip.png</file>
+    <alpha>true</alpha>
+  </Texture>
+</Textures>
