@@ -119,10 +119,12 @@ private:
 
 	void ProcessPhysics(float deltaTime);
 	void DrawWorld();
+	void ProcessDebug(float deltaTime);
 
 	class RenderingSystem* renderingSystem;
 	class PhysicsSystem* physicsSystem;
 	class AudioEngine* audioEngine;
+	class DebugSystem* debugSystem;
 
 	ECSContext* ecsContext;
 	EventsContext* eventsContext;

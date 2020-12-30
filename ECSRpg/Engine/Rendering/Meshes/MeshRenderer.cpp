@@ -20,17 +20,14 @@ void MeshRenderer::Draw(World* world)
 
 	glm::mat4 model;
 
-	MeshComponent* mesh;
-	Transform* transform;
-
 	int currentVAO = -1;
 	int currentProgram = -1;
 	int currentNumberOfIndices = 0;
 
 	for (Entity entity : entities)
 	{
-		mesh = world->GetComponent<MeshComponent>(entity);
-		transform = world->GetComponent<Transform>(entity);
+		MeshComponent* mesh = world->GetComponent<MeshComponent>(entity);
+		Transform* transform = world->GetComponent<Transform>(entity);
 
 		int mat = mesh->GetMaterialIndex();
 		int vao = mesh->GetMeshVAO();

@@ -55,6 +55,7 @@ public:
 	static const InputKey KEYBOARD_SPACE = GLFW_KEY_SPACE;
 	static const InputKey KEYBOARD_ESC = GLFW_KEY_ESCAPE;
 	static const InputKey KEYBOARD_ENTER = GLFW_KEY_ENTER;
+	static const InputKey KEYBOARD_TAB = GLFW_KEY_TAB;
 
 	//Mouse Buttons (Add Mouse offset to all values!!)
 	static const InputKey LEFT_MOUSE_BUTTON = GLFW_MOUSE_BUTTON_1 + MOUSE_OFFSET;

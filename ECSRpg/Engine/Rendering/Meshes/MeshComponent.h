@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Resources/Mesh.h>
+#include <Resources/Material.h>
 
 struct MeshComponent
 {
@@ -12,8 +13,8 @@ public:
 	int GetNumberOfIndices() const;
 
 
-	void SetMaterial(int material);
-	//Material* GetMaterial
+	void SetMaterial(Material* material);
+	Material* GetMaterial() const;
 	int GetMaterialIndex() const;
 
 protected:
@@ -22,9 +23,9 @@ protected:
 	int MeshVAO;
 	int NumberOfIndices;
 
-	//Material Variables
 
-	//Material* material;
+
+	Material* material;
 	int MaterialIndex;
 };
 

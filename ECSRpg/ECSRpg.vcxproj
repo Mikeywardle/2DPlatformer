@@ -153,7 +153,8 @@
     <ClCompile Include="Engine\Analytics\Timer.cpp" />
     <ClCompile Include="Engine\Audio\AudioEngine.cpp" />
     <ClCompile Include="Engine\Camera\CameraComponent.cpp" />
-    <ClCompile Include="Engine\Debug\FloatingCamera.cpp" />
+    <ClCompile Include="Engine\Debugging\DebugSystem.cpp" />
+    <ClCompile Include="Engine\Debugging\FloatingCamera.cpp" />
     <ClCompile Include="Engine\GamePlay\Health.cpp" />
     <ClCompile Include="Engine\GamePlay\Lifetime.cpp" />
     <ClCompile Include="Engine\GamePlay\TransformParenting.cpp" />
@@ -189,6 +190,8 @@
     <ClCompile Include="Engine\Rendering\glad.c" />
     <ClCompile Include="Engine\Rendering\Meshes\MeshRenderer.cpp" />
     <ClCompile Include="Engine\Rendering\Sprites\BillBoardSprites.cpp" />
+    <ClCompile Include="Engine\Resources\Material.cpp" />
+    <ClCompile Include="Engine\Resources\MaterialsLibrary.cpp" />
     <ClCompile Include="Engine\Resources\Mesh.cpp" />
     <ClCompile Include="Engine\Rendering\RenderingSystem.cpp" />
     <ClCompile Include="Engine\Rendering\Sprites\Sprite.cpp" />
@@ -214,13 +217,21 @@
     <ClCompile Include="Source\Systems\FloatingPlatformSystem.cpp" />
     <ClCompile Include="Source\Systems\PlayerCameraSystem.cpp" />
     <ClCompile Include="Source\Systems\PlayerMovementSystem.cpp" />
+    <ClCompile Include="_include\ImGui\imgui.cpp" />
+    <ClCompile Include="_include\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="_include\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="_include\ImGui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="_include\ImGui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="_include\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="_include\ImGui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Analytics\Timer.h" />
     <ClInclude Include="Engine\Audio\AudioEngine.h" />
     <ClInclude Include="Engine\Camera\CameraComponent.h" />
-    <ClInclude Include="Engine\Debug\DebugDraws.h" />
-    <ClInclude Include="Engine\Debug\FloatingCamera.h" />
+    <ClInclude Include="Engine\Debugging\DebugDraws.h" />
+    <ClInclude Include="Engine\Debugging\DebugSystem.h" />
+    <ClInclude Include="Engine\Debugging\FloatingCamera.h" />
     <ClInclude Include="Engine\ecs\EntityTag.h" />
     <ClInclude Include="Engine\Events\EventDispatcher.h" />
     <ClInclude Include="Engine\Events\EventsContext.h" />
@@ -264,6 +275,8 @@
     <ClInclude Include="Engine\Rendering\Meshes\MeshComponent.h" />
     <ClInclude Include="Engine\Rendering\IRenderer.h" />
     <ClInclude Include="Engine\Rendering\Sprites\BillBoardSprites.h" />
+    <ClInclude Include="Engine\Resources\Material.h" />
+    <ClInclude Include="Engine\Resources\MaterialsLibrary.h" />
     <ClInclude Include="Engine\Resources\Mesh.h" />
     <ClInclude Include="Engine\Rendering\Meshes\MeshRenderer.h" />
     <ClInclude Include="Engine\Rendering\RenderingSystem.h" />
@@ -301,10 +314,24 @@
     <ClInclude Include="Source\Systems\PlayerCameraSystem.h" />
     <ClInclude Include="Source\Systems\PlayerMovementSystem.h" />
     <ClInclude Include="Source\Systems\RotatorSystem.h" />
+    <ClInclude Include="_include\ImGui\imconfig.h" />
+    <ClInclude Include="_include\ImGui\imgui.h" />
+    <ClInclude Include="_include\ImGui\imgui_impl_glfw.h" />
+    <ClInclude Include="_include\ImGui\imgui_impl_opengl3.h" />
+    <ClInclude Include="_include\ImGui\imgui_internal.h" />
+    <ClInclude Include="_include\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="_include\ImGui\imstb_textedit.h" />
+    <ClInclude Include="_include\ImGui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="Resources\Materials\_Materials.xml" />
     <Xml Include="Resources\Meshes\_Meshes.xml" />
+    <Xml Include="Resources\Shaders\_Shaders.xml" />
     <Xml Include="Resources\Textures\_Textures.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Materials\CoinMaterial.mat" />
+    <None Include="Resources\Materials\TestMaterial.mat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

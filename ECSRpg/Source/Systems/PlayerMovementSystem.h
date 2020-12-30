@@ -10,7 +10,6 @@ public:
 	PlayerMovementSystem(World* world) : System(world)
 	{
 		BindEvents();
-		world->AddListener<CollisionEvent>(this, &PlayerMovementSystem::OnPlayerLand);
 	}
 
 	virtual void OnFrame(float deltaTime) override;

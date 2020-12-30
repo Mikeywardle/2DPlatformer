@@ -7,6 +7,7 @@ struct Ray
 {
 	Ray(Vector3 Start, Vector3 End);
 
+	float Length;
 	Vector3 Start;
 	Vector3 End;
 	Vector3 Direction;
@@ -14,7 +15,7 @@ struct Ray
 
 struct RaycastingResult
 {
-	bool hasHit;
+	bool hasHit = false;
 
 	Entity HitEntity;
 	float Distance;

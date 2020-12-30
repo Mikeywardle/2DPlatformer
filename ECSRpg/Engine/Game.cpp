@@ -64,6 +64,7 @@ bool InitializeWindow()
 
 	glfwSetInputMode(GameWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSwapInterval(0);
+
 	return true;
 }
 
@@ -113,20 +114,15 @@ int StartGame()
 	while (!glfwWindowShouldClose(GameWindow))
 	{
 
-		for (int i = 0; i < 1000; ++i)
-		{
-			glEnable(GL_CULL_FACE);;
-		}
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		GameWorld->RunFrame(DELTA_TIME);
-
-		glfwSwapBuffers(GameWindow);
 		glfwPollEvents();
-
+		glEnable(GL_CULL_FACE);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GameWorld->RunFrame(DELTA_TIME);
+		glfwSwapBuffers(GameWindow);
 		UpdateGameTime();	
 	}
 	glfwTerminate();
+
 	return 0;
 }
 

@@ -1,0 +1,12 @@
+<Shaders>
+  <Shader>
+    <name>BuildingFragment</name>
+    <file>BuildingFragment.fs</file>
+    <type>FRAG</type>
+  </Shader>
+  <Shader>
+    <name>BuildingVertex</name>
+    <file>BuildingVertex.vs</file>
+    <type>VERT</type>
+  </Shader>
+</Shaders>

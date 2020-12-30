@@ -23,17 +23,30 @@ void CollisionSystem::TestSphereColliders(std::vector<CollisionResult>& collisio
 {
 	std::vector<Entity> entities = world->GetEntities<SphereColliderComponent, Transform>();
 
-	for (Entity entity : entities)
+	for (int i = 0; i<entities.size(); ++i)
 	{
-		Transform* transform = world->GetComponent<Transform>(entity);
-		if (transform->IsStatic())
+		Entity entityA = entities[i];
+		Transform* transformA = world->GetComponent<Transform>(entityA);
+		if (transformA->IsStatic())
 			continue;
 
-		SphereColliderComponent* collider= world->GetComponent<SphereColliderComponent>(entity);
-		CollisionSphere sphere = CollisionSphere(entity, collider->radius, transform->GetPosition());
+		SphereColliderComponent* colliderA= world->GetComponent<SphereColliderComponent>(entityA);
+		CollisionSphere sphereA = CollisionSphere(entityA, colliderA->radius, transformA->GetPosition());
 
-		QuerySpheresWithSphere<>(sphere, collisionResults, entity);
-		QueryAABBsWithSphere<>(sphere, collisionResults, entity);
+		for (int j = i + 1; j < entities.size(); ++j)
+		{
+			Entity entityB = entities[j];
+			Transform* transformB = world->GetComponent<Transform>(entityB);
+			SphereColliderComponent* colliderB = world->GetComponent<SphereColliderComponent>(entityB);
+			CollisionSphere sphereB = CollisionSphere(entityB, colliderB->radius, transformB->GetPosition());
+
+			CollisionResult result = TestSpherevsSphere(sphereA, sphereB);
+
+			if (result.hasCollision)
+				collisionResults.push_back(result);
+		}
+
+		QueryAABBsWithSphere<>(sphereA, collisionResults);
 	}
 }
 
@@ -41,21 +54,39 @@ void CollisionSystem::TestAABBColliders(std::vector<CollisionResult>& collisionR
 {
 	std::vector<Entity> entities = world->GetEntities<AABBColliderComponent, Transform>();
 
-	for (Entity entity : entities)
+	for (int i = 0; i < entities.size(); ++i)
 	{
-		Transform* transform = world->GetComponent<Transform>(entity);
-		if (transform->IsStatic())
+		Entity entityA = entities[i];
+		Transform* transformA = world->GetComponent<Transform>(entityA);
+		if (transformA->IsStatic())
 			continue;
 
-		AABBColliderComponent* collider = world->GetComponent<AABBColliderComponent>(entity);
+		AABBColliderComponent* colliderA = world->GetComponent<AABBColliderComponent>(entityA);
 
-		CollisionAABB box = CollisionAABB(entity,
-			transform->GetPosition(),
-			collider->halfWidth,
-			collider->halfHeight,
-			collider->halfDepth);
+		CollisionAABB boxA = CollisionAABB(entityA,
+			transformA->GetPosition(),
+			colliderA->halfWidth,
+			colliderA->halfHeight,
+			colliderA->halfDepth);
+
+		for (int j = i + 1; j < entities.size(); ++j)
+		{
+			Entity entityB = entities[j];
+			Transform* transformB = world->GetComponent<Transform>(entityB);
+			AABBColliderComponent* colliderB = world->GetComponent<AABBColliderComponent>(entityB);
+
+			CollisionAABB boxB = CollisionAABB(entityB,
+				transformB->GetPosition(),
+				colliderB->halfWidth,
+				colliderB->halfHeight,
+				colliderB->halfDepth);
+
+			CollisionResult result = TestABBvAABB(boxA, boxB);
+
+			if (result.hasCollision)
+				collisionResults.push_back(result);
+		}
 
 
-		QueryAABBsWithAABB<>(box, collisionResults, entity);
 	}
 }

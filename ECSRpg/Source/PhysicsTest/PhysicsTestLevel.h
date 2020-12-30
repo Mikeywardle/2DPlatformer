@@ -6,7 +6,7 @@
 #include <UI/Text.h>
 #include <sstream>
 
-#include <Debug/FloatingCamera.h>
+#include <Debugging/FloatingCamera.h>
 #include <Camera/CameraComponent.h>
 #include <Rendering/Meshes/MeshComponent.h>#
 #include <Physics/Collisions/AABB.h>
@@ -31,8 +31,6 @@ public:
 
 		Mesh* cubeMeshAsset = resourceManager->GetMesh("Cube");
 		Mesh* sphereMeshAsset = resourceManager->GetMesh("Sphere");
-
-		int testShader = resourceManager->LoadShader("TestMesh", "BuildingVertex.vs", "BuildingFragment.fs");
 
 		//Spawn Camera
 		Entity cameraEntity = world->CreateEntity();
@@ -71,14 +69,14 @@ public:
 		ResourceManager* resourceManager = world->GetResourceManager();
 
 		Mesh* cubeMeshAsset = resourceManager->GetMesh("Cube");
-		int testShader = resourceManager->GetShader("TestMesh");
+		Material* testMaterial = resourceManager->GetMaterial("TestMaterial");
 
 		//Spawn Mesh
 		Entity mesh = world->CreateEntity();
 
 		MeshComponent* m = world->AddComponent<MeshComponent>(mesh);
 		m->SetMesh(cubeMeshAsset);
-		m->SetMaterial(testShader);
+		m->SetMaterial(testMaterial);
 
 		Transform* t4 = world->AddComponent<Transform>(mesh);
 		t4->SetPosition(position);

@@ -6,6 +6,7 @@
 #include <Resources/ResourceManager.h>
 #include <Audio/AudioEngine.h>
 #include <Utils/STLUtils.h>
+#include <Debugging/DebugSystem.h>
 
 World::World()
 {
@@ -14,8 +15,9 @@ World::World()
 
 	renderingSystem = new RenderingSystem(this);
 	physicsSystem = new PhysicsSystem(this);
+	debugSystem = new DebugSystem(this);
 
-	resourceManager = new ResourceManager();
+	resourceManager = new ResourceManager(this);
 }
 
 void World::UnRegisterSystem(System* system)
@@ -38,6 +40,8 @@ void World::RunFrame(float deltaTime)
 
 	ProcessPhysics(deltaTime);
 	DrawWorld();
+	ProcessDebug(deltaTime);
+
 }
 
 void World::ProcessPhysics(float deltaTime)
@@ -48,6 +52,11 @@ void World::ProcessPhysics(float deltaTime)
 void World::DrawWorld()
 {
 	renderingSystem->DrawWorld();
+}
+
+void World::ProcessDebug(float deltaTime)
+{
+	debugSystem->OnFrame(deltaTime);
 }
 
 Entity World::CreateEntity()

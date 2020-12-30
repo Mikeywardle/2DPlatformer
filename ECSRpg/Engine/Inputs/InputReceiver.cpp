@@ -31,3 +31,8 @@ void InputReceiver::ClearBindings()
 		UnbindAllKeysFromBinding(binding);
 	}
 }
+
+bool InputReceiver::KeyPressed(InputKey key)
+{
+	return GetKeyPressed(key);
+}

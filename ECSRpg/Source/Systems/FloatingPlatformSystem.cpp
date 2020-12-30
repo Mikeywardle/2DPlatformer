@@ -32,7 +32,8 @@ void FloatingPlatformSystem::OnFrame(float deltaTime)
 		if (!platform->movingForwards)
 			movingDirection *= -1;
 
-		rb->velocity = movingDirection * platform->speed;
+		float platformSpeed = platform->speed;
+		rb->velocity = movingDirection * platformSpeed;
 
 	}
 }

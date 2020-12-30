@@ -3,21 +3,23 @@
 
 struct Texture2D;
 struct Mesh;
+struct Material;
+
+class World;
 
 class ResourceManager
 {
 public:
-	ResourceManager();
+	ResourceManager(World* world);
 
 	Mesh* GetMesh(std::string name);
-
 	Texture2D* GetTexture(std::string name);
-
-	int LoadShader(std::string name, std::string vertex, std::string fragment);
+	Material* GetMaterial(std::string name);
 	int GetShader(std::string name);
 
 private:
 	class TextureLibrary* textureLibrary;
 	class ShaderLibrary* shaderLibrary;
 	class MeshLibrary* meshLibrary;
+	class MaterialsLibrary* materialLibrary;
 };

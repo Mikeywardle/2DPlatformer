@@ -17,6 +17,7 @@ InputConfiguration CURRENT_INPUT_CONFIGURATION;
 Vector2 MOUSE_POSITION = Vector2(0,0);
 Vector2 MOUSE_DELTA = Vector2(0, 0);
 
+GLFWwindow* ActiveWindow;
 void InvokeKeyEvent(InputKey& inputKey, const InputType& type);
 
 InputBinding::InputBinding(std::string name, InputType type, std::vector<InputKey> boundKeys, std::vector<EventDelegate<InputKey, InputType>*> delegates)
@@ -81,6 +82,8 @@ void InitializeInputs(GLFWwindow* gameWindow)
 	glfwSetMouseButtonCallback(gameWindow, MouseClickCallBack);
 	glfwSetCursorPosCallback(gameWindow, MousePositionCallBack);
 
+	ActiveWindow = gameWindow;
+
 }
 
 void SetInputConfiguration(InputConfiguration config)
@@ -131,4 +134,9 @@ void UnbindMousePositionCallback(EventDelegate<Vector2, Vector2>* delegate)
 Vector2 GetMousePosition()
 {
 	return MOUSE_POSITION;
+}
+
+bool GetKeyPressed(InputKey key)
+{
+	return glfwGetKey(ActiveWindow, key) == InputTypes::BUTTON_PRESSED;
 }

@@ -1,0 +1,10 @@
+<Materials>
+  <Material>
+    <name>TestMaterial</name>
+    <file>TestMaterial.mat</file>
+  </Material>
+  <Material>
+    <name>CoinMaterial</name>
+    <file>CoinMaterial.mat</file>
+  </Material>
+</Materials>

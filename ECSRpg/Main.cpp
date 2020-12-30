@@ -5,13 +5,14 @@
 #include "Source/Config/TestInputConfig.h"
 
 #include <Maths/Vector3.h>
+#include <Physics/Collisions/CollisionDetection.h>
 
 int main()
 {
 	InitializeGame();
 	SetGameInputConfiguration(TestConfig);
 
-	SetDefaultLevel<CityBuilderLevel>();
+	SetDefaultLevel<PhysicsTestLevel>();
 
 	StartGame();
 

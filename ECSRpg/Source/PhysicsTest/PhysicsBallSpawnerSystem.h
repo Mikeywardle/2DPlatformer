@@ -40,14 +40,13 @@ public:
 
 		ResourceManager* resourceManager = world->GetResourceManager();
 		Mesh* sphereMeshAsset = resourceManager->GetMesh("Sphere");
-
-		int testShader = resourceManager->GetShader("TestMesh");
+		Material* testMaterial = resourceManager->GetMaterial("TestMaterial");
 
 		Entity player = world->CreateEntity();
 
 		MeshComponent* m = world->AddComponent<MeshComponent>(player);
 		m->SetMesh(sphereMeshAsset);
-		m->SetMaterial(testShader);
+		m->SetMaterial(testMaterial);
 
 		Transform* t4 = world->AddComponent<Transform>(player);
 		t4->SetPosition(Vector3(xPos, 10, yPos));

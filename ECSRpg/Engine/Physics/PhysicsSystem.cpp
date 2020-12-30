@@ -119,27 +119,36 @@ void PhysicsSystem::ResolveCollisions(CollisionEvent collisionResults)
 
 		const Vector3 ImpulserPerIMass = result.normal * impulse;
 
-		if (rba != nullptr)
-			rba->velocity += ImpulserPerIMass * rba->GetInverseMass();
-
-		if (rbb != nullptr)
-			rbb->velocity -= ImpulserPerIMass * rbb->GetInverseMass();
+		AddImpulseIfNotNull(rba, ImpulserPerIMass);
+		AddImpulseIfNotNull(rbb, ImpulserPerIMass * -1);
 
 		//Add Friction
 		const float TotalFrictionCoefficient = GetTotalFrictionCoefficient(rba, rbb);
 		const Vector3 tangent = Vector3::Normalize(relativeVelocity - (collisionNormal * Vector3::DotProduct(relativeVelocity, collisionNormal)));
 
-		const float frictionMagnitude = -Vector3::DotProduct(relativeVelocity, tangent) / TotalInverseMass;
+		const float frictionMagnitude = -(Vector3::DotProduct(relativeVelocity, tangent) / TotalInverseMass);
+		const float normalImpulseMagnitude = Vector3::Magnitude(ImpulserPerIMass);
 
-		const Vector3 frictionImpulse = tangent * frictionMagnitude * TotalFrictionCoefficient;
+		Vector3 frictionImpulse;
+		if (fabsf(frictionMagnitude) < normalImpulseMagnitude * TotalFrictionCoefficient)
+		{
+			frictionImpulse =  tangent * frictionMagnitude;
+		}
+		else
+		{
+			frictionImpulse = tangent * -normalImpulseMagnitude * TotalFrictionCoefficient;
+		}
 
-		if (rba != nullptr)
-			rba->velocity += frictionImpulse * rba->GetInverseMass();
-
-		if (rbb != nullptr)
-			rbb->velocity -= frictionImpulse * rbb->GetInverseMass();
+		AddImpulseIfNotNull(rba, frictionImpulse);
+		AddImpulseIfNotNull(rbb, frictionImpulse * -1);
 	}
 
+}
+
+void PhysicsSystem::AddImpulseIfNotNull(RigidBodyComponent* rigidbody, const Vector3& frictionImpulse)
+{
+	if (rigidbody != nullptr)
+		rigidbody->AddImpulse(frictionImpulse);
 }
 
 float PhysicsSystem::GetSeparatingVelocity(Vector3 relativeVelocity, Vector3 Normal)
@@ -194,14 +203,4 @@ float PhysicsSystem::GetTotalFrictionCoefficient(RigidBodyComponent* rb1, RigidB
 
 		return sqrtf((fric1 * fric1) * (fric2 * fric2));
 	}
-}
-
-void PhysicsSystem::ApplyFriction(RigidBodyComponent* rigidbody, Vector3 normal, float FrictionCoefficient)
-{
-	if (rigidbody == nullptr)
-		return;
-
-	Vector3 FrameForce = rigidbody->GetFrameForce();
-	Vector3 FrameForceDir = Vector3::Normalize(FrameForce);
-
 }

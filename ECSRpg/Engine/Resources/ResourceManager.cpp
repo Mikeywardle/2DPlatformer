@@ -3,12 +3,14 @@
 #include <Resources/TextureLibrary.h>
 #include <Resources/MeshLibrary.h>
 #include <Resources/ShaderLibrary.h>
+#include <Resources/MaterialsLibrary.h>
 
-ResourceManager::ResourceManager()
+ResourceManager::ResourceManager(World* world)
 {
     textureLibrary = new TextureLibrary();
     meshLibrary = new MeshLibrary();
     shaderLibrary = new ShaderLibrary();
+    materialLibrary = new MaterialsLibrary(world);
 
 }
 
@@ -22,10 +24,11 @@ Texture2D* ResourceManager::GetTexture(std::string name)
     return textureLibrary->GetTexture(name);
 }
 
-int ResourceManager::LoadShader(std::string name, std::string vertex, std::string fragment)
+Material* ResourceManager::GetMaterial(std::string name)
 {
-    return shaderLibrary->LoadShader(name, vertex, fragment);
+    return materialLibrary->GetMaterial(name);
 }
+
 
 int ResourceManager::GetShader(std::string name)
 {

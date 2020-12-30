@@ -79,3 +79,5 @@ EventDelegate<Vector2, Vector2>* BindMousePositionCallback(Clazz* object, Functi
 void UnbindMousePositionCallback(EventDelegate<Vector2, Vector2>* delegate);
 
 Vector2 GetMousePosition();
+
+bool GetKeyPressed(InputKey key);

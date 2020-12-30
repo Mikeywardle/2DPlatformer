@@ -2,6 +2,8 @@
 #include <Inputs/InputReceiver.h>
 
 #include "../Components/PlayerMovementComponent.h"
+#include <Physics/PhysicsSystem.h>
+#include <Physics/Collisions/CollisionDetection.h>
 
 #include <Physics/RigidBody.h>
 
@@ -9,11 +11,29 @@ void PlayerMovementSystem::OnFrame(float deltaTime)
 {
 	std::vector<Entity> entities = world->GetEntities<PlayerMovementComponent, RigidBodyComponent>();
 
+	PhysicsSystem* physicsSystem = world->GetPhysicsSystem();
+
 	for (Entity entity : entities)
 	{
-
+		Transform* t = world->GetComponent<Transform>(entity);
 		RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
 		PlayerMovementComponent* p = world->GetComponent<PlayerMovementComponent>(entity);
+
+		Vector3 playerPosition = t->GetPosition();
+
+		Vector3 RayEnd = playerPosition + (VECTOR3_DOWN * 1.01);
+
+ 		RaycastingResult result = physicsSystem->CastRay(playerPosition, RayEnd, entity);
+
+		if (result.hasHit)
+		{
+ 			p->inAir = false;
+			p->CurrentJumpsNumber = 0;
+		} 
+		else
+		{
+			p->inAir = true;
+		}
 
 		Vector3 MoveDir = VECTOR3_RIGHT * (p->MovingRight - p->MoveingLeft);
 		float force;
@@ -36,9 +56,7 @@ void PlayerMovementSystem::OnJump(InputKey key, InputType type)
 		RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
 		PlayerMovementComponent* p = world->GetComponent<PlayerMovementComponent>(entity);
 
-		p->inAir = true;
-
-		if (p->CurrentJumpsNumber < p->TotalJumps)
+		if (p->CurrentJumpsNumber < p->TotalJumps-1)
 		{
 			rb->AddImpulse(VECTOR3_UP * p->JumpForce);
 			++p->CurrentJumpsNumber;

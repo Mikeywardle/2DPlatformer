@@ -9,7 +9,6 @@
 #include <vector>
 
 
-
 class InputReceiver
 {
 public:
@@ -33,6 +32,8 @@ public:
 	void RemoveBinding(InputBinding toRemove);
 
 	void ClearBindings();
+
+	bool KeyPressed(InputKey key);
 
 private:
 	void UnbindAllKeysFromBinding(InputBinding& toRemove);

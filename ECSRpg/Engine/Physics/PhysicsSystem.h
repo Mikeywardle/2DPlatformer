@@ -23,11 +23,19 @@ public:
 		return collisionSystem->CastBox<Args...>(position, halfWidth, halfHeight, halfDepth);
 	}
 
+	template<typename ...Args>
+	RaycastingResult CastRay(Vector3 Start, Vector3 End, Entity ignoreEntity)
+	{
+		return collisionSystem->CastRay<Args...>(Start, End, ignoreEntity);
+	}
+
 private:
 	void ProcessForceHandlers(float deltaTime);
 	void IntegrateForces(float deltaTime);
 
 	void ResolveCollisions(struct CollisionEvent collisionResults);
+
+	void AddImpulseIfNotNull(RigidBodyComponent* rba, const Vector3& frictionImpulse);
 
 	//TODO Creat Collision Resolver class
 	Vector3 GetRelativeVelocity(RigidBodyComponent* rb1, RigidBodyComponent* rb2);
@@ -35,7 +43,6 @@ private:
 	float GetCollisionRestitution(RigidBodyComponent* rb1, RigidBodyComponent* rb2);
 	float GetTotalInversMass(RigidBodyComponent* rb1, RigidBodyComponent* rb2);
 	float GetTotalFrictionCoefficient(RigidBodyComponent* rb1, RigidBodyComponent* rb2);
-	void ApplyFriction(RigidBodyComponent* rigidbody, Vector3 normal, float FrictionCoefficient);
 
 	std::vector<class IForceHandler*> forceHandlers;
 

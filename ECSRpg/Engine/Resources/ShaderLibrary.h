@@ -5,10 +5,24 @@
 class ShaderLibrary : public ResourceLibrary<GLuint>
 {
 public:
-	GLuint LoadShader(std::string name, std::string vertex, std::string fragment);
+	ShaderLibrary();
+	void LoadShader(std::string name, std::string path, int type);
 	GLuint GetShader(std::string name);
 
 private:
 	static std::string SHADER_PATH;
+
+	void LoadMetaData();
+
+	struct ShaderImportData
+	{
+		ShaderImportData() = default;
+		ShaderImportData(std::string path, int type);
+
+		std::string path;
+		int type;
+	};
+
+	std::unordered_map<std::string, ShaderImportData> FileLookup;
 };
 

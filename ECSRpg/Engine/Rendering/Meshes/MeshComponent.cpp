@@ -23,9 +23,15 @@ int MeshComponent::GetNumberOfIndices() const
     return NumberOfIndices;
 }
 
-void MeshComponent::SetMaterial(int material)
+void MeshComponent::SetMaterial(Material* material)
 {
-    MaterialIndex = material;
+    material = material;
+    MaterialIndex = material->ID;
+}
+
+Material* MeshComponent::GetMaterial() const
+{
+    return nullptr;
 }
 
 int MeshComponent::GetMaterialIndex() const

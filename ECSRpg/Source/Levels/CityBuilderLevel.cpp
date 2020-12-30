@@ -13,7 +13,7 @@
 #include <Physics/Forces/AirResistance.h>
 #include <Physics/RigidBody.h>
 
-#include <Debug/FloatingCamera.h>
+#include <Debugging/FloatingCamera.h>
 
 #include <UI/Text.h>
 
@@ -30,15 +30,13 @@
 #include "../Systems/FloatingPlatformSystem.h"
 #include "../Systems/RotatorSystem.h"
 
+#include <ImGui/imgui.h>
+
 struct TestBallTag {};
 
 void CityBuilderLevel::OnStart()
 {
 	Level::OnStart();
-
-	ResourceManager* resourceManager = world->GetResourceManager();
-
-	int testShader = resourceManager->LoadShader("TestMesh", "BuildingVertex.vs", "BuildingFragment.fs");
 
 	CreatePlayerCamera();
 	CreatePlayer();
@@ -80,47 +78,23 @@ void CityBuilderLevel::OnStart()
 
 void CityBuilderLevel::OnFrame(float deltaTime)
 {
-	Entity sphere = world->GetEntities<TestBallTag>()[0];
-
-	Transform* t = world->GetComponent<Transform>(sphere);
-	PlayerMovementComponent* p = world->GetComponent<PlayerMovementComponent>(sphere);
-
-	std::ostringstream ss2;
-	ss2 << 1/deltaTime << "fps";
-	RenderText(ss2.str(), Vector2(20, 40), COLOR_WHITE);
-	 
-	std::ostringstream ss3;
-	ss3 << "x: "<<t->GetPosition().x << ", y: "<< t->GetPosition().y;
-	RenderText(ss3.str(), Vector2(20, 60), COLOR_WHITE);
-
-	std::ostringstream ss4;
-	ss4 << p->CurrentJumpsNumber <<" jumps";
-	RenderText(ss4.str(), Vector2(20, 20), COLOR_WHITE);
-
-	if (p->inAir)
-	{
-		RenderText("In Air", Vector2(20, 80), COLOR_WHITE);
-	}
-
-
 }
 
 void CityBuilderLevel::CreatePlayer()
 {	
 	ResourceManager* resourceManager = world->GetResourceManager();
-	//Mesh* sphereMeshAsset = resourceManager->GetMesh("Sphere");
+	Mesh* sphereMeshAsset = resourceManager->GetMesh("Sphere");
 	Texture2D* spriteTexture = resourceManager->GetTexture("PlayerShip");
-
-	int testShader = resourceManager->GetShader("TestMesh");
+	Material* testMaterial = resourceManager->GetMaterial("TestMaterial");
 
 	Entity player = world->CreateEntity();
 
-	//MeshComponent *m = world->AddComponent<MeshComponent>(player);
-	//m->SetMesh(sphereMeshAsset);
-	//m->SetMaterial(testShader);
+	MeshComponent *m = world->AddComponent<MeshComponent>(player);
+	m->SetMesh(sphereMeshAsset);
+	m->SetMaterial(testMaterial);
 
-	SpriteComponent* renderer = world->AddComponent<SpriteComponent>(player);
-	*renderer = SpriteComponent(spriteTexture, COLOR_WHITE, 32);
+	//SpriteComponent* renderer = world->AddComponent<SpriteComponent>(player);
+	//*renderer = SpriteComponent(spriteTexture, COLOR_WHITE, 32);
 
 	Transform* t = world->AddComponent<Transform>(player);
 	t->SetPosition(Vector3(-5, 5, 0));
@@ -135,8 +109,8 @@ void CityBuilderLevel::CreatePlayer()
 
 	RigidBodyComponent* rb = world->AddComponent<RigidBodyComponent>(player);
 	rb->mass = 10;
-	rb->Restitution = .07f;
-	rb->Friction = 0.5f;
+	rb->Restitution = .01f;
+	rb->Friction = 0.8f;
 
 	GravityComponent* g = world->AddComponent<GravityComponent>(player);
 	g->GravityScale = 1.f;
@@ -145,7 +119,7 @@ void CityBuilderLevel::CreatePlayer()
 	a->DragCoefficient = 1.f;
 
 	PlayerMovementComponent* p = world->AddComponent<PlayerMovementComponent>(player);
-	new(p) PlayerMovementComponent(2,100,80,.5);
+	new(p) PlayerMovementComponent(2,100, .5,.3);
 
 	world->AddComponent<TestBallTag>(player);
 }
@@ -175,33 +149,34 @@ Entity CityBuilderLevel::CreatePlatform(Vector3 position, float width, float hei
 	ResourceManager* resourceManager = world->GetResourceManager();
 
 	Mesh* cubeMeshAsset = resourceManager->GetMesh("Cube");
-	int testShader = resourceManager->GetShader("TestMesh");
+	Material* testMaterial = resourceManager->GetMaterial("TestMaterial");
 
 	//Spawn Mesh
-	Entity mesh = world->CreateEntity();
+	Entity platform = world->CreateEntity();
 
-	MeshComponent* m = world->AddComponent<MeshComponent>(mesh);
+	MeshComponent* m = world->AddComponent<MeshComponent>(platform);
 	m->SetMesh(cubeMeshAsset);
-	m->SetMaterial(testShader);
+	m->SetMaterial(testMaterial);
 
-	Transform* t4 = world->AddComponent<Transform>(mesh);
+	Transform* t4 = world->AddComponent<Transform>(platform);
 	t4->SetPosition(position);
 	t4->SetScale(Vector3(width, height, 5));
 	t4->SetStatic(true);
 
-	AABBColliderComponent* sc = world->AddComponent<AABBColliderComponent>(mesh);
+	RigidBodyComponent* rb = world->AddComponent<RigidBodyComponent>(platform);
+	rb->isInfiniteMass = true;
+	rb->Friction = 1.2;
+
+	AABBColliderComponent* sc = world->AddComponent<AABBColliderComponent>(platform);
 	new(sc) AABBColliderComponent(width, height, 5);
 
-	return mesh;
+	return platform;
 }
 
 void CityBuilderLevel::CreateFloatingPlatform(Vector3 position, float width, float height, Vector3 start, Vector3 end)
 {
 	Entity platform = CreatePlatform(position, width, height);
 	world->GetComponent<Transform>(platform)->SetStatic(false);
-
-	RigidBodyComponent* rb = world->AddComponent<RigidBodyComponent>(platform);
-	rb->isInfiniteMass = true;
 
 	FloatingPlatformComponent* f = world->AddComponent<FloatingPlatformComponent>(platform);
 	*f = FloatingPlatformComponent(start, end, 2.f);
@@ -212,14 +187,14 @@ void CityBuilderLevel::CreateCoin(Vector3 position)
 	ResourceManager* resourceManager = world->GetResourceManager();
 
 	Mesh* MeshAsset = resourceManager->GetMesh("Cylinder");
-	int testShader = resourceManager->GetShader("TestMesh");
+	Material* testMaterial = resourceManager->GetMaterial("CoinMaterial");
 
 	//Spawn Mesh
 	Entity coin = world->CreateEntity();
 
 	MeshComponent* m = world->AddComponent<MeshComponent>(coin);
 	m->SetMesh(MeshAsset);
-	m->SetMaterial(testShader);
+	m->SetMaterial(testMaterial);
 
 	Transform* t = world->AddComponent<Transform>(coin);
 	t->SetPosition(position);
