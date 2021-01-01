@@ -16,9 +16,9 @@ public:
 	~InputReceiver();
 
 	template<typename Clazz, typename Function>
-	InputBinding AddButtonBinding(Clazz* object, Function function, std::string name, InputType pressedType)
+	Inputs::InputBinding AddButtonBinding(Clazz* object, Function function, std::string name, InputType pressedType)
 	{
-		InputBinding toReturn = BindButton(object, function, name, pressedType);
+		Inputs::InputBinding toReturn = Inputs::BindButton(object, function, name, pressedType);
 		inputBindings.push_back(toReturn);
 		return toReturn;
 	}
@@ -26,18 +26,20 @@ public:
 	template<typename Clazz, typename Function>
 	void AddMousePositionCallback(Clazz* object, Function function)
 	{
-		OnMousePositionChangedDelegate = BindMousePositionCallback(object, function);
+		OnMousePositionChangedDelegate = Inputs::BindMousePositionCallback(object, function);
 	}
 
-	void RemoveBinding(InputBinding toRemove);
+	void RemoveBinding(Inputs::InputBinding toRemove);
 
 	void ClearBindings();
 
 	bool KeyPressed(InputKey key);
 
+	bool BindingPressed(std::string binding);
+
 private:
-	void UnbindAllKeysFromBinding(InputBinding& toRemove);
-	std::vector<InputBinding> inputBindings;
+	void UnbindAllKeysFromBinding(Inputs::InputBinding& toRemove);
+	std::vector<Inputs::InputBinding> inputBindings;
 
 	EventDelegate<Vector2, Vector2>* OnMousePositionChangedDelegate = nullptr;
 

@@ -25,10 +25,10 @@
 #include "../Components/RotatorComponent.h"
 
 #include "../Systems/PlayerMovementSystem.h"
-#include "../Systems/PlayerCameraSystem.h"
-#include "../Systems/CoinSystem.h"
+//#include "../Systems/PlayerCameraSystem.h"
+//#include "../Systems/CoinSystem.h"
 #include "../Systems/FloatingPlatformSystem.h"
-#include "../Systems/RotatorSystem.h"
+//#include "../Systems/RotatorSystem.h"
 
 #include <ImGui/imgui.h>
 
@@ -69,11 +69,11 @@ void CityBuilderLevel::OnStart()
 	//world->RegisterSystem<FloatingCameraMovementSystem>();
 
 	world->RegisterSystem<PlayerMovementSystem>();
-	world->RegisterSystem<PlayerCameraSystem>();
+	//world->RegisterSystem<PlayerCameraSystem>();
 
-	world->RegisterSystem<CoinSystem>();
+	//world->RegisterSystem<CoinSystem>();
 	world->RegisterSystem<FloatingPlatformSystem>();
-	world->RegisterSystem<RotatorSystem>();
+	//world->RegisterSystem<RotatorSystem>();
 }
 
 void CityBuilderLevel::OnFrame(float deltaTime)
@@ -119,7 +119,7 @@ void CityBuilderLevel::CreatePlayer()
 	a->DragCoefficient = 1.f;
 
 	PlayerMovementComponent* p = world->AddComponent<PlayerMovementComponent>(player);
-	new(p) PlayerMovementComponent(2,100, .5,.3);
+	new(p) PlayerMovementComponent(100, .5,.3);
 
 	world->AddComponent<TestBallTag>(player);
 }

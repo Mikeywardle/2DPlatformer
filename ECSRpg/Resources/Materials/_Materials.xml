@@ -3,6 +3,14 @@
     <name>TestMaterial</name>
     <file>TestMaterial.mat</file>
   </Material>
+    <Material>
+    <name>TestFloor</name>
+    <file>TestFloor.mat</file>
+  </Material>
+    <Material>
+    <name>TestWall</name>
+    <file>TestWall.mat</file>
+  </Material>
   <Material>
     <name>CoinMaterial</name>
     <file>CoinMaterial.mat</file>

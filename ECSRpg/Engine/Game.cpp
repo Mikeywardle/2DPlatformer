@@ -96,7 +96,7 @@ void InitializeGame()
 	}
 
 	BindCallBackFunctions();
-	InitializeInputs(GameWindow);
+	Inputs::InitializeInputs(GameWindow);
 	InitializeData();
 
 	GameWorld = new World();
@@ -104,7 +104,7 @@ void InitializeGame()
 
 void SetGameInputConfiguration(InputConfiguration config)
 {
-	SetInputConfiguration(config);
+	Inputs::SetInputConfiguration(config);
 }
 
 int StartGame()

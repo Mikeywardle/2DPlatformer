@@ -1,17 +1,17 @@
 #include "DebugSystem.h"
 
-
 #include <Game.h>
 
 #include <Core/World.h>
 
 #include <ImGui/imgui.h>
-#include<ImGui/imgui_impl_glfw.h>
-#include<ImGui/imgui_impl_opengl3.h>
+#include <ImGui/imgui_impl_glfw.h>
+#include <ImGui/imgui_impl_opengl3.h>
 
 #include <Inputs/InputReceiver.h>
 #include <Inputs/InputValues.h>
 
+#include <Rendering/Sprites/BillBoardSprites.h>
 #include "../../Source/Components/PlayerMovementComponent.h"
 
 
@@ -58,14 +58,21 @@ void DebugSystem::OnFrame(float deltaTime)
 
 		ImGui::Begin("Debug Tool");
 
-		PlayerMovementComponent p = world->GetComponents<PlayerMovementComponent>()->at(0);
-
+		ImGui::Text("Frame Time:");
 		ImGui::Text("%.2f fps", 1 / deltaTime);
+		ImGui::Text("%.2f ms", deltaTime*1000);
 
-		if(p.inAir)
-			ImGui::Text("In Air");
-		else
-			ImGui::Text("On Ground");
+
+		ImGui::End();
+
+
+
+		ImGui::Begin("Player Tool");
+
+		Entity player = world->GetEntities<PlayerMovementComponent, BillBoardComponent>()[0];
+		Transform* t = world->GetComponent<Transform>(player);
+
+		ImGui::Text("Rotation: %.2f", t->GetRotation().y);
 		ImGui::End();
 
 		//Draw ImGUI

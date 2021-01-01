@@ -14,36 +14,36 @@ void BillBoardSpriteSystem::OnFrame(float deltaTime)
 	Transform* cameraTranform = world->GetComponent<Transform>(cameraEntity);
 	Vector3 cameraposition = cameraTranform->GetPosition();
 
-	Vector3 billboardPosition;
-	Vector3 diff;
-	Vector3 rotation;
-
 	for (Entity entity : entities)
 	{
 		Transform* transform = world->GetComponent<Transform>(entity);
-		billboardPosition = transform->GetPosition();
-		rotation = transform->GetRotation();
+		Vector3 billboardPosition = transform->GetPosition();
+		Vector3 rotation = transform->GetRotation();
 
 		BillBoardComponent* billboard = world->GetComponent<BillBoardComponent>(entity);
 
+		Vector3 diff = cameraposition - billboardPosition;
 
-		diff = cameraposition - billboardPosition;
-
-		//if (billboard->rotateX)
-		//{
-		//	rotation.x = RadiansToDegrees(atan(diff.z / diff.y));
-		//}
 
 		if (billboard->rotateY)
 		{
-			rotation.y = RadiansToDegrees(atan(diff.x / diff.z));
-		}
+			float diffFrac = diff.x / diff.z;
 
-		//if (billboard->rotateZ)
-		//{
-		//	rotation.z = RadiansToDegrees(atan(diff.y/ diff.x));
-		//}
+			float newRotation = RadiansToDegrees(atan(diffFrac));
+
+			if (diff.z > 0)
+				newRotation -= 180;
+
+			rotation.y = newRotation;
+		}
 
 		transform->SetRotation(rotation);
 	}
+}
+
+BillBoardComponent::BillBoardComponent(bool rotateX, bool rotateY, bool rotateZ)
+{
+	this->rotateX = rotateX;
+	this->rotateY = rotateY;
+	this->rotateZ = rotateZ;
 }

@@ -19,14 +19,5 @@ private:
 	class InputReceiver* inputReceiver;
 
 	void OnJump(InputKey key, InputType type);
-
-	void OnPlayerLand(CollisionEvent collisions);
-
-	void OnLeftPressed(InputKey key, InputType type);
-	void OnLeftReleased(InputKey key, InputType type);
-
-	void OnRightPressed(InputKey key, InputType type);
-	void OnRightReleased(InputKey key, InputType type);
-
 	void BindEvents();
 };

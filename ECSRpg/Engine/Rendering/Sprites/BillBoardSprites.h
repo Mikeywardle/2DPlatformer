@@ -3,6 +3,9 @@
 
 struct BillBoardComponent
 {
+	BillBoardComponent() = default;
+	BillBoardComponent(bool rotateX, bool rotateY, bool rotateZ);
+
 	bool rotateX;
 	bool rotateY;
 	bool rotateZ;

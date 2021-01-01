@@ -7,35 +7,26 @@
 
 #include <Physics/RigidBody.h>
 
+#include "SubSystems/InAirStateSubSystem.h"
+
 void PlayerMovementSystem::OnFrame(float deltaTime)
 {
+	CheckInAirState(world);
+
 	std::vector<Entity> entities = world->GetEntities<PlayerMovementComponent, RigidBodyComponent>();
 
-	PhysicsSystem* physicsSystem = world->GetPhysicsSystem();
+	bool forwardsPressed = inputReceiver->BindingPressed("Forwards");
+	bool backwardsPressed = inputReceiver->BindingPressed("Backwards");
+
+	bool leftPressed = inputReceiver->BindingPressed("Left");
+	bool rightPressed = inputReceiver->BindingPressed("Right");
 
 	for (Entity entity : entities)
 	{
-		Transform* t = world->GetComponent<Transform>(entity);
 		RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
 		PlayerMovementComponent* p = world->GetComponent<PlayerMovementComponent>(entity);
 
-		Vector3 playerPosition = t->GetPosition();
-
-		Vector3 RayEnd = playerPosition + (VECTOR3_DOWN * 1.01);
-
- 		RaycastingResult result = physicsSystem->CastRay(playerPosition, RayEnd, entity);
-
-		if (result.hasHit)
-		{
- 			p->inAir = false;
-			p->CurrentJumpsNumber = 0;
-		} 
-		else
-		{
-			p->inAir = true;
-		}
-
-		Vector3 MoveDir = VECTOR3_RIGHT * (p->MovingRight - p->MoveingLeft);
+		const Vector3 MoveDir = (VECTOR3_RIGHT * (rightPressed - leftPressed)) +(VECTOR3_FORWARD * (forwardsPressed - backwardsPressed));
 		float force;
 
 		if (p->inAir)
@@ -56,97 +47,18 @@ void PlayerMovementSystem::OnJump(InputKey key, InputType type)
 		RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
 		PlayerMovementComponent* p = world->GetComponent<PlayerMovementComponent>(entity);
 
-		if (p->CurrentJumpsNumber < p->TotalJumps-1)
+		if (!p->inAir)
 		{
 			rb->AddImpulse(VECTOR3_UP * p->JumpForce);
-			++p->CurrentJumpsNumber;
 		}
-
 	}
 }
 
-void PlayerMovementSystem::OnPlayerLand(CollisionEvent collisions)
-{
 
-	static const float collisionTolerance = .25f;
-
-	for (CollisionResult result : collisions.results)
-	{
-		PlayerMovementComponent* playerMovement = nullptr;
-		Vector3 groundDirection;
-
-		if (world->HasComponent<PlayerMovementComponent>(result.entityA))
-		{
-			playerMovement = world->GetComponent<PlayerMovementComponent>(result.entityA);
-			groundDirection = VECTOR3_UP;
-		}
-		else if (world->HasComponent<PlayerMovementComponent>(result.entityB))
-		{
-			playerMovement = world->GetComponent<PlayerMovementComponent>(result.entityB);
-			groundDirection = VECTOR3_DOWN;
-		}
-
-
-		if (playerMovement == nullptr)
-			continue;
-
-		if (Vector3::DotProduct(result.normal, groundDirection) >= collisionTolerance)
-		{
-			playerMovement->CurrentJumpsNumber = 0;
-			playerMovement->inAir = false;
-		}		
-	}
-}
-
-void PlayerMovementSystem::OnLeftPressed(InputKey key, InputType type)
-{
-	std::vector<PlayerMovementComponent>* components = world->GetComponents<PlayerMovementComponent>();
-
-	for (PlayerMovementComponent& p : *components)
-	{
-		p.MoveingLeft = true;
-	}
-}
-
-void PlayerMovementSystem::OnLeftReleased(InputKey key, InputType type)
-{
-	std::vector<PlayerMovementComponent>* components = world->GetComponents<PlayerMovementComponent>();
-
-	for (PlayerMovementComponent& p : *components)
-	{
-		p.MoveingLeft = false;
-	}
-}
-
-void PlayerMovementSystem::OnRightPressed(InputKey key, InputType type)
-{
-	std::vector<PlayerMovementComponent>* components = world->GetComponents<PlayerMovementComponent>();
-
-	for (PlayerMovementComponent& p : *components)
-	{
-		p.MovingRight = true;
-	}
-}
-
-void PlayerMovementSystem::OnRightReleased(InputKey key, InputType type)
-{
-	std::vector<PlayerMovementComponent>* components = world->GetComponents<PlayerMovementComponent>();
-
-	for (PlayerMovementComponent& p : *components)
-	{
-		p.MovingRight = false;
-	}
-}
 
 void PlayerMovementSystem::BindEvents()
 {
 	inputReceiver = new InputReceiver();
 
 	inputReceiver->AddButtonBinding(this, &PlayerMovementSystem::OnJump, "Jump", InputTypes::BUTTON_PRESSED);
-
-	inputReceiver->AddButtonBinding(this, &PlayerMovementSystem::OnLeftPressed, "Left", InputTypes::BUTTON_PRESSED);
-	inputReceiver->AddButtonBinding(this, &PlayerMovementSystem::OnLeftReleased, "Left", InputTypes::BUTTON_RELEASED);
-
-	inputReceiver->AddButtonBinding(this, &PlayerMovementSystem::OnRightPressed, "Right", InputTypes::BUTTON_PRESSED);
-	inputReceiver->AddButtonBinding(this, &PlayerMovementSystem::OnRightReleased, "Right", InputTypes::BUTTON_RELEASED);
 }

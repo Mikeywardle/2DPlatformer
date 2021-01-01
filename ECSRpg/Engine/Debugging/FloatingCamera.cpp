@@ -50,8 +50,8 @@ void FloatingCameraMovementSystem::OnMousePositionChanged(Vector2 Position, Vect
 
 		Vector3 rotation = t->GetRotation();
 
-		rotation.z += -Delta.y * fcc->LookSpeed * deltaTime;
-		rotation.y += Delta.x * fcc->LookSpeed * deltaTime;
+		rotation.z += -Delta.y * fcc->LookSpeed;// *deltaTime;
+		rotation.y += Delta.x * fcc->LookSpeed;// *deltaTime;
 
 		if (rotation.z > 89.0f)
 			rotation.z = 89.0f;

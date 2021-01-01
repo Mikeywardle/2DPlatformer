@@ -1,7 +1,6 @@
 #include <Game.h>
 
-#include "Source/Levels/CityBuilderLevel.h"
-#include "Source/PhysicsTest/PhysicsTestLevel.h"
+#include "Source//Levels/DungeonLevel.h"
 #include "Source/Config/TestInputConfig.h"
 
 #include <Maths/Vector3.h>
@@ -12,7 +11,7 @@ int main()
 	InitializeGame();
 	SetGameInputConfiguration(TestConfig);
 
-	SetDefaultLevel<PhysicsTestLevel>();
+	SetDefaultLevel<DungeonLevel>();
 
 	StartGame();
 
