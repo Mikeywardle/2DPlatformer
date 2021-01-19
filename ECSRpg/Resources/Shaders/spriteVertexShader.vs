@@ -10,8 +10,12 @@ out vec2 VTexCoord;
 out vec4 VColor;
 out float VTextureId;
 
-uniform mat4 view;
-uniform mat4 projection;
+layout (std140) uniform CameraMatrices
+{
+    mat4 projection;
+    mat4 view;
+	mat4 transformlessView;
+};
 
 void main()
 {

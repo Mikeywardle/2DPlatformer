@@ -6,16 +6,6 @@
 
 void MeshRenderer::Draw(World* world)
 {
-	//TODO: Move Camera Matrix Logic to own function (once per frame)
-	Entity cameraEntity = CameraComponent::GetMainCamera();
-
-	Transform* cameraTransform = world->GetComponent<Transform>(cameraEntity);
-	CameraComponent* mainCamera = world->GetComponent<CameraComponent>(cameraEntity);
-
-	glm::mat4 view = mainCamera->GetView(cameraTransform);
-	glm::mat4 projection = mainCamera->GetProjection();
-	//------------------------------------------------------------------------------------------------
-
 	std::vector<Entity> entities = world->GetEntities<MeshComponent, Transform>();
 
 	glm::mat4 model;
@@ -35,10 +25,6 @@ void MeshRenderer::Draw(World* world)
 		if (currentProgram != mat)
 		{
 			glUseProgram(mat);
-
-			SetShaderMatrix4(mat, "view", view);
-			SetShaderMatrix4(mat, "projection", projection);
-
 			currentProgram = mat;
 		}
 

@@ -1,6 +1,6 @@
 #include "Texture2D.h"
 #include <stdbool.h>
-#include<stb_image.h>
+#include <stb_image.h>
 
 
 Texture2D ImportTextureFromFile(const char* file, GLboolean alpha)

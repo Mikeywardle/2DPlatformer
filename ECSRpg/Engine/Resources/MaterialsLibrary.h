@@ -19,6 +19,9 @@ private:
 	void LoadMetaData();
 	void LoadMaterial(std::string name, std::string path);
 
+	void BindUniforms(unsigned int toAddID);
+	void BindUniform(unsigned int toAddID, unsigned int location, const char* name);
+
 	std::unordered_map<std::string, std::string> FileLookup;
 
 	World* world;

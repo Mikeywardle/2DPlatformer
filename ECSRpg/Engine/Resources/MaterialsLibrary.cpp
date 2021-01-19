@@ -3,6 +3,8 @@
 #include "ResourceManager.h"
 #include <Core/World.h>
 
+#include <Rendering/UniformBufferLocations.h>
+
 std::string MaterialsLibrary::MATERIAL_PATH = "Materials";
 
 void MaterialsLibrary::LoadMetaData()
@@ -50,7 +52,6 @@ void MaterialsLibrary::LoadMaterial(std::string name, std::string path)
 		Color color = Color(r, g, b, a);
 
 		toAdd.SetColor(colorname, color);
-
 	}
 
 
@@ -58,9 +59,35 @@ void MaterialsLibrary::LoadMaterial(std::string name, std::string path)
 
 	//floats
 
+	//BindUniforms
+	unsigned int toAddID = toAdd.ID;
+	BindUniforms(toAddID);
+
 	resourceTable[name] = toAdd;
 
 	delete materialDoc;
+}
+
+void MaterialsLibrary::BindUniforms(unsigned int toAddID)
+{
+	//Camera Matrices
+	BindUniform(toAddID, CAMERA_MATRICES_LOCATION, CAMERA_MATRICES_NAME);
+	BindUniform(toAddID, EYE_POSITION_LOCATION, EYE_POSITION_NAME);
+
+	//Misc info
+
+	//Directional Light
+	BindUniform(toAddID, DIRECTIONAL_LIGHT_LOCATION, DIRECTIONAL_LIGHT_NAME);
+
+	//Point Lights
+
+	//Spot lights
+}
+
+void MaterialsLibrary::BindUniform(unsigned int toAddID, unsigned int location, const char* name)
+{
+	unsigned int UniformBlock = glGetUniformBlockIndex(toAddID, name);
+	glUniformBlockBinding(toAddID, UniformBlock, location);
 }
 
 MaterialsLibrary::MaterialsLibrary(World* world)

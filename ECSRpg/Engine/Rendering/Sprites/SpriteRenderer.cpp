@@ -58,19 +58,6 @@ void SpriteRenderer::Draw(World* world)
 	glUseProgram(spriteShader);
 	glBindVertexArray(SpriteVAO);
 
-	//TODO: Move Camera Matrix Logic to own function (once per frame)
-	Entity cameraEntity = CameraComponent::GetMainCamera();
-
-	CameraComponent* mainCamera = world->GetComponent<CameraComponent>(cameraEntity);
-	Transform* cameraTransform = world->GetComponent<Transform>(cameraEntity);
-
-	glm::mat4 view = mainCamera->GetView(cameraTransform);
-	glm::mat4 projection = mainCamera->GetProjection();
-
-	glUniformMatrix4fv(glGetUniformLocation(spriteShader, "view"), 1, GL_FALSE, &view[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(spriteShader, "projection"), 1, GL_FALSE, &projection[0][0]);
-	//------------------------------------------------------------------------------------------------
-
 	int bufferedSprites = 0;
 
 	std::unordered_map<int, int> textureLookup = std::unordered_map<int, int>();

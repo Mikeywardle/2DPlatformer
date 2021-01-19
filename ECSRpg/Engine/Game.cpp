@@ -57,10 +57,7 @@ bool InitializeWindow()
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		return false;
 
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
 	glfwSetInputMode(GameWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSwapInterval(0);
@@ -109,14 +106,12 @@ void SetGameInputConfiguration(InputConfiguration config)
 
 int StartGame()
 {
-	glClearColor(0, 0, 0, 1.0f);
+
 
 	while (!glfwWindowShouldClose(GameWindow))
 	{
 
 		glfwPollEvents();
-		glEnable(GL_CULL_FACE);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		GameWorld->RunFrame(DELTA_TIME);
 		glfwSwapBuffers(GameWindow);
 		UpdateGameTime();	

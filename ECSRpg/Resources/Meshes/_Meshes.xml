@@ -11,4 +11,8 @@
     <name>Sphere</name>
     <file>Sphere.fbx</file>
   </Mesh>
+  <Mesh>
+    <name>SmoothSphere</name>
+    <file>SmoothSphere.fbx</file>
+  </Mesh>
 </Meshes>

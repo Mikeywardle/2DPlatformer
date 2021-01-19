@@ -153,12 +153,15 @@
     <ClCompile Include="Engine\Analytics\Timer.cpp" />
     <ClCompile Include="Engine\Audio\AudioEngine.cpp" />
     <ClCompile Include="Engine\Camera\CameraComponent.cpp" />
+    <ClCompile Include="Engine\Camera\CameraUniformBufferHandler.cpp" />
     <ClCompile Include="Engine\Debugging\DebugSystem.cpp" />
     <ClCompile Include="Engine\Debugging\FloatingCamera.cpp" />
     <ClCompile Include="Engine\GamePlay\Health.cpp" />
     <ClCompile Include="Engine\GamePlay\Lifetime.cpp" />
     <ClCompile Include="Engine\GamePlay\TransformParenting.cpp" />
     <ClCompile Include="Engine\Inputs\InputReceiver.cpp" />
+    <ClCompile Include="Engine\Lighting\LightSources\DirectionalLight.cpp" />
+    <ClCompile Include="Engine\Lighting\UniformBufferHandlers\DirectionalLightBufferHandler.cpp" />
     <ClCompile Include="Engine\Physics\Collisions\AABB.cpp" />
     <ClCompile Include="Engine\Core\Behaviour.cpp" />
     <ClCompile Include="Engine\Core\GameObject.cpp" />
@@ -189,6 +192,8 @@
     <ClCompile Include="Engine\Rendering\Meshes\MeshComponent.cpp" />
     <ClCompile Include="Engine\Rendering\glad.c" />
     <ClCompile Include="Engine\Rendering\Meshes\MeshRenderer.cpp" />
+    <ClCompile Include="Engine\Rendering\PostProcessing\Quad.cpp" />
+    <ClCompile Include="Engine\Rendering\Skybox\SkyBox.cpp" />
     <ClCompile Include="Engine\Rendering\Sprites\BillBoardSprites.cpp" />
     <ClCompile Include="Engine\Resources\Material.cpp" />
     <ClCompile Include="Engine\Resources\MaterialsLibrary.cpp" />
@@ -228,6 +233,7 @@
     <ClInclude Include="Engine\Analytics\Timer.h" />
     <ClInclude Include="Engine\Audio\AudioEngine.h" />
     <ClInclude Include="Engine\Camera\CameraComponent.h" />
+    <ClInclude Include="Engine\Camera\CameraUniformBufferHandler.h" />
     <ClInclude Include="Engine\Debugging\DebugDraws.h" />
     <ClInclude Include="Engine\Debugging\DebugSystem.h" />
     <ClInclude Include="Engine\Debugging\FloatingCamera.h" />
@@ -237,6 +243,8 @@
     <ClInclude Include="Engine\GamePlay\Health.h" />
     <ClInclude Include="Engine\GamePlay\Lifetime.h" />
     <ClInclude Include="Engine\GamePlay\TransformParenting.h" />
+    <ClInclude Include="Engine\Lighting\LightSources\DirectionalLight.h" />
+    <ClInclude Include="Engine\Lighting\UniformBufferHandlers\DirectionalLightBufferHandler.h" />
     <ClInclude Include="Engine\Physics\Collisions\AABB.h" />
     <ClInclude Include="Engine\Physics\Collisions\Collider.h" />
     <ClInclude Include="Engine\Physics\Collisions\CollisionDetection.h" />
@@ -273,7 +281,10 @@
     <ClInclude Include="Engine\Physics\RigidBody.h" />
     <ClInclude Include="Engine\Rendering\Meshes\MeshComponent.h" />
     <ClInclude Include="Engine\Rendering\IRenderer.h" />
+    <ClInclude Include="Engine\Rendering\PostProcessing\Quad.h" />
+    <ClInclude Include="Engine\Rendering\Skybox\SkyBox.h" />
     <ClInclude Include="Engine\Rendering\Sprites\BillBoardSprites.h" />
+    <ClInclude Include="Engine\Rendering\UniformBufferLocations.h" />
     <ClInclude Include="Engine\Resources\Material.h" />
     <ClInclude Include="Engine\Resources\MaterialsLibrary.h" />
     <ClInclude Include="Engine\Resources\Mesh.h" />
@@ -327,7 +338,6 @@
     <Xml Include="Resources\Textures\_Textures.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Materials\CoinMaterial.mat" />
     <None Include="Resources\Materials\TestMaterial.mat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
