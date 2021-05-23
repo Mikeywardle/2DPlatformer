@@ -2,6 +2,8 @@
 
 #include <irrklang/irrKlang.h>
 
+#pragma comment(lib, "irrklang.lib")
+
 
 AudioEngine::AudioEngine()
 {

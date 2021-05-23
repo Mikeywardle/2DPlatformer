@@ -82,7 +82,7 @@ RaycastingResult TestRayVsSphere(Ray& ray, CollisionSphere& sphere)
 
 	result.hasHit = true;
 	result.HitEntity = sphere.entity;
-	result.Distance = fmaxf(-fb - sqrtf(discriminant),0);
+	result.Distance = fmaxf(-fb - sqrtf(discriminant),0)/ray.Length;
 	result.Position = ray.Start + (ray.Direction * result.Distance);
 	result.Normal = Vector3::Normalize(result.Position - sphere.Position);
 

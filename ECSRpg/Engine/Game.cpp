@@ -2,6 +2,12 @@
 
 #include <stdio.h>
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+
+#include <Inputs/InputConfiguration.h>
+
 #include <Core/GameTime.h>
 #include <Rendering/Sprites/Sprite.h>
 #include <UI/Text.h>
@@ -57,10 +63,8 @@ bool InitializeWindow()
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		return false;
 
-
-
 	glfwSetInputMode(GameWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSwapInterval(0);
+	glfwSwapInterval(1);
 
 	return true;
 }

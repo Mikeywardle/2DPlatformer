@@ -12,8 +12,6 @@
 #include <Resources/ResourceManager.h>
 
 #include <Rendering/Meshes/MeshComponent.h>
-#include <Rendering/Sprites/Sprite.h>
-#include <Rendering/Sprites/BillBoardSprites.h>
 
 #include <Lighting/LightSources/DirectionalLight.h>
 
@@ -21,19 +19,21 @@
 #include <Physics/Collisions/AABB.h>
 #include <Physics/Collisions/SphereCollider.h>
 
-#include <Physics/Forces/AirResistance.h>
-#include <Physics/Forces/Gravity.h>
+#include <Camera/SpringArm.h>
 
-#include "../Components/PlayerMovementComponent.h"
+#include <Systems/PlayerMovementSystem.h>
+#include <Systems/CameraRotationSystem.h>
 
-#include "../Systems/PlayerMovementSystem.h"
+#include <Helpers/PlayerCreationHelpers.h>
+
 
 
 void DungeonLevel::OnStart()
 {
 
-	SpawnPlayer();
-	CreatePlayerCamera();
+	SpawnPlayer(world);
+
+	//CreatePlayerCamera();
 	CreateDirectionalLight(Vector3(90, -30, 20));
 
 	CreateTile(Vector3(5, 0, 5), Vector3(5, .2, 5), "TestFloor");
@@ -50,47 +50,11 @@ void DungeonLevel::OnStart()
 	CreateMesh(Vector3(5, 5, 5), "SmoothSphere");
 	CreateMesh(Vector3(8, 5, 8), "SmoothSphere");
 
-	world->RegisterSystem<FloatingCameraMovementSystem>();
+	//world->RegisterSystem<FloatingCameraMovementSystem>();
 
-	world->RegisterSystem<BillBoardSpriteSystem>();
-	//world->RegisterSystem<PlayerMovementSystem>();
-}
-
-void DungeonLevel::SpawnPlayer()
-{
-	ResourceManager* resourceManager = world->GetResourceManager();
-	Texture2D* spriteTexture = resourceManager->GetTexture("PlayerShip");
-
-	Entity player = world->CreateEntity();
-
-	SpriteComponent* renderer = world->AddComponent<SpriteComponent>(player);
-	*renderer = SpriteComponent(spriteTexture, COLOR_WHITE, 64);
-
-	Transform* t = world->AddComponent<Transform>(player);
-	t->SetPosition(Vector3(5, 5, 5));
-	t->SetRotation(Vector3(0, 0, 0));
-	t->SetScale(VECTOR3_ONE);
-
-	SphereColliderComponent* sphere = world->AddComponent<SphereColliderComponent>(player);
-	new(sphere) SphereColliderComponent(.5);
-
-	RigidBodyComponent* rb = world->AddComponent<RigidBodyComponent>(player);
-	rb->mass = 10;
-	rb->Restitution = .01f;
-	rb->Friction = 0.5f;
-
-	GravityComponent* g = world->AddComponent<GravityComponent>(player);
-	g->GravityScale = 1.f;
-
-	AirResistanceComponent* a = world->AddComponent<AirResistanceComponent>(player);
-	a->DragCoefficient = 1.f;
-
-	BillBoardComponent* billboard = world->AddComponent<BillBoardComponent>(player);
-	*billboard = BillBoardComponent(false, true, false);
-
-	PlayerMovementComponent* p = world->AddComponent<PlayerMovementComponent>(player);
-	new(p) PlayerMovementComponent(50, .2, .1);
-
+	world->RegisterSystem<CameraRotationSystem>();
+	world->RegisterSystem<SpringArmSystem>();
+	world->RegisterSystem<PlayerMovementSystem>();
 }
 
 void DungeonLevel::CreatePlayerCamera()
@@ -106,13 +70,13 @@ void DungeonLevel::CreatePlayerCamera()
 	c->projectionType = ProjectionType::PERSPECTIVE;
 
 	Transform* t = world->AddComponent<Transform>(cameraEntity);
-	t->SetPosition(Vector3(-2, 12, -2));
-	t->SetRotation(Vector3(-45, 45, -45));
+	t->SetPosition(Vector3(0, 10, -2));
+	t->SetRotation(Vector3(0, 90, -45));
 
 	CameraComponent::SetMainCamera(cameraEntity);
 
-	FloatingCameraComponent* fc = world->AddComponent<FloatingCameraComponent>(cameraEntity);
-	*fc = FloatingCameraComponent(5.f, .1f);
+	FloatingCameraComponent* oc = world->AddComponent<FloatingCameraComponent>(cameraEntity);
+	*oc = FloatingCameraComponent(10.f, .2f);
 
 }
 

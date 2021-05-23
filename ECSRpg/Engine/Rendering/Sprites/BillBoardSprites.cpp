@@ -25,7 +25,7 @@ void BillBoardSpriteSystem::OnFrame(float deltaTime)
 		Vector3 diff = cameraposition - billboardPosition;
 
 
-		if (billboard->rotateY)
+		//Y-Axis Rotation
 		{
 			float diffFrac = diff.x / diff.z;
 
@@ -39,11 +39,4 @@ void BillBoardSpriteSystem::OnFrame(float deltaTime)
 
 		transform->SetRotation(rotation);
 	}
-}
-
-BillBoardComponent::BillBoardComponent(bool rotateX, bool rotateY, bool rotateZ)
-{
-	this->rotateX = rotateX;
-	this->rotateY = rotateY;
-	this->rotateZ = rotateZ;
 }

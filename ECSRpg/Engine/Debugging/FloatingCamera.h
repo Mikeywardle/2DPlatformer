@@ -11,22 +11,27 @@ struct FloatingCameraComponent
 	float LookSpeed;
 };
 
+typedef int InputKey;
+typedef int  InputType;
+
 struct Vector2;
+
+class InputReceiver;
 
 class FloatingCameraMovementSystem : public System
 {
 
 public:
-	FloatingCameraMovementSystem(World* world) : System(world) 
-	{
-		BindEvent();
-	};
+	FloatingCameraMovementSystem(World* world);
 
 	virtual void OnFrame(float deltaTime) override;
 
 private:
-	class InputReceiver* inputReceiver;
+	InputReceiver* inputReceiver;
 
 	void OnMousePositionChanged(Vector2 Position, Vector2 Delta);
 	void BindEvent();
+
+	void OnRightClickPress(InputKey key, InputType type);
+	void OnRightClickRelease(InputKey key, InputType type);
 };

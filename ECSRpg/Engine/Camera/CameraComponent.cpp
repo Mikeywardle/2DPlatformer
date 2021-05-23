@@ -18,7 +18,7 @@ void CameraComponent::SetMainCamera(Entity cameraEntity)
 	mainCamera = cameraEntity;
 }
 
-glm::mat4 CameraComponent::GetProjection()
+glm::mat4 CameraComponent::GetProjection()const 
 {
 	if (projectionType == ProjectionType::PERSPECTIVE)
 	{
@@ -35,7 +35,7 @@ glm::mat4 CameraComponent::GetProjection()
 
 }
 
-glm::mat4 CameraComponent::GetView(Transform* transform)
+glm::mat4 CameraComponent::GetView(Transform* transform) const
 {
 	Vector3 eye = transform->GetPosition();
 	Vector3 center = transform->GetPosition() + transform->GetForward();
@@ -50,13 +50,6 @@ float CameraComponent::GetHorizontalFOV()
 	return  2.f * atan(tan(radAngle / 2.f) * ASPECT_RATIO);
 }
 
-Vector3 CameraComponent::ScreenPositionToWorldPosition(float xPos, float yPos, float depth, Transform* transform)
-{
-	if (projectionType == ProjectionType::PERSPECTIVE)
-		return ScreenPositionToWorldPosition_Perspective(xPos, yPos, depth, transform);
-	else
-		return ScreenPositionToWorldPosition_Ortho(xPos, yPos, depth, transform);
-}
 
 Vector3 CameraComponent::ScreenPositionToWorldPosition_Ortho(float xPos, float yPos, float depth, Transform* transform)
 {
@@ -81,4 +74,24 @@ Vector3 CameraComponent::ScreenPositionToWorldPosition_Ortho(float xPos, float y
 Vector3 CameraComponent::ScreenPositionToWorldPosition_Perspective(float xPos, float yPos, float depth, Transform* transform)
 {
 	return Vector3();
+}
+
+Vector3 CameraComponent::ScreenSpaceLocationToWorldSpaceDirection(Vector2 ScreenPosition, Transform* transform) const
+{
+
+	glm::vec4 rayClip = glm::vec4(ScreenPosition.x, ScreenPosition.y, -1.0f, 1.0f);
+
+	glm::mat4 projection = GetProjection();
+	glm::mat4 view = GetView(transform);
+
+	glm::vec4 rayEye = glm::inverse(projection) * rayClip;
+
+	rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
+
+	glm::vec4 rayWorld = glm::inverse(view) * rayEye;
+
+	Vector3 toReturn = Vector3(rayWorld.x, rayWorld.y, rayWorld.z);
+
+
+	return Vector3::Normalize(toReturn);
 }

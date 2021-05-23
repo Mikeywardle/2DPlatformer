@@ -73,19 +73,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)/_include;$(ProjectDir)/Engine;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(ProjectDir)/_lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)/_include;$(ProjectDir)/Engine;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(ProjectDir)/_lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(ProjectDir)/_lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(ProjectDir)/_lib</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -93,13 +97,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)/_include;$(ProjectDir)/Engine;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)/_lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp.lib;freetype.lib;opengl32.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>irrKlang.lib;assimp.lib;freetype.lib;opengl32.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -110,7 +114,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)/_include;$(ProjectDir)/Engine;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,10 +131,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>irrKlang.lib;assimp.lib;freetype.lib;opengl32.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -141,12 +147,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>irrKlang.lib;assimp.lib;freetype.lib;opengl32.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -154,6 +162,7 @@
     <ClCompile Include="Engine\Audio\AudioEngine.cpp" />
     <ClCompile Include="Engine\Camera\CameraComponent.cpp" />
     <ClCompile Include="Engine\Camera\CameraUniformBufferHandler.cpp" />
+    <ClCompile Include="Engine\Camera\SpringArm.cpp" />
     <ClCompile Include="Engine\Debugging\DebugSystem.cpp" />
     <ClCompile Include="Engine\Debugging\FloatingCamera.cpp" />
     <ClCompile Include="Engine\GamePlay\Health.cpp" />
@@ -214,13 +223,12 @@
     <ClCompile Include="Engine\Utils\FileIO.cpp" />
     <ClCompile Include="Engine\Utils\XMLReader.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Source\Components\FloatingPlatformComponent.cpp" />
+    <ClCompile Include="Source\Components\CameraRotationComponent.cpp" />
     <ClCompile Include="Source\Components\PlayerMovementComponent.cpp" />
-    <ClCompile Include="Source\Levels\CityBuilderLevel.cpp" />
+    <ClCompile Include="Source\Helpers\PlayerCreationHelpers.cpp" />
     <ClCompile Include="Source\Levels\DungeonLevel.cpp" />
-    <ClCompile Include="Source\Systems\FloatingPlatformSystem.cpp" />
+    <ClCompile Include="Source\Systems\CameraRotationSystem.cpp" />
     <ClCompile Include="Source\Systems\PlayerMovementSystem.cpp" />
-    <ClCompile Include="Source\Systems\SubSystems\InAirStateSubSystem.cpp" />
     <ClCompile Include="_include\ImGui\imgui.cpp" />
     <ClCompile Include="_include\ImGui\imgui_demo.cpp" />
     <ClCompile Include="_include\ImGui\imgui_draw.cpp" />
@@ -234,6 +242,7 @@
     <ClInclude Include="Engine\Audio\AudioEngine.h" />
     <ClInclude Include="Engine\Camera\CameraComponent.h" />
     <ClInclude Include="Engine\Camera\CameraUniformBufferHandler.h" />
+    <ClInclude Include="Engine\Camera\SpringArm.h" />
     <ClInclude Include="Engine\Debugging\DebugDraws.h" />
     <ClInclude Include="Engine\Debugging\DebugSystem.h" />
     <ClInclude Include="Engine\Debugging\FloatingCamera.h" />
@@ -245,6 +254,7 @@
     <ClInclude Include="Engine\GamePlay\TransformParenting.h" />
     <ClInclude Include="Engine\Lighting\LightSources\DirectionalLight.h" />
     <ClInclude Include="Engine\Lighting\UniformBufferHandlers\DirectionalLightBufferHandler.h" />
+    <ClInclude Include="Engine\Maths\MathsTypes.h" />
     <ClInclude Include="Engine\Physics\Collisions\AABB.h" />
     <ClInclude Include="Engine\Physics\Collisions\Collider.h" />
     <ClInclude Include="Engine\Physics\Collisions\CollisionDetection.h" />
@@ -303,25 +313,23 @@
     <ClInclude Include="Engine\UI\UITransform.h" />
     <ClInclude Include="Engine\UI\Widget.h" />
     <ClInclude Include="Engine\Utils\BitsSet.h" />
+    <ClInclude Include="Engine\Utils\ComponentUtils.h" />
     <ClInclude Include="Engine\Utils\FileIO.h" />
     <ClInclude Include="Engine\Utils\Signature.h" />
     <ClInclude Include="Engine\Utils\SortedVector.h" />
     <ClInclude Include="Engine\Utils\STLUtils.h" />
     <ClInclude Include="Engine\Utils\XMLReader.h" />
-    <ClInclude Include="Source\Components\BuildingPlacementMarker.h" />
-    <ClInclude Include="Source\Components\CoinPickupComponent.h" />
-    <ClInclude Include="Source\Components\FloatingPlatformComponent.h" />
+    <ClInclude Include="Source\Components\CameraRotationComponent.h" />
+    <ClInclude Include="Source\Components\PlayerTags.h" />
     <ClInclude Include="Source\Components\PlayerMovementComponent.h" />
     <ClInclude Include="Source\Components\RotatorComponent.h" />
     <ClInclude Include="Source\Config\TestInputConfig.h" />
-    <ClInclude Include="Source\Levels\CityBuilderLevel.h" />
+    <ClInclude Include="Source\Helpers\PlayerCreationHelpers.h" />
     <ClInclude Include="Source\Levels\DungeonLevel.h" />
     <ClInclude Include="Source\PhysicsTest\PhysicsBallSpawnerSystem.h" />
     <ClInclude Include="Source\PhysicsTest\PhysicsTestLevel.h" />
-    <ClInclude Include="Source\Systems\FloatingPlatformSystem.h" />
+    <ClInclude Include="Source\Systems\CameraRotationSystem.h" />
     <ClInclude Include="Source\Systems\PlayerMovementSystem.h" />
-    <ClInclude Include="Source\Systems\SubSystems\InAirStateSubSystem.h" />
-    <ClInclude Include="Source\Systems\SubSystems\JumpingSubsystem.h" />
     <ClInclude Include="_include\ImGui\imconfig.h" />
     <ClInclude Include="_include\ImGui\imgui.h" />
     <ClInclude Include="_include\ImGui\imgui_impl_glfw.h" />

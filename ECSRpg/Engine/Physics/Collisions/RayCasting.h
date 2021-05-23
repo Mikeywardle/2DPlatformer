@@ -17,7 +17,7 @@ struct RaycastingResult
 {
 	bool hasHit = false;
 
-	Entity HitEntity;
+	Entity HitEntity = NO_ENTITY;
 	float Distance;
 
 	Vector3 Position;

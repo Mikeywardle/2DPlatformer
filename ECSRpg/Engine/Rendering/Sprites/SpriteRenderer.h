@@ -15,7 +15,6 @@ struct SpriteVertex
 	Vector2 texCoords;
 	Color color;
 	float textureId;
-	float batchIndex;
 };
 
 struct Quad

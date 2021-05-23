@@ -1,14 +1,16 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <Core/World.h>
-#include <Inputs/InputConfiguration.h>
+
+struct InputConfiguration;
+struct GLFWwindow;
+//class World;
 
 void InitializeGame();
 void SetGameInputConfiguration(InputConfiguration config);
 int StartGame();
 void EndGame();
+
 
 extern GLFWwindow* GameWindow;
 

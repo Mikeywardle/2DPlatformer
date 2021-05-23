@@ -23,8 +23,12 @@ static InputConfiguration TestConfig =
 			{InputKeys::KEYBOARD_D_KEY}
 		},
 		{
-			"Shoot",
+			"Select",
 			{InputKeys::LEFT_MOUSE_BUTTON}
+		},
+		{
+			"Move",
+			{InputKeys::RIGHT_MOUSE_BUTTON}
 		},
 		{
 			"Jump",

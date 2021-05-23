@@ -12,7 +12,6 @@
 #include <Inputs/InputValues.h>
 
 #include <Rendering/Sprites/BillBoardSprites.h>
-#include "../../Source/Components/PlayerMovementComponent.h"
 
 
 DebugSystem::DebugSystem(World* world)
@@ -60,26 +59,15 @@ void DebugSystem::OnFrame(float deltaTime)
 
 		ImGui::Text("Frame Time:");
 		ImGui::Text("%.2f fps", 1 / deltaTime);
-		ImGui::Text("%.2f ms", deltaTime*1000);
+		ImGui::Text("%.2f ms", deltaTime * 1000);
 
 
-		ImGui::End();
-
-
-
-		ImGui::Begin("Player Tool");
-
-		Entity player = world->GetEntities<PlayerMovementComponent, BillBoardComponent>()[0];
-		Transform* t = world->GetComponent<Transform>(player);
-
-		ImGui::Text("Rotation: %.2f", t->GetRotation().y);
 		ImGui::End();
 
 		//Draw ImGUI
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
-
 
 }
 

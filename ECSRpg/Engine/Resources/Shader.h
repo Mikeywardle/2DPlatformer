@@ -8,6 +8,7 @@
 #define VERTEX_SHADER GL_VERTEX_SHADER;
 
 GLuint CreateShader(const GLchar* shaderSource, GLuint shaderType);
+
 void DeleteShader(GLuint shader);
 
 GLuint CreateProgram(GLuint vertexShader, GLuint fragmentShader);

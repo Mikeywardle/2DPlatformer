@@ -13,5 +13,6 @@ public:
 	void Play2DSound();
 
 private:
+
 	irrklang::ISoundEngine* IKDevice;
 };

@@ -41,8 +41,6 @@ SpriteRenderer::SpriteRenderer()
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(SpriteVertex), (void*)offsetof(SpriteVertex, textureId));
 
-	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(SpriteVertex), (void*)offsetof(SpriteVertex, batchIndex));
 
 	//Generate Indicies array
 	GenerateIndices();
@@ -153,28 +151,24 @@ Quad SpriteRenderer::CreateSpriteVertices(Color color, float textureId, float ba
 		Vector2(1.f, 1.f),
 		color,
 		textureId,
-		batchIndex,
 
 		//Bottom Right
 		transform->TransformPoint(Vector3(HalfQuadWidth,-HalfQuadHeight,0)),
 		Vector2(1.f, 0.f),
 		color,
 		textureId,
-		batchIndex,
 
 		//Bottom Left
 		transform->TransformPoint(Vector3(-HalfQuadWidth,-HalfQuadHeight,0)),
 		Vector2(0.f, 0.f),
 		color,
 		textureId,
-		batchIndex,
 
 		//Top Left
 		transform->TransformPoint(Vector3(-HalfQuadWidth,HalfQuadHeight,0)),
 		Vector2(0.f, 1.f),
 		color,
 		textureId,
-		batchIndex
 	};
 
 	return quad;

@@ -1,23 +1,30 @@
 #pragma once
-#include <Inputs/InputValues.h>
+
 #include <ecs/System.h>
-#include <Core/World.h>
-#include <Physics/Collisions/CollisionEvent.h>
+
+class InputReceiver;
+
+typedef int InputKey;
+typedef int InputType;
+
 
 class PlayerMovementSystem : public System
 {
-public:
-	PlayerMovementSystem(World* world) : System(world)
-	{
-		BindEvents();
-	}
 
-	virtual void OnFrame(float deltaTime) override;
+public:
+
+	PlayerMovementSystem(World* world);
+	~PlayerMovementSystem();
+
+	virtual void OnFrame(float deltaTime);
 
 private:
 
-	class InputReceiver* inputReceiver;
+	void CheckPlayersOnGround();
+	void ProcessMovementInputs();
+	
+	void Jump(InputKey key, InputType type);
 
-	void OnJump(InputKey key, InputType type);
-	void BindEvents();
+	InputReceiver* inputReceiver;
+
 };

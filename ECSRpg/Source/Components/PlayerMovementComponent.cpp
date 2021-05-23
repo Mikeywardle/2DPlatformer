@@ -1,8 +1,9 @@
 #include "PlayerMovementComponent.h"
 
-PlayerMovementComponent::PlayerMovementComponent( float JumpForce, float MoveForce, float AirMoveForce)
+PlayerMovementComponent::PlayerMovementComponent(float InMovementSpeed, float InAirMovementSpeed, float InJumpForce, uint8 InMaxNumberOfJumps)
+	:MaxNumberOfJumps(InMaxNumberOfJumps)
+	, MovementSpeed(InMovementSpeed)
+	, AirMovementSpeed(InAirMovementSpeed)
+	, JumpForce(InJumpForce)
 {
-	this->JumpForce = JumpForce;
-	this->MoveForce = MoveForce;
-	this->AirMoveForce = AirMoveForce;
 }

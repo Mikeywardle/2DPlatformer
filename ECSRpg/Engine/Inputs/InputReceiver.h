@@ -30,12 +30,15 @@ public:
 	}
 
 	void RemoveBinding(Inputs::InputBinding toRemove);
+	void RemoveMousePositionBinding();
 
 	void ClearBindings();
 
 	bool KeyPressed(InputKey key);
 
 	bool BindingPressed(std::string binding);
+
+	Vector2 GetNormalizedMousePosition();
 
 private:
 	void UnbindAllKeysFromBinding(Inputs::InputBinding& toRemove);

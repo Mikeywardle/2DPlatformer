@@ -7,14 +7,20 @@
 #include <Inputs/InputReceiver.h>
 #include <Core/GameTime.h>
 
+FloatingCameraMovementSystem::FloatingCameraMovementSystem(World* world)
+	:System(world)
+{
+	inputReceiver = new InputReceiver();
+	inputReceiver->AddButtonBinding(this, &FloatingCameraMovementSystem::OnRightClickPress, "Move", InputTypes::BUTTON_PRESSED);
+	inputReceiver->AddButtonBinding(this, &FloatingCameraMovementSystem::OnRightClickRelease, "Move", InputTypes::BUTTON_RELEASED);
+}
+
 void FloatingCameraMovementSystem::OnFrame(float deltaTime)
 {
-	GLFWwindow* gameWindow = GameWindow;
-
-	bool wPressed = glfwGetKey(gameWindow, GLFW_KEY_W) == GLFW_PRESS;
-	bool aPressed = glfwGetKey(gameWindow, GLFW_KEY_A) == GLFW_PRESS;
-	bool sPressed = glfwGetKey(gameWindow, GLFW_KEY_S) == GLFW_PRESS;
-	bool dPressed = glfwGetKey(gameWindow, GLFW_KEY_D) == GLFW_PRESS;
+	bool wPressed = inputReceiver->KeyPressed(InputKeys::KEYBOARD_W_KEY);
+	bool aPressed = inputReceiver->KeyPressed(InputKeys::KEYBOARD_A_KEY);
+	bool sPressed = inputReceiver->KeyPressed(InputKeys::KEYBOARD_S_KEY);
+	bool dPressed = inputReceiver->KeyPressed(InputKeys::KEYBOARD_D_KEY);
 
 	float forwardMove = (wPressed + (-1 * sPressed))* deltaTime;
 	float rightMove = (dPressed + (-1 * aPressed)) * deltaTime;
@@ -33,8 +39,17 @@ void FloatingCameraMovementSystem::OnFrame(float deltaTime)
 
 void FloatingCameraMovementSystem::BindEvent()
 {
-	inputReceiver = new InputReceiver();
 	inputReceiver->AddMousePositionCallback(this, &FloatingCameraMovementSystem::OnMousePositionChanged);
+}
+
+void FloatingCameraMovementSystem::OnRightClickPress(InputKey key, InputType type)
+{
+	inputReceiver->AddMousePositionCallback(this, &FloatingCameraMovementSystem::OnMousePositionChanged);
+}
+
+void FloatingCameraMovementSystem::OnRightClickRelease(InputKey key, InputType type)
+{
+	inputReceiver->RemoveMousePositionBinding();
 }
 
 
