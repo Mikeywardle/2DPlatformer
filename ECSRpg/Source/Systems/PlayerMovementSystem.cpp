@@ -2,7 +2,7 @@
 
 #include <Inputs/InputReceiver.h>
 #include <Core/World.h>
-#include <Core/Transform.h>
+#include <Maths/Transform.h>
 
 #include <Physics/RigidBody.h>
 #include <Physics/PhysicsSystem.h>
@@ -43,7 +43,7 @@ void PlayerMovementSystem::CheckPlayersOnGround()
 		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
 
 		const Vector3 RayStart = transform->GetPosition();
-		const Vector3 RayEnd = RayStart + VECTOR3_DOWN;
+		const Vector3 RayEnd = RayStart + Vector3::Down;
 
 		RaycastingResult result = physicsSystem->CastRay(RayStart, RayEnd, entity);
 
@@ -113,7 +113,7 @@ void PlayerMovementSystem::Jump(InputKey key, InputType type)
 
 		if (pmc->NumberOfJumps < pmc->MaxNumberOfJumps)
 		{
-			rb->AddImpulse(VECTOR3_UP * pmc->JumpForce);
+			rb->AddImpulse(Vector3::Up * pmc->JumpForce);
 			pmc->NumberOfJumps += 1;
 		}
 	}

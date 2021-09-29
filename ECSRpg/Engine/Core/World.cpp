@@ -59,6 +59,11 @@ void World::ProcessDebug(float deltaTime)
 	debugSystem->OnFrame(deltaTime);
 }
 
+void World::BuildWorld()
+{
+	physicsSystem->GenerateStaticWorld();
+}
+
 Entity World::CreateEntity()
 {
 	return ecsContext->CreateEntity();

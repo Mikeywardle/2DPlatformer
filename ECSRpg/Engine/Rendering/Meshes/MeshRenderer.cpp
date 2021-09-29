@@ -1,21 +1,20 @@
 #include "MeshRenderer.h"
 #include "MeshComponent.h"
-#include <Core/Transform.h>
+#include <Maths/Transform.h>
 #include <Camera/CameraComponent.h>
 #include <Resources/Shader.h>
 
 void MeshRenderer::Draw(World* world)
 {
-	std::vector<Entity> entities = world->GetEntities<MeshComponent, Transform>();
-
 	glm::mat4 model;
 
 	int currentVAO = -1;
 	int currentProgram = -1;
 	int currentNumberOfIndices = 0;
 
-	for (Entity entity : entities)
+	ForEntities(world, MeshComponent, Transform)
 	{
+
 		MeshComponent* mesh = world->GetComponent<MeshComponent>(entity);
 		Transform* transform = world->GetComponent<Transform>(entity);
 
@@ -40,5 +39,7 @@ void MeshRenderer::Draw(World* world)
 
 
 		glDrawElements(GL_TRIANGLES, currentNumberOfIndices, GL_UNSIGNED_INT, 0);
+
 	}
+
 }

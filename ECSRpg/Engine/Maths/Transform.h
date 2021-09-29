@@ -7,14 +7,14 @@
 struct Transform
 {
 public:
-	Transform() {};
+	Transform() = default;
 	Transform(Vector3 position, Vector3 rotation= Vector3(), Vector3 scale = Vector3(1,1,1), bool isStatic = false);
 
 	// Getters/Setters
 	// Global
-	Vector3 GetPosition();
-	Vector3 GetRotation();
-	Vector3 GetScale();
+	Vector3 GetPosition() const;
+	Vector3 GetRotation() const;
+	Vector3 GetScale() const;
 
 	void SetPosition(Vector3 position);
 	void SetRotation(Vector3 rotation);
@@ -24,11 +24,11 @@ public:
 	void AddRotation(Vector3 deltaRotation);
 	void AddScaling(Vector3 deltaScale);
 
-	Vector3 GetForward();
-	Vector3 GetRight();
-	Vector3 GetUp();
+	Vector3 GetForward() const;
+	Vector3 GetRight() const;
+	Vector3 GetUp() const;
 
-	bool IsStatic();
+	bool IsStatic() const;
 	void SetStatic(bool isStatic);
 
 	Vector3 TransformPoint(Vector3 point);
@@ -50,10 +50,4 @@ private:
 	Vector3 scale;
 
 	glm::mat4 model;
-
-
-
-
-
-
 };

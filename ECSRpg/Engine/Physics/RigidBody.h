@@ -9,7 +9,7 @@ struct RigidBodyComponent
 	float Restitution = 0;
 	float Friction = 0;
 
-	Vector3 velocity = VECTOR3_ZERO;
+	Vector3 velocity = Vector3::Zero;
 
 	float GetInverseMass();
 	void AddForce(Vector3 force);
@@ -22,8 +22,8 @@ struct RigidBodyComponent
 
 private:
 
-	Vector3 resultantForce = VECTOR3_ZERO;
-	Vector3 frameForce = VECTOR3_ZERO;
+	Vector3 resultantForce = Vector3::Zero;
+	Vector3 frameForce = Vector3::Zero;
 
 
 };

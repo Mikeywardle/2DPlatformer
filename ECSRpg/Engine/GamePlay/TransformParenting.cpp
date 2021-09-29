@@ -1,6 +1,6 @@
 #include "TransformParenting.h"
 #include <Core/World.h>
-#include <Core/Transform.h>
+#include <Maths/Transform.h>
 
 PositionAttatchmentComponent::PositionAttatchmentComponent(Entity Parent, Vector3 LocalOffset, bool DestroyOnNoParent)
 {

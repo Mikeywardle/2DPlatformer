@@ -39,14 +39,15 @@ struct Vector3
 	static Vector3 Lerp(Vector3 a, Vector3 b, float alpha);
 	static float ReverseLerp(Vector3 a, Vector3 b, Vector3 output);
 
+	static const Vector3 Up;
+	static const Vector3 Down;
+	static const Vector3 Right;
+	static const Vector3 Left;
+	static const Vector3 Forwards;
+	static const Vector3 Backwards;
+
+	static const Vector3 Zero;
+	static const Vector3 One;
 };
 
-static Vector3 VECTOR3_UP = { 0,1,0 };
-static Vector3 VECTOR3_DOWN = { 0,-1,0 };
-static Vector3 VECTOR3_RIGHT = { -1,0,0 };
-static Vector3 VECTOR3_LEFT = { 1,0,0 };
-static Vector3 VECTOR3_FORWARD = { 0,0,1 };
-static Vector3 VECTOR3_BACKWARDS = { 0,0,-1 };
 
-static Vector3 VECTOR3_ZERO = { 0,0,0 };
-static Vector3 VECTOR3_ONE = { 1,1,1 };

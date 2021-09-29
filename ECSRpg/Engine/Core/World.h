@@ -8,6 +8,8 @@
 #include <ecs/Entity.h>
 #include <Events/EventsContext.h>
 
+#define ForEntities(World, ...) std::vector<Entity> entities = World->GetEntities<##__VA_ARGS__>(); for(Entity entity : entities) 
+
 class World
 {
 public:
@@ -24,9 +26,14 @@ public:
 		currentlyLoadedLevels.push_back(newLevel);
 
 		toAdd->OnStart();
+
+		BuildWorld();
+
 		return newLevel;
 
 	}
+
+	void BuildWorld();
 #pragma endregion
 
 #pragma region ECS

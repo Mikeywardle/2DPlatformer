@@ -11,7 +11,7 @@
 
 #include <Utils/STLUtils.h>
 
-Vector3 Transform::GetForward()
+Vector3 Transform::GetForward() const
 {
     float yRads = DegreesToRadians(rotation.y);
     float zRads = DegreesToRadians(rotation.z);
@@ -24,17 +24,17 @@ Vector3 Transform::GetForward()
     return Vector3::Normalize(forward);
 }
 
-Vector3 Transform::GetRight()
+Vector3 Transform::GetRight() const
 {
-    return Vector3::Normalize(Vector3::CrossProduct(GetForward(),VECTOR3_UP));
+    return Vector3::Normalize(Vector3::CrossProduct(GetForward(),Vector3::Up));
 }
 
-Vector3 Transform::GetUp()
+Vector3 Transform::GetUp() const
 {
     return Vector3::Normalize(Vector3::CrossProduct(GetRight(), GetForward()));
 }
 
-bool Transform::IsStatic()
+bool Transform::IsStatic() const
 {
     return isStatic;
 }
@@ -110,17 +110,17 @@ Transform::Transform(Vector3 position, Vector3 rotation, Vector3 scale, bool isS
     this->isStatic = isStatic;
 }
 
-Vector3 Transform::GetPosition()
+Vector3 Transform::GetPosition() const
 {
     return position;
 }
 
-Vector3 Transform::GetRotation()
+Vector3 Transform::GetRotation() const
 {
     return rotation;
 }
 
-Vector3 Transform::GetScale()
+Vector3 Transform::GetScale() const
 {
     return scale;
 }

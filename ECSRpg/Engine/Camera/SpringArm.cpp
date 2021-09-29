@@ -1,12 +1,13 @@
 #include "SpringArm.h"
 
 #include <Core/World.h>
-#include <Core/Transform.h>
+#include <Maths/Transform.h>
 #include <Physics/PhysicsSystem.h>
 
-SpringArmComponent::SpringArmComponent(float InDistance, Entity InChild, Entity InParent)
+SpringArmComponent::SpringArmComponent(float InDistance, float InLerpSpeed, Entity InChild, Entity InParent)
 {
 	distance = InDistance;
+	lerpSpeed = InLerpSpeed;
 	child = InChild;
 	parent = InParent;
 }
@@ -57,8 +58,13 @@ void SpringArmSystem::OnFrame(float deltaTime)
 			CameraOffset = springArmForward * NegativeDistance;
 		}
 
-		childTransform->SetPosition(springArmPos);
 		childTransform->SetRotation(armTransform->GetRotation());
-		childTransform->AddTranslation(CameraOffset);
+
+		const Vector3 oldCameraPosition = childTransform->GetPosition();
+
+		childTransform->SetPosition(Vector3::Lerp(oldCameraPosition
+			, springArmPos+CameraOffset
+			, springArm->lerpSpeed)
+		);
 	}
 }

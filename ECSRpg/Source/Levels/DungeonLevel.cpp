@@ -1,7 +1,7 @@
 #include "DungeonLevel.h"
 
 #include <Core/World.h>
-#include <Core/Transform.h>
+#include <Maths/Transform.h>
 
 #include <Camera/CameraComponent.h>
 
@@ -16,8 +16,8 @@
 #include <Lighting/LightSources/DirectionalLight.h>
 
 #include <Physics/RigidBody.h>
-#include <Physics/Collisions/AABB.h>
-#include <Physics/Collisions/SphereCollider.h>
+#include <Physics/Collisions/CollisionComponents.h>
+
 
 #include <Camera/SpringArm.h>
 
@@ -30,8 +30,7 @@
 
 void DungeonLevel::OnStart()
 {
-
-	SpawnPlayer(world);
+	PlayerCreation::SpawnPlayer(world);
 
 	//CreatePlayerCamera();
 	CreateDirectionalLight(Vector3(90, -30, 20));
@@ -104,7 +103,12 @@ void DungeonLevel::CreateTile(Vector3 Position, Vector3 Scale, std::string mater
 	rb->Friction = 1.2;
 
 	AABBColliderComponent* sc = world->AddComponent<AABBColliderComponent>(platform);
-	new(sc) AABBColliderComponent(Scale.x, Scale.y, Scale.z);
+	new(sc) AABBColliderComponent(Scale);
+
+	ColliderMetaComponent* colliderMeta = world->AddComponent< ColliderMetaComponent>(platform);
+	colliderMeta->type = ColliderType::AABB;
+
+	world->AddComponent<StaticCollider>(platform);
 }
 
 void DungeonLevel::CreateDirectionalLight(Vector3 rotation)
@@ -137,5 +141,5 @@ void DungeonLevel::CreateMesh(Vector3 position, std::string mesh)
 	Transform* t = world->AddComponent<Transform>(platform);
 	t->SetPosition(position);
 	t->SetStatic(true);
-	t->SetScale(VECTOR3_ONE);
+	t->SetScale(Vector3::One);
 }

@@ -11,7 +11,7 @@
 #include <Physics/Forces/AirResistance.h>
 #include <Physics/Forces/Gravity.h>
 #include <Physics/RigidBody.h>
-#include <Physics/Collisions/SphereCollider.h>
+#include <Physics/Collisions/CollisionComponents.h>
 
 #include <Camera/SpringArm.h>
 
@@ -21,80 +21,86 @@
 #include <Camera/CameraComponent.h>
 #include <Components/CameraRotationComponent.h>
 
-void SpawnPlayer(World* world)
+namespace PlayerCreation
 {
-	ResourceManager* resourceManager = world->GetResourceManager();
+void SpawnPlayer(World* world)
+	{
+		ResourceManager* resourceManager = world->GetResourceManager();
 
-	Mesh* meshAsset = resourceManager->GetMesh("SmoothSphere");
-	Material* testMaterial = resourceManager->GetMaterial("TestMaterial");
+		Mesh* meshAsset = resourceManager->GetMesh("SmoothSphere");
+		Material* testMaterial = resourceManager->GetMaterial("TestMaterial");
 
-	//Create Player
-	Entity player = world->CreateEntity();
+		//Create Player
+		Entity player = world->CreateEntity();
 
-	Transform* t = world->AddComponent<Transform>(player);
-	t->SetPosition(Vector3(5, 5, 5));
-	t->SetRotation(Vector3(0, 0, 0));
-	t->SetScale(Vector3(0.5f, 0.5f, 0.5f));
+		Transform* t = world->AddComponent<Transform>(player);
+		t->SetPosition(Vector3(5, 5, 5));
+		t->SetRotation(Vector3(0, 0, 0));
+		t->SetScale(Vector3(0.5f, 0.5f, 0.5f));
 
-	MeshComponent* m = world->AddComponent<MeshComponent>(player);
-	m->SetMesh(meshAsset);
-	m->SetMaterial(testMaterial);
+		MeshComponent* m = world->AddComponent<MeshComponent>(player);
+		m->SetMesh(meshAsset);
+		m->SetMaterial(testMaterial);
 
-	SphereColliderComponent* sphere = world->AddComponent<SphereColliderComponent>(player);
-	new(sphere) SphereColliderComponent(.5);
+		SphereColliderComponent* sphere = world->AddComponent<SphereColliderComponent>(player);
+		new(sphere) SphereColliderComponent(.5);
 
-	RigidBodyComponent* rb = world->AddComponent<RigidBodyComponent>(player);
-	rb->mass = 10;
-	rb->Restitution = .01f;
-	rb->Friction = 0.5f;
+		ColliderMetaComponent* colliderMeta = world->AddComponent< ColliderMetaComponent>(player);
+		colliderMeta->type = ColliderType::Sphere;
 
-	GravityComponent* g = world->AddComponent<GravityComponent>(player);
-	g->GravityScale = 1.f;
+		world->AddComponent<DynamicCollider>(player);
 
-	AirResistanceComponent* a = world->AddComponent<AirResistanceComponent>(player);
-	a->DragCoefficient = 1.f;
+		RigidBodyComponent* rb = world->AddComponent<RigidBodyComponent>(player);
+		rb->mass = 10;
+		rb->Restitution = .01f;
+		rb->Friction = 0.5f;
 
-	PlayerMovementComponent* pmc = world->AddComponent<PlayerMovementComponent>(player);
-	*pmc = PlayerMovementComponent
-	(
-		10.0f
-		, 2.f
-		, 100.f
-		, 2
-	);
+		GravityComponent* g = world->AddComponent<GravityComponent>(player);
+		g->GravityScale = 1.f;
 
-	world->AddComponent<CurrentPossesedPlayer>(player);
+		AirResistanceComponent* a = world->AddComponent<AirResistanceComponent>(player);
+		a->DragCoefficient = 1.f;
 
+		PlayerMovementComponent* pmc = world->AddComponent<PlayerMovementComponent>(player);
+		*pmc = PlayerMovementComponent
+		(
+			10.0f
+			, 2.f
+			, 100.f
+			, 2
+		);
 
-	//Create Camera
-	Entity camera = world->CreateEntity();
-
-	CameraComponent* c = world->AddComponent<CameraComponent>(camera);
-
-	c->fov = 45.f;
-	c->farPlane = 1000.f;
-	c->nearPlane = 0.1f;
-	c->projectionType = ProjectionType::PERSPECTIVE;
-
-	world->AddComponent<Transform>(camera);
-
-	CameraComponent::SetMainCamera(camera);
-
-	//Create Camera SpringArm
-	Entity springArm = world->CreateEntity();
-
-	SpringArmComponent* smc = world->AddComponent<SpringArmComponent>(springArm);
-
-	*smc = SpringArmComponent(10, camera, player);
-
-	Transform* springArmTransform = world->AddComponent<Transform>(springArm);
-	springArmTransform->SetRotation(Vector3(0, 90, -20));
-
-	CameraRotationComponent* crc = world->AddComponent<CameraRotationComponent>(springArm);
-	*crc = CameraRotationComponent(1.f);
-
-	world->AddComponent<CurrentPossesedPlayer>(springArm);
+		world->AddComponent<CurrentPossesedPlayer>(player);
 
 
+		//Create Camera
+		Entity camera = world->CreateEntity();
+
+		CameraComponent* c = world->AddComponent<CameraComponent>(camera);
+
+		c->fov = 45.f;
+		c->farPlane = 1000.f;
+		c->nearPlane = 0.1f;
+		c->projectionType = ProjectionType::PERSPECTIVE;
+
+		world->AddComponent<Transform>(camera);
+
+		CameraComponent::SetMainCamera(camera);
+
+		//Create Camera SpringArm
+		Entity springArm = world->CreateEntity();
+
+		SpringArmComponent* smc = world->AddComponent<SpringArmComponent>(springArm);
+
+		*smc = SpringArmComponent(10, 0.5f, camera, player);
+
+		Transform* springArmTransform = world->AddComponent<Transform>(springArm);
+		springArmTransform->SetRotation(Vector3(0, 90, -20));
+
+		CameraRotationComponent* crc = world->AddComponent<CameraRotationComponent>(springArm);
+		*crc = CameraRotationComponent(1.f);
+
+		world->AddComponent<CurrentPossesedPlayer>(springArm);
+	}
 
 }

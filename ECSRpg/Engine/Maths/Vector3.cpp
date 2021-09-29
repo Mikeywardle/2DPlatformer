@@ -1,6 +1,16 @@
 #include "Vector3.h"
 #include <math.h>
 
+const Vector3 Vector3::Up = { 0,1,0 };
+const Vector3 Vector3::Down = { 0,-1,0 };
+const Vector3 Vector3::Right = { -1,0,0 };
+const Vector3 Vector3::Left = { 1,0,0 };
+const Vector3 Vector3::Forwards = { 0,0,1 };
+const Vector3 Vector3::Backwards = { 0,0,-1 };
+
+const Vector3 Vector3::Zero = { 0,0,0 };
+const Vector3 Vector3::One = { 1,1,1 };
+
 Vector3::Vector3(float x, float y, float z)
 {
     this->x = x;

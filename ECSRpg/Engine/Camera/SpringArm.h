@@ -8,7 +8,7 @@ class World;
 struct SpringArmComponent
 {
 	SpringArmComponent() = default;
-	SpringArmComponent(float InDistance, Entity InChild, Entity InParent);
+	SpringArmComponent(float InDistance, float InLerpSpeed, Entity InChild, Entity InParent);
 
 	float distance;
 	float lerpSpeed;

@@ -31,5 +31,5 @@ Vector3 RigidBodyComponent::GetFrameForce()
 void RigidBodyComponent::ClearResultantForce()
 {
     frameForce = resultantForce;
-    resultantForce = VECTOR3_ZERO;
+    resultantForce = Vector3::Zero;
 }

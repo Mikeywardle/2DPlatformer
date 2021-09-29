@@ -1,9 +1,9 @@
 #pragma once
 
 #include <vector>
-#include "CollisionResult.h"
+#include <Physics/Collisions/PhysicsCollisionResult.h>
 
 struct CollisionEvent
 {
-	std::vector<CollisionResult> results;
+	std::vector<PhysicsCollisionResult> results;
 };

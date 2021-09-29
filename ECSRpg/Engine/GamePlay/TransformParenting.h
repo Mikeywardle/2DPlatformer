@@ -6,7 +6,7 @@
 struct PositionAttatchmentComponent
 {
 	PositionAttatchmentComponent() = default;
-	PositionAttatchmentComponent(Entity Parent, Vector3 LocalOffset = VECTOR3_ZERO, bool DestroyOnNoParent = true);
+	PositionAttatchmentComponent(Entity Parent, Vector3 LocalOffset = Vector3::Zero, bool DestroyOnNoParent = true);
 
 	bool DestroyOnNoParent;
 	Entity Parent;

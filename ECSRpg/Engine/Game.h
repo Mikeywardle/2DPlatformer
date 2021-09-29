@@ -29,3 +29,10 @@ void SetDefaultLevel()
 	GameWorld->SwitchLevel<T>();
 }
 
+class GameContext
+{
+private:
+	World* gameWorld;
+//	GameWindow* gameWindow;
+};
+

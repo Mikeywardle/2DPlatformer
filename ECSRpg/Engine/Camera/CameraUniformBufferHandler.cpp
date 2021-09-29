@@ -10,7 +10,7 @@
 #include <Maths/Vector3.h>
 
 #include <Camera/CameraComponent.h>
-#include <Core/Transform.h>
+#include <Maths/Transform.h>
 #include <Rendering/UniformBufferLocations.h>
 
 CameraUniformBufferHandler::CameraUniformBufferHandler()

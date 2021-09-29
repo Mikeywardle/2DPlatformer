@@ -2,4 +2,7 @@
 
 class World;
 
-void SpawnPlayer(World* world);
+namespace PlayerCreation
+{
+	void SpawnPlayer(World* world);
+}

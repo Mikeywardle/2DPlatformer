@@ -1,16 +1,17 @@
 #include "PhysicsSystem.h"
 
 #include "RigidBody.h"
-#include <Core/Transform.h>
+#include <Maths/Transform.h>
 #include <Maths/Vector3.h>
 #include "Collisions/CollisionSystem.h"
-#include "Collisions/Collider.h"
 #include "Collisions/CollisionEvent.h"
 #include <math.h>
 
 #include "ForceHandler.h"
 #include "Forces/Gravity.h"
 #include "Forces/AirResistance.h"
+
+#include "PhysicsWorld.h"
 
 
 PhysicsSystem::PhysicsSystem(World* world)
@@ -24,8 +25,13 @@ PhysicsSystem::PhysicsSystem(World* world)
 	};
 
 	this->collisionSystem = new CollisionSystem(world);
+	physicsWorld = new PhysicsWorld(world);
+}
 
-	world->AddListener<CollisionEvent>(this, &PhysicsSystem::ResolveCollisions);
+PhysicsSystem::~PhysicsSystem()
+{
+	delete(collisionSystem);
+	delete(physicsWorld);
 }
 
 void PhysicsSystem::ProcessPhysicsForFrame(float deltaTime)
@@ -33,7 +39,12 @@ void PhysicsSystem::ProcessPhysicsForFrame(float deltaTime)
 	ProcessForceHandlers(deltaTime);
 	IntegrateForces(deltaTime);
 
-	collisionSystem->ProcessCollisions();
+	collisionSystem->ProcessCollisions(physicsWorld);
+}
+
+void PhysicsSystem::GenerateStaticWorld()
+{
+	collisionSystem->GenerateStaticColiisions(physicsWorld);
 }
 
 void PhysicsSystem::ProcessForceHandlers(float deltaTime)
@@ -62,145 +73,5 @@ void PhysicsSystem::IntegrateForces(float deltaTime)
 		rigidBody->velocity += frameResultant * rigidBody->GetInverseMass() * deltaTime;
 		transform->AddTranslation(rigidBody->velocity * deltaTime);
 		rigidBody->ClearResultantForce();
-	}
-}
-
-void PhysicsSystem::ResolveCollisions(CollisionEvent collisionResults)
-{
-	for (CollisionResult result : collisionResults.results)
-	{
-		Transform* ta = world->GetComponent<Transform>(result.entityA);
-		Transform* tb = world->GetComponent<Transform>(result.entityB);
-
-		RigidBodyComponent* rba = world->GetComponent<RigidBodyComponent>(result.entityA);
-		RigidBodyComponent* rbb = world->GetComponent<RigidBodyComponent>(result.entityB);
-
-		bool NoPhysicsComponents = rba == nullptr && rbb == nullptr; 
-		const float TotalInverseMass = GetTotalInversMass(rba, rbb);
-
-		//Resolve Interpentration
-		const float depth = result.collisionDepth;
-		Vector3 collisionNormal = result.normal;
-
-		const bool aStatic = ta->IsStatic();
-		const bool bStatic = tb->IsStatic();
-
-		if (!aStatic && !bStatic && !NoPhysicsComponents)
-		{
-			Vector3 movePerImass = collisionNormal * (depth / TotalInverseMass);
-
-			ta->AddTranslation(movePerImass * rba->GetInverseMass());
-			tb->AddTranslation(movePerImass * -1.0 *rbb->GetInverseMass());
-		}
-		else if (!aStatic)
-		{
-			ta->AddTranslation(collisionNormal * depth);
-		}
-		else if (!bStatic)
-		{
-			tb->AddTranslation(collisionNormal * depth);
-		}
-
-		//Resolve Velocity
-		if (NoPhysicsComponents || TotalInverseMass <= 0)
-			continue;
-
-		const Vector3 relativeVelocity = GetRelativeVelocity(rba, rbb);
-		const float SeparatingVelocity = GetSeparatingVelocity(relativeVelocity, result.normal);
-
-		if (SeparatingVelocity > 0 )
-			continue;
-
-		const float collisionRestitution = GetCollisionRestitution(rba, rbb);
-		const float newSepVelocity = -SeparatingVelocity * collisionRestitution;
-		const float deltaVelocity = newSepVelocity - SeparatingVelocity;
-
-		const float impulse = deltaVelocity / TotalInverseMass;
-
-		const Vector3 ImpulserPerIMass = result.normal * impulse;
-
-		AddImpulseIfNotNull(rba, ImpulserPerIMass);
-		AddImpulseIfNotNull(rbb, ImpulserPerIMass * -1);
-
-		//Add Friction
-		const float TotalFrictionCoefficient = GetTotalFrictionCoefficient(rba, rbb);
-		const Vector3 tangent = Vector3::Normalize(relativeVelocity - (collisionNormal * Vector3::DotProduct(relativeVelocity, collisionNormal)));
-
-		const float frictionMagnitude = -(Vector3::DotProduct(relativeVelocity, tangent) / TotalInverseMass);
-		const float normalImpulseMagnitude = Vector3::Magnitude(ImpulserPerIMass);
-
-		Vector3 frictionImpulse;
-		if (fabsf(frictionMagnitude) < normalImpulseMagnitude * TotalFrictionCoefficient)
-		{
-			frictionImpulse =  tangent * frictionMagnitude;
-		}
-		else
-		{
-			frictionImpulse = tangent * -normalImpulseMagnitude * TotalFrictionCoefficient;
-		}
-
-		AddImpulseIfNotNull(rba, frictionImpulse);
-		AddImpulseIfNotNull(rbb, frictionImpulse * -1);
-	}
-
-}
-
-void PhysicsSystem::AddImpulseIfNotNull(RigidBodyComponent* rigidbody, const Vector3& frictionImpulse)
-{
-	if (rigidbody != nullptr)
-		rigidbody->AddImpulse(frictionImpulse);
-}
-
-float PhysicsSystem::GetSeparatingVelocity(Vector3 relativeVelocity, Vector3 Normal)
-{
-	return Vector3::DotProduct(relativeVelocity, Normal);
-}
-
-Vector3 PhysicsSystem::GetRelativeVelocity(RigidBodyComponent* rb1, RigidBodyComponent* rb2)
-{
-	if (rb2 == nullptr)
-		return rb1->velocity;
-	else if (rb1 == nullptr)
-		return rb2->velocity * -1;
-	else
-		return rb1->velocity - rb2->velocity;
-}
-
-float PhysicsSystem::GetCollisionRestitution(RigidBodyComponent* rb1, RigidBodyComponent* rb2)
-{
-	if (rb2 == nullptr)
-		return rb1->Restitution;
-	else if (rb1 == nullptr)
-		return rb2->Restitution;
-	else
-		return fmaxf(rb1->Restitution, rb2->Restitution);
-}
-
-float PhysicsSystem::GetTotalInversMass(RigidBodyComponent* rb1, RigidBodyComponent* rb2)
-{
-	if (rb2 == nullptr)
-		return rb1->GetInverseMass();
-	else if (rb1 == nullptr)
-		return rb2->GetInverseMass();
-	else
-		return rb1->GetInverseMass() + rb2->GetInverseMass();
-}
-
-float PhysicsSystem::GetTotalFrictionCoefficient(RigidBodyComponent* rb1, RigidBodyComponent* rb2)
-{
-	if (rb1 == nullptr)
-	{
-		return rb2->Friction;
-	}
-	else if (rb2 == nullptr)
-	{
-		return rb1->Friction;
-	}
-	else
-	{
-		float fric1 = rb1->Friction;
-		float fric2 = rb2->Friction;
-
-		return sqrtf((fric1 * fric1) * (fric2 * fric2));
 	}
 }
