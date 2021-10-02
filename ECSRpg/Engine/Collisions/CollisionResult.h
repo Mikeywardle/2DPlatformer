@@ -9,3 +9,5 @@ struct CollisionResult
 	float collisionDepth;
 	Vector3 normal;
 };
+
+CollisionResult FlipCollisionResult(CollisionResult result);

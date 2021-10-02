@@ -1,6 +1,6 @@
 #include "PlayerMovementSystem.h"
 
-#include <Inputs/InputReceiver.h>
+#include <Inputs/InputData.h>
 #include <Core/World.h>
 #include <Maths/Transform.h>
 
@@ -12,23 +12,54 @@
 
 #include <Camera/CameraComponent.h>
 
+#include <Config/TestInputConfig.h>
+
 PlayerMovementSystem::PlayerMovementSystem(World* world)
 	:System(world)
 {
-	inputReceiver = new InputReceiver();
 
-	inputReceiver->AddButtonBinding(this, &PlayerMovementSystem::Jump, "Jump", InputTypes::BUTTON_RELEASED);
 }
 
 PlayerMovementSystem::~PlayerMovementSystem()
 {
-	delete inputReceiver;
 }
 
 void PlayerMovementSystem::OnFrame(float deltaTime)
 {
+
+}
+
+void PlayerMovementSystem::OnInput(const float deltaTime, const InputData* inputData)
+{
+	if (inputData->GetInputValue(TestConfigInputId::Jump, InputTypes::BUTTON_RELEASED))
+		Jump();
+
 	CheckPlayersOnGround();
-	ProcessMovementInputs();
+	ProcessMovementInputs(inputData);
+	ProcessJumps();
+
+
+	const Vector2 Delta = inputData->MouseDelta;
+
+	ForEntities(world, PlayerMovementComponent, Transform)
+	{
+		Transform* transform = world->GetComponent<Transform>(entity);
+		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
+
+		const Vector3 currentRotation = transform->GetRotation();
+
+		Vector3 NewRotation = currentRotation;
+
+		NewRotation.y += Delta.x * pmc->RotationSpeed * deltaTime;
+		NewRotation.z -= -Delta.y * pmc->RotationSpeed * deltaTime;
+
+		if (NewRotation.z > 89.0f)
+			NewRotation.z = 89.0f;
+		if (NewRotation.z < -89.0f)
+			NewRotation.z = -89.0f;
+
+		transform->SetRotation(NewRotation);
+	}
 }
 
 void PlayerMovementSystem::CheckPlayersOnGround()
@@ -56,36 +87,49 @@ void PlayerMovementSystem::CheckPlayersOnGround()
 	}
 }
 
-void PlayerMovementSystem::ProcessMovementInputs()
+void PlayerMovementSystem::ProcessJumps()
 {
-	bool ForwardPressed = inputReceiver->BindingPressed("Forwards");
-	bool BackPressed = inputReceiver->BindingPressed("Backwards");
-	bool LeftPressed = inputReceiver->BindingPressed("Left");
-	bool RightPressed = inputReceiver->BindingPressed("Right");
-
-
-	Entity CameraEntity = CameraComponent::GetMainCamera();
-
-	Transform* CameraTransfrom = world->GetComponent<Transform>(CameraEntity);
-	Vector3 CameraForward = CameraTransfrom->GetForward();
-	CameraForward.y = 0;
-	CameraForward = Vector3::Normalize(CameraForward);
-
-	Vector3 CameraRight = CameraTransfrom->GetRight();
-	CameraRight.y = 0;
-	CameraRight = Vector3::Normalize(CameraRight);
-
-	const Vector3 MovementUnitVector = Vector3::Normalize((CameraForward * (ForwardPressed - BackPressed)) + (CameraRight * (RightPressed - LeftPressed)));
-
-	if (Vector3::Magnitude(MovementUnitVector) == 0)
-		return;
-
 	std::vector<Entity> entities = world->GetEntities<CurrentPossesedPlayer, PlayerMovementComponent, RigidBodyComponent>();
 
 	for (Entity entity : entities)
 	{
+		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
+
+		if (pmc->ToJump)
+		{
+			RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
+
+			rb->AddImpulse(Vector3::Up * pmc->JumpForce);
+			pmc->NumberOfJumps += 1;
+			pmc->ToJump = false;
+		}
+	}
+}
+
+void PlayerMovementSystem::ProcessMovementInputs(const InputData* inputData)
+{
+	bool ForwardPressed = inputData->GetInputValue(TestConfigInputId::Up, InputTypes::BUTTON_IS_DOWN);
+	bool BackPressed = inputData->GetInputValue(TestConfigInputId::Down, InputTypes::BUTTON_IS_DOWN);
+	bool LeftPressed = inputData->GetInputValue(TestConfigInputId::Left, InputTypes::BUTTON_IS_DOWN);
+	bool RightPressed = inputData->GetInputValue(TestConfigInputId::Right, InputTypes::BUTTON_IS_DOWN);
+
+
+	ForEntities(world, CurrentPossesedPlayer, PlayerMovementComponent, RigidBodyComponent, Transform)
+	{
+		Transform* t = world->GetComponent<Transform>(entity);
 		RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
 		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
+
+		Vector3 PlayerForward = t->GetForward();
+		Vector3 PlayerRight= t->GetRight();
+
+		PlayerForward.y = 0;
+		PlayerRight.y = 0;
+
+		PlayerForward = Vector3::Normalize(PlayerForward);
+		PlayerRight = Vector3::Normalize(PlayerRight);
+
+		const Vector3 MovementUnitVector = Vector3::Normalize((PlayerForward * (ForwardPressed - BackPressed)) + (PlayerRight * (RightPressed - LeftPressed)));
 
 		Vector3 MovementImpulse;
 
@@ -100,21 +144,20 @@ void PlayerMovementSystem::ProcessMovementInputs()
 
 		rb->AddImpulse(MovementImpulse);
 	}
+
 }
 
-void PlayerMovementSystem::Jump(InputKey key, InputType type)
+void PlayerMovementSystem::Jump()
 {
-	std::vector<Entity> entities = world->GetEntities<CurrentPossesedPlayer, PlayerMovementComponent, RigidBodyComponent>();
+	std::vector<Entity> entities = world->GetEntities<CurrentPossesedPlayer, PlayerMovementComponent>();
 
 	for (Entity entity : entities)
 	{
-		RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
 		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
 
 		if (pmc->NumberOfJumps < pmc->MaxNumberOfJumps)
 		{
-			rb->AddImpulse(Vector3::Up * pmc->JumpForce);
-			pmc->NumberOfJumps += 1;
+			pmc->ToJump = true;
 		}
 	}
 

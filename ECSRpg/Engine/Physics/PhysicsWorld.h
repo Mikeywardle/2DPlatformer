@@ -15,11 +15,12 @@ struct ColliderMetaComponent;
 struct IColliderComponent;
 struct Vector2;
 struct Vector3;
+struct CollisionResult;
 
 typedef unsigned int Entity;
 
 
-typedef PhysicsCollisionResult(*FunctionCallBack)(IColliderComponent* colliderA, Transform* transformA, World* world);
+typedef CollisionResult (*FunctionCallBack)(const IColliderComponent* colliderA, Transform* transformA, const PhysicsCollisionWorldData entityB, World* world);
 
 class PhysicsWorld
 {
@@ -49,7 +50,7 @@ public:
 
 private:
 
-	int GetColliderPairingIndex(const int8& a, const int8& b);
+	int GetColliderPairingIndex(const int8& a, const int8& b) const;
 	int GetTotalNumberOfColliderPairings();
 
 private:
@@ -60,4 +61,17 @@ private:
 
 	CollisionQuadtree<PhysicsCollisionWorldData>* dynamicTree;
 	CollisionQuadtree<PhysicsCollisionWorldData>* staticTree;
+
+	const float QuadTreeBorderWidth = 10.f;
 };
+
+namespace PhysicsWorldCollisionFunctions
+{
+	//AABB vs
+	CollisionResult AABBvsAABB(const IColliderComponent * colliderA, Transform * transformA, const PhysicsCollisionWorldData entityB, World * world);
+	CollisionResult AABBvsSphere(const IColliderComponent* colliderA, Transform* transformA, const PhysicsCollisionWorldData entityB, World* world);
+
+	//Sphere vs
+	CollisionResult SpherevsAABB(const IColliderComponent* colliderA, Transform* transformA, const PhysicsCollisionWorldData entityB, World* world);
+	CollisionResult SpherevsSphere(const IColliderComponent* colliderA, Transform* transformA, const PhysicsCollisionWorldData entityB, World* world);
+}

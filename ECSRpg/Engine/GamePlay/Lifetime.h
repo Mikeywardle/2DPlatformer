@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ecs/System.h>
+#include <ecs/Entity.h>
 
 struct LifetimeComponent
 {

@@ -1,144 +1,143 @@
 #pragma once
 
 #include <vector>
-#include "Level.h"
-#include <ecs/System.h>
-#include <ecs/EcsContext.h>
 
-#include <ecs/Entity.h>
-#include <Events/EventsContext.h>
+#include <Utils/EngineDefines.h>
+#include <Events/Event.h>
 
-#define ForEntities(World, ...) std::vector<Entity> entities = World->GetEntities<##__VA_ARGS__>(); for(Entity entity : entities) 
+class GameContext;
+
+class GameWindow;
+
+class ECSContext;
+class System;
+class GameState;
+class AudioEngine;
+class RenderingSystem;
+class ResourceManager;
+class DebugSystem;
+class EventsContext;
+class Level;
+class PhysicsSystem;
+
+struct InputData;
+
+typedef unsigned int Entity;
+
+#define ForEntities(World, ...) std::vector<Entity> entities = World->GetEntities<##__VA_ARGS__>(); for(Entity entity : entities)
 
 class World
 {
 public:
 
-	World();
+	World(GameContext* InGame);
+	~World();
 
 #pragma region Levels
 	//Levels
 	template<typename T>
-	T* SwitchLevel()
-	{
-		T* newLevel = new T(this);
-		Level* toAdd = dynamic_cast<Level*>(newLevel);
-		currentlyLoadedLevels.push_back(newLevel);
-
-		toAdd->OnStart();
-
-		BuildWorld();
-
-		return newLevel;
-
-	}
-
-	void BuildWorld();
+	T* SwitchLevel();
 #pragma endregion
 
 #pragma region ECS
 	 //ECS functions
 	Entity CreateEntity();
 	void DestroyEntity(Entity entity);
-
-	template<typename T>
-	T* AddComponent(const Entity entity)
-	{
-		return ecsContext->AddComponent<T>(entity);
-	}
-
-	template <typename T>
-	void RemoveComponent(const Entity entity)
-	{
-		ecsContext->RemoveComponent<T>(entity);
-	}
-
-	template<typename T>
-	T* GetComponent(const Entity entity) const
-	{
-		return ecsContext->GetComponent<T>(entity);
-	}
-
-	template<typename... Args>
-	void FilterEntities(std::vector<Entity>& entities) const
-	{
-		ecsContext->FilterEntities<Args...>(entities);
-	}
-
-	template<typename... Args>
-	std::vector<Entity> GetEntities() 
-	{
-		return ecsContext->GetEntities<Args...>();
-	}
-	template<typename T>
-	bool HasComponent(Entity entity) const
-	{
-		return ecsContext->HasComponent<T>(entity);
-	}
-
-	template<class T>
-	T*  RegisterSystem()
-	{
-		T* toReturn = new T(this);
-		systems.push_back(toReturn);
-
-		return toReturn;
-	}
-
 	void UnRegisterSystem(System* system);
 
 	template<typename T>
-	std::vector<T>* GetComponents()
-	{
-		return ecsContext->GetComponents<T>();
-	}
+	T* AddComponent(const Entity entity);
+
+	template <typename T>
+	void RemoveComponent(const Entity entity);
+
+	template<typename T>
+	T* GetComponent(const Entity entity) const;
+
+	template<typename... Args>
+	void FilterEntities(std::vector<Entity>& entities) const;
+
+	template<typename... Args>
+	std::vector<Entity> GetEntities() const;
+
+	template<typename T>
+	bool HasComponent(Entity entity) const;
+
+	template<class T>
+	T* RegisterSystem();
+
+	template<typename T>
+	std::vector<T>* GetComponents();
+
+	template<typename ...Args>
+	Entity GetEntity();
 #pragma endregion
 
 #pragma region Events
 	//Events Functions
 	template<typename T, typename Clazz, typename Function>
-	EventDelegate<T>* AddListener(Clazz* object, Function function)
-	{
-		return eventsContext->AddListener<T>(object, function);
-	}
+	EventDelegate<T>* AddListener(Clazz* object, Function function);
 
 	template<typename T>
-	void RemoveListener(EventDelegate<T>* delegate)
-	{
-		eventsContext->RemoveListener<T>(delegate);
-	}
+	void RemoveListener(EventDelegate<T>* delegate);
 
 	template<typename T>
-	void DispatchMessage(T message)
-	{
-		eventsContext->DispatchMessage<T>(message);
-	}
+	void DispatchMessage(T message);
 #pragma endregion
 
-	void RunFrame(float deltaTime);
+	void RunFrame(const float deltaTime, const InputData* inputData);
+
+	ResourceManager* GetResourceManager();
+	AudioEngine* GetAudioEngine();
+
+	GameState* GetGameState();
+
+	void DeleteGameState();
+
+	template<typename T>
+	GameState* CreateNewGameState();
+
+	GameContext* GetGame() const;
+	GameWindow* GetGameWindow() const;
+	PhysicsSystem* GetPhysicsSystem() const;
 
 
-	class ResourceManager* GetResourceManager();
-	class PhysicsSystem* GetPhysicsSystem();
-	class AudioEngine* GetAudioEngine();
+private:
+	void BuildWorld();
 
 private:
 
-	void ProcessPhysics(float deltaTime);
-	void DrawWorld();
-	void ProcessDebug(float deltaTime);
+	GameContext* game;
 
-	class RenderingSystem* renderingSystem;
-	class PhysicsSystem* physicsSystem;
-	class AudioEngine* audioEngine;
-	class DebugSystem* debugSystem;
+	RenderingSystem* renderingSystem;
+	AudioEngine* audioEngine;
+	PhysicsSystem* physicsSystem;
+
+	GameState* gameState = nullptr;
 
 	ECSContext* ecsContext;
 	EventsContext* eventsContext;
 
-	class ResourceManager* resourceManager;
+	ResourceManager* resourceManager;
 
-	std::vector<Level*> currentlyLoadedLevels;
+	Level* currentlyLoadedLevel = nullptr;
 	std::vector<System*> systems;
 
+//Debug stuff
+#if NOT_RELEASE_BUILD
+
+public:
+	
+	DebugSystem* GetDebugSystem();
+
+private:
+	void ProcessDebug(const float deltaTime, const InputData* inputData);
+
+private:
+	DebugSystem* debugSystem;
+
+#endif
+
 };
+
+#include "World.inl"

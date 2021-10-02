@@ -1,8 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <set>
-#include <unordered_map>
 #include <Utils/STLUtils.h>
 
 #include "Entity.h"
@@ -17,7 +15,7 @@ public:
 };
 
 template<typename T>
-class ComponentBatch : public IComponentBatch
+class ComponentBatch final : public IComponentBatch
 {
 public:
 
@@ -32,7 +30,7 @@ public:
 		}
 		else 
 		{
-			return entityToIndexArray[entity];
+			return entityToIndexArray[entity] != 0;
 		}
 
 	}
@@ -104,6 +102,14 @@ public:
 	std::vector<T>* GetComponents()
 	{
 		return &componentPackedArray;
+	}
+
+	Entity GetEntity(T* pointer) const
+	{
+		const T* componentsStartPtr = &componentPackedArray[0];
+		const int pointerindex = (pointer - componentsStartPtr) / sizeof(T);
+
+		return indexToEntityArray.at(pointerindex);
 	}
 
 private:

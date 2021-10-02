@@ -52,6 +52,8 @@ public:
 	virtual CollisionAABB2D GetAABB2DLimits(Transform* transform) const override;
 	virtual ColliderType GetColliderType() const override { return ColliderType::Sphere; };
 
+	CollisionSphere GetCollisionSphere(Transform* transform) const;
+
 public:
 
 	float radius;

@@ -3,6 +3,18 @@
     <name>TestMaterial</name>
     <file>TestMaterial.mat</file>
   </Material>
+  <Material>
+    <name>BlueBullet</name>
+    <file>BlueBullet.mat</file>
+  </Material>
+  <Material>
+    <name>RedBullet</name>
+    <file>RedBullet.mat</file>
+  </Material>
+  <Material>
+    <name>YellowBullet</name>
+    <file>YellowBullet.mat</file>
+  </Material>
     <Material>
     <name>TestFloor</name>
     <file>TestFloor.mat</file>

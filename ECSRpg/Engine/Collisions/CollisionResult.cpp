@@ -1,6 +1,8 @@
 #include "CollisionResult.h"
 
-void FlipCollisionResult(CollisionResult& result)
+CollisionResult FlipCollisionResult(CollisionResult result)
 {
 	result.normal *= -1;
+
+	return result;
 }

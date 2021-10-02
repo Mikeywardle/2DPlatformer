@@ -45,9 +45,9 @@ private:
 	bool isStatic = false;
 
 	//Global Values
-	Vector3 position;
-	Vector3 rotation;
-	Vector3 scale;
+	Vector3 position = Vector3::Zero;
+	Vector3 rotation = Vector3::Zero;
+	Vector3 scale = Vector3::One;
 
 	glm::mat4 model;
 };

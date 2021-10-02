@@ -39,3 +39,8 @@ CollisionAABB2D SphereColliderComponent::GetAABB2DLimits(Transform* transform) c
 
 	return CollisionAABB2D(position2D, Vector2(radius, radius));
 }
+
+CollisionSphere SphereColliderComponent::GetCollisionSphere(Transform* transform) const
+{
+	return CollisionSphere(radius, transform->GetPosition());
+}

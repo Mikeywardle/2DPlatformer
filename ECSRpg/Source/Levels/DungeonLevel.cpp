@@ -5,8 +5,6 @@
 
 #include <Camera/CameraComponent.h>
 
-#include <Debugging/FloatingCamera.h>
-
 #include <Resources/Mesh.h>
 #include <Resources/Material.h>
 #include <Resources/ResourceManager.h>
@@ -19,63 +17,60 @@
 #include <Physics/Collisions/CollisionComponents.h>
 
 
-#include <Camera/SpringArm.h>
-
 #include <Systems/PlayerMovementSystem.h>
-#include <Systems/CameraRotationSystem.h>
+#include <Systems/BulletSystem.h>
+#include <Systems/PlayerWeaponSystem.h>
 
 #include <Helpers/PlayerCreationHelpers.h>
 
+#include <GamePlay/TransformParenting.h>
+#include <GamePlay/Lifetime.h>
 
 
-void DungeonLevel::OnStart()
+
+void DungeonLevel::LoadLevel()
 {
 	PlayerCreation::SpawnPlayer(world);
 
-	//CreatePlayerCamera();
-	CreateDirectionalLight(Vector3(90, -30, 20));
+	CreateDirectionalLight(Vector3(80, -10, 30));
 
-	CreateTile(Vector3(5, 0, 5), Vector3(5, .2, 5), "TestFloor");
+	//Floor
+	CreateTile(Vector3(5, 0, 5), Vector3(10, .2, 10), "TestFloor");
 
+	//Blocks
 	CreateTile(Vector3(9, .7, 2), Vector3(.5, .5, 1), "TestMaterial");
 	CreateTile(Vector3(8, .7, 6), Vector3(1, .5, 1), "TestMaterial");
 
-	CreateTile(Vector3(5, 2, 0), Vector3(5, 2, .2), "TestWall");
-	CreateTile(Vector3(5, 2, 10), Vector3(5, 2, .2), "TestWall");
+	CreateTile(Vector3(5, 2, -5), Vector3(10, 2, .2), "TestWall");
+	CreateTile(Vector3(5, 2, 15), Vector3(10, 2, .2), "TestWall");
 
-	CreateTile(Vector3(0, 2, 5), Vector3(.2, 2, 5), "TestWall");
-	CreateTile(Vector3(10, 2, 5), Vector3(.2, 2, 5), "TestWall");
+	CreateTile(Vector3(-5, 2, 5), Vector3(.2, 2, 10), "TestWall");
+	CreateTile(Vector3(15, 2, 5), Vector3(.2, 2, 10), "TestWall");
 
-	CreateMesh(Vector3(5, 5, 5), "SmoothSphere");
-	CreateMesh(Vector3(8, 5, 8), "SmoothSphere");
+	//Steps
+	//CreateTile(Vector3(5, .2, 9), Vector3(2, .05, 5), "TestFloor");
 
-	//world->RegisterSystem<FloatingCameraMovementSystem>();
+	//CreateMesh(Vector3(5, 5, 5), "SmoothSphere");
+	//CreateMesh(Vector3(8, 5, 8), "SmoothSphere");
+}
 
-	world->RegisterSystem<CameraRotationSystem>();
-	world->RegisterSystem<SpringArmSystem>();
+void DungeonLevel::OnStart()
+{
+	//Player Systems
 	world->RegisterSystem<PlayerMovementSystem>();
+	world->RegisterSystem<PlayerWeaponSystem>();
+
+	//Bullet Systems
+	world->RegisterSystem<BulletSystem>();
+
+	//Gameplay Utils
+	world->RegisterSystem<PositionAttachmentSystem>();
+
+	world->RegisterSystem<LifeTimeDecaySystem>();
 }
 
 void DungeonLevel::CreatePlayerCamera()
 {
-	//Spawn Camera
-	Entity cameraEntity = world->CreateEntity();
-
-	CameraComponent* c = world->AddComponent<CameraComponent>(cameraEntity);
-
-	c->fov = 45.f;
-	c->farPlane = 1000.f;
-	c->nearPlane = 0.1f;
-	c->projectionType = ProjectionType::PERSPECTIVE;
-
-	Transform* t = world->AddComponent<Transform>(cameraEntity);
-	t->SetPosition(Vector3(0, 10, -2));
-	t->SetRotation(Vector3(0, 90, -45));
-
-	CameraComponent::SetMainCamera(cameraEntity);
-
-	FloatingCameraComponent* oc = world->AddComponent<FloatingCameraComponent>(cameraEntity);
-	*oc = FloatingCameraComponent(10.f, .2f);
 
 }
 
@@ -100,7 +95,7 @@ void DungeonLevel::CreateTile(Vector3 Position, Vector3 Scale, std::string mater
 
 	RigidBodyComponent* rb = world->AddComponent<RigidBodyComponent>(platform);
 	rb->isInfiniteMass = true;
-	rb->Friction = 1.2;
+	rb->Friction = 3.f;
 
 	AABBColliderComponent* sc = world->AddComponent<AABBColliderComponent>(platform);
 	new(sc) AABBColliderComponent(Scale);

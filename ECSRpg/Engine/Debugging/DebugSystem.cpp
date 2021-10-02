@@ -1,36 +1,35 @@
 #include "DebugSystem.h"
 
-#include <Game.h>
-
 #include <Core/World.h>
+
+#include <Platform/GameWindow.h>
 
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_impl_glfw.h>
 #include <ImGui/imgui_impl_opengl3.h>
 
-#include <Inputs/InputReceiver.h>
 #include <Inputs/InputValues.h>
+#include <Inputs/InputData.h>
 
-#include <Rendering/Sprites/BillBoardSprites.h>
-
+#include "PerformanceDebugSystem.h"
 
 DebugSystem::DebugSystem(World* world)
 {
 	this->world = world;
 
-	inputReceiver = new InputReceiver();
-
-	//TODO: Move to debug System file
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
 
 	// Setup Platform/Renderer backends
-	ImGui_ImplGlfw_InitForOpenGL(GameWindow, true);
+	ImGui_ImplGlfw_InitForOpenGL(world->GetGameWindow()->GetWindow(), true);
 	ImGui_ImplOpenGL3_Init("#version 150");
+
+	AddSystem<PerformanceDebugSystem>();
 }
 
 DebugSystem::~DebugSystem()
@@ -40,13 +39,24 @@ DebugSystem::~DebugSystem()
 	ImGui::DestroyContext();
 }
 
-void DebugSystem::OnFrame(float deltaTime)
+void DebugSystem::OnFrame(const float deltaTime , const InputData* inputData)
 {
-	bool TabPressed = inputReceiver->KeyPressed(InputKeys::KEYBOARD_TAB);
-	if (TabPressed && !WasPressed)
+	GameWindow* window = world->GetGameWindow();
+	bool TabPressed = window->IsKeyPressed(InputKeys::KEYBOARD_TAB);
+
+	if (TabPressed && !TabWasPressed)
 		ToggleDebug();
 
-	WasPressed = TabPressed;
+	bool TildaPressed = window->IsKeyPressed(InputKeys::KEYBOARD_ACCENT);
+
+	if (TildaPressed && !TildaWasPressed)
+	{
+		const bool isMouseVisible = !window->IsMouseVisible();
+		window->SetMouseVisible(isMouseVisible);
+	}
+
+	TabWasPressed = TabPressed;
+	TildaWasPressed = TildaPressed;
 
 	if (ShowDebug)
 	{
@@ -55,20 +65,15 @@ void DebugSystem::OnFrame(float deltaTime)
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		ImGui::Begin("Debug Tool");
-
-		ImGui::Text("Frame Time:");
-		ImGui::Text("%.2f fps", 1 / deltaTime);
-		ImGui::Text("%.2f ms", deltaTime * 1000);
-
-
-		ImGui::End();
+		for (IDebuggingSystem* System : debugSystems)
+		{
+			System->OnDebugUpdate(world, deltaTime);
+		}
 
 		//Draw ImGUI
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
-
 }
 
 void DebugSystem::ToggleDebug()

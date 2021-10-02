@@ -1,7 +1,7 @@
 #pragma once
 #include <typeinfo>
 #include <map>
-#include <initializer_list>
+#include <stdexcept>
 
 #include "Entity.h"
 #include "ComponentBatch.h"
@@ -59,12 +59,23 @@ public:
 	void FilterEntities(std::vector<Entity>& entities) const
 	{
 		std::vector<const char*> types = { (typeid(Args).raw_name())... };
+		std::vector<const IComponentBatch*> componentBatches;
 		std::vector<Entity> entitiesTemp = std::vector<Entity>();
 
 		//For each type (after type 0) check if current entities also contain those components
 		for (int i = 0; i < types.size(); ++i)
 		{
 			const IComponentBatch* currentTypeBatch = GetComponentBatchFromHash(types[i]);
+			if (currentTypeBatch == nullptr)
+			{
+				return;
+			}
+
+			componentBatches.push_back(currentTypeBatch);
+		}
+
+		for(const IComponentBatch* currentTypeBatch : componentBatches)
+		{
 			entitiesTemp = std::vector<Entity>();
 			entitiesTemp.reserve(entities.size());
 
@@ -82,13 +93,17 @@ public:
 	template<typename T, typename... Args>
 	std::vector<Entity> GetEntities()
 	{
-		VerifyComponentsRegistered<T,Args...>();
-
-		//Get hashes of all type args
+		//Get hashes of first type args
 		const char* Type0 = typeid(T).raw_name();	
+		const IComponentBatch* componentBatch0 = GetComponentBatchFromHash(Type0);
+
+		if (componentBatch0 == nullptr)
+		{
+			return std::vector<Entity>();
+		}
 
 		//Get initial vector of entities from first argument type
-		std::vector<Entity> entities = GetComponentBatchFromHash(Type0)->GetEntitiesWithComponent();
+		std::vector<Entity> entities = componentBatch0->GetEntitiesWithComponent();
 
 		FilterEntities<Args...>(entities);
 
@@ -96,7 +111,7 @@ public:
 	}
 
 	template<typename T>
-	std::vector<T>* GetComponents() 
+	std::vector<T>* GetComponents()
 	{
 		ComponentBatch<T>* batch = GetComponentBatchSafe<T>();
 
@@ -116,24 +131,38 @@ public:
 		else
 			return batch->ContainsComponent(entity);
 	}
+
+	template<typename... Args>
+	Entity GetEntity()
+	{
+		std::vector<Entity> entities = GetEntities<Args...>();
+
+		if (entities.size() == 0)
+			return NO_ENTITY;
+		else
+			return entities[0];
+	}
+
+
 private:
 
 	IComponentBatch* GetComponentBatchFromHash(const char* hash) const
 	{
-		return componentsLookup.at(hash);
+		try 
+		{
+			return componentsLookup.at(hash);
+		}
+		catch(std::out_of_range e)
+		{
+			return nullptr;
+		}
 	}
-
-	template<typename... Args>
-	constexpr void VerifyComponentsRegistered()
-	{
-		std::vector<bool> comps = { (VerifyComponentRegistered<Args>())...};
-	}
-
 
 	template<typename T>
 	constexpr bool VerifyComponentRegistered()
 	{
 		const char* hash = typeid(T).raw_name();
+
 		if (componentsLookup.find(hash) == componentsLookup.end())
 			componentsLookup[hash] = (IComponentBatch*) new ComponentBatch<T>();
 

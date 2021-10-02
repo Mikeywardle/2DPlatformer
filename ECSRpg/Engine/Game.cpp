@@ -2,131 +2,58 @@
 
 #include <stdio.h>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-
 #include <Inputs/InputConfiguration.h>
+#include <Inputs/InputData.h>
 
-#include <Core/GameTime.h>
-#include <Rendering/Sprites/Sprite.h>
-#include <UI/Text.h>
-#include<Inputs/Inputs.h>
+#include <Platform/GameWindow.h>
+#include <Core/World.h>
 
-GLFWwindow* GameWindow;
-
-int WINDOW_WIDTH = 800;
-int WINDOW_HEIGHT = 600;
-
-int HALF_WINDOW_WIDTH = WINDOW_WIDTH / 2;
-int HALF_WINDOW_HEIGHT = WINDOW_HEIGHT / 2;
-float ASPECT_RATIO;
-
-World* GameWorld;
-
-
-void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
+GameContext::GameContext(InputConfiguration InputConfig)
 {
-	glViewport(0, 0, width, height);
-	WINDOW_WIDTH = width;
-	WINDOW_HEIGHT = height;
-
-	HALF_WINDOW_WIDTH = WINDOW_WIDTH / 2;
-	HALF_WINDOW_HEIGHT = WINDOW_HEIGHT / 2;
-
-	ASPECT_RATIO = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
+	gameWindow = new GameWindow(InputConfig);
+	gameWorld = new World(this);
 }
 
-bool InitializeWindow()
+GameContext::~GameContext()
 {
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	delete(gameWindow);
+	delete(gameWorld);
+}
 
-#ifdef __APPLE__
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
-	GameWindow = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "RPG", NULL, NULL);
-	ASPECT_RATIO = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
-
-	if (GameWindow == NULL)
+int GameContext::StartGame()
+{
+	while (!ShouldClose && !gameWindow->IsWindowCLosed())
 	{
-		printf("Failed to create window");
-		glfwTerminate();
-		return false;
+		gameWindow->RefreshFrame();
+		const InputData* inputData = gameWindow->GetFrameInputs();
+		gameWorld->RunFrame(LastDeltaTime, inputData);
+		UpdateFrameTime();
 	}
-
-	glfwMakeContextCurrent(GameWindow);
-
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-		return false;
-
-	glfwSetInputMode(GameWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSwapInterval(1);
-
-	return true;
-}
-
-void BindCallBackFunctions()
-{
-	glfwSetFramebufferSizeCallback(GameWindow, FramebufferSizeCallback);
-}
-
-void InitializeData()
-{
-	InitializeTextData();
-}
-
-void UpdateGameTime()
-{
-	double time = glfwGetTime();
-	REAL_DELTA_TIME = (float)(time - TOTAL_GAME_TIME);
-	DELTA_TIME = REAL_DELTA_TIME * TIME_SCALE;
-	TOTAL_GAME_TIME = time;
-}
-
-void InitializeGame()
-{
-	bool initialized = InitializeWindow();
-	if (!initialized)
-	{
-		printf("FAILED TO RUN!!");
-		return;
-	}
-
-	BindCallBackFunctions();
-	Inputs::InitializeInputs(GameWindow);
-	InitializeData();
-
-	GameWorld = new World();
-}
-
-void SetGameInputConfiguration(InputConfiguration config)
-{
-	Inputs::SetInputConfiguration(config);
-}
-
-int StartGame()
-{
-
-
-	while (!glfwWindowShouldClose(GameWindow))
-	{
-
-		glfwPollEvents();
-		GameWorld->RunFrame(DELTA_TIME);
-		glfwSwapBuffers(GameWindow);
-		UpdateGameTime();	
-	}
-	glfwTerminate();
 
 	return 0;
 }
 
-void EndGame()
+void GameContext::EndGame()
 {
-	glfwSetWindowShouldClose(GameWindow, true);
+	ShouldClose = true;
 }
 
+GameWindow* GameContext::GetGameWindow() const
+{
+	return gameWindow;
+}
+
+World* GameContext::GetGameWorld() const
+{
+	return gameWorld;
+}
+
+void GameContext::UpdateFrameTime()
+{
+	//DELTA_TIME = REAL_DELTA_TIME * TIME_SCALE;
+
+
+	const double time = gameWindow->GetWindowLifetime();
+	LastDeltaTime = (float)(time - GameLifetime);
+	GameLifetime = time;
+}

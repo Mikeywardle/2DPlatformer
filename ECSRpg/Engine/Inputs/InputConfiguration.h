@@ -1,13 +1,14 @@
 #pragma once
 
 #include "InputValues.h"
+
 #include <vector>
 #include <string>
 
 
 struct ButtonConfig
 {
-	std::string name;
+	int ButtonId;
 	std::vector<InputKey> keys;
 };
 

@@ -42,7 +42,7 @@ void CameraUniformBufferHandler::BindCameraBuffers(World* world)
 	Transform* transform = world->GetComponent<Transform>(mainCamera);
 
 	//Matrices
-	glm::mat4 projection = camera->GetProjection();
+	glm::mat4 projection = camera->GetProjection(world->GetGameWindow());
 	glm::mat4 view = camera->GetView(transform);
 	glm::mat4 transformlessView = glm::mat4(glm::mat3(view));
 

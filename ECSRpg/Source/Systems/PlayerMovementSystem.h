@@ -2,29 +2,25 @@
 
 #include <ecs/System.h>
 
-class InputReceiver;
-
-typedef int InputKey;
-typedef int InputType;
+#include <Maths/MathsTypes.h>
 
 
 class PlayerMovementSystem : public System
 {
-
 public:
 
 	PlayerMovementSystem(World* world);
 	~PlayerMovementSystem();
 
-	virtual void OnFrame(float deltaTime);
+	virtual void OnFrame(float deltaTime) override;
+	virtual void OnInput(const float deltaTime, const InputData* inputData) override;
 
 private:
 
 	void CheckPlayersOnGround();
-	void ProcessMovementInputs();
+	void ProcessMovementInputs(const InputData* inputData);
+	void ProcessJumps();
 	
-	void Jump(InputKey key, InputType type);
-
-	InputReceiver* inputReceiver;
+	void Jump();
 
 };

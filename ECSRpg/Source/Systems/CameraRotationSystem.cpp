@@ -3,27 +3,23 @@
 #include <Core/World.h>
 #include <Maths/Vector2.h>
 
-#include <Inputs/InputReceiver.h>
-
 #include <Components/PlayerTags.h>
 #include <Components/CameraRotationComponent.h>
 
 #include <Maths/Transform.h>
 
+#include <Inputs/InputData.h>
+
 
 
 CameraRotationSystem::CameraRotationSystem(World* world)
 	:System(world)
+{}
+
+void CameraRotationSystem::OnInput(const float deltaTime, const InputData* inputData)
 {
-	inputReceiver = new InputReceiver();
+	const Vector2 Delta = inputData->MouseDelta;
 
-	inputReceiver->AddMousePositionCallback(this, &CameraRotationSystem::OnMousePositionChanged);
-}
-
-void CameraRotationSystem::OnFrame(float deltaTime){}
-
-void CameraRotationSystem::OnMousePositionChanged(Vector2 Position, Vector2 Delta)
-{
 	std::vector<Entity> entities = world->GetEntities<CurrentPossesedPlayer, CameraRotationComponent, Transform>();
 
 	for (Entity entity : entities)
@@ -35,8 +31,8 @@ void CameraRotationSystem::OnMousePositionChanged(Vector2 Position, Vector2 Delt
 
 		Vector3 NewRotation = currentRotation;
 
-		NewRotation.y += Delta.x * rotator->RotationSpeed;
-		NewRotation.z += -Delta.y * rotator->RotationSpeed;
+		NewRotation.y += Delta.x * rotator->RotationSpeed * deltaTime;
+		NewRotation.z += -Delta.y * rotator->RotationSpeed * deltaTime;
 
 		if (NewRotation.z > 89.0f)
 			NewRotation.z = 89.0f;
@@ -44,6 +40,5 @@ void CameraRotationSystem::OnMousePositionChanged(Vector2 Position, Vector2 Delt
 			NewRotation.z = -89.0f;
 
 		transform->SetRotation(NewRotation);
-
 	}
 }

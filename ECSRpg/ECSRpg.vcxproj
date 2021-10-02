@@ -5,6 +5,14 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Development|Win32">
+      <Configuration>Development</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Development|x64">
+      <Configuration>Development</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
@@ -40,6 +48,13 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -47,6 +62,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
@@ -64,10 +86,16 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Development|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -81,12 +109,22 @@
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(ProjectDir)/_lib</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(ProjectDir)/_lib</LibraryPath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(ProjectDir)/_lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(ProjectDir)/_lib</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(ProjectDir)/_lib</LibraryPath>
@@ -107,6 +145,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>irrKlang.lib;assimp.lib;freetype.lib;opengl32.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)/_lib</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Development|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -157,6 +214,24 @@
       <AdditionalDependencies>irrKlang.lib;assimp.lib;freetype.lib;opengl32.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>irrKlang.lib;assimp.lib;freetype.lib;opengl32.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Analytics\Timer.cpp" />
     <ClCompile Include="Engine\Audio\AudioEngine.cpp" />
@@ -166,15 +241,14 @@
     <ClCompile Include="Engine\Collisions\CollisionQuadtree.cpp" />
     <ClCompile Include="Engine\Collisions\CollisionQuadtreeTests.cpp" />
     <ClCompile Include="Engine\Debugging\DebugSystem.cpp" />
-    <ClCompile Include="Engine\Debugging\FloatingCamera.cpp" />
+    <ClCompile Include="Engine\Debugging\PerformanceDebugSystem.cpp" />
     <ClCompile Include="Engine\GamePlay\Health.cpp" />
     <ClCompile Include="Engine\GamePlay\Lifetime.cpp" />
     <ClCompile Include="Engine\GamePlay\TransformParenting.cpp" />
-    <ClCompile Include="Engine\Inputs\InputReceiver.cpp" />
+    <ClCompile Include="Engine\Inputs\InputData.cpp" />
+    <ClCompile Include="Engine\Inputs\InputValues.cpp" />
     <ClCompile Include="Engine\Lighting\LightSources\DirectionalLight.cpp" />
     <ClCompile Include="Engine\Lighting\UniformBufferHandlers\DirectionalLightBufferHandler.cpp" />
-    <ClCompile Include="Engine\Core\Behaviour.cpp" />
-    <ClCompile Include="Engine\Core\GameObject.cpp" />
     <ClCompile Include="Engine\Core\GameTime.cpp" />
     <ClCompile Include="Engine\Core\Level.cpp" />
     <ClCompile Include="Engine\Maths\Transform.cpp" />
@@ -183,12 +257,10 @@
     <ClCompile Include="Engine\ecs\EntitiesManager.cpp" />
     <ClCompile Include="Engine\ecs\System.cpp" />
     <ClCompile Include="Engine\Game.cpp" />
-    <ClCompile Include="Engine\Inputs\Inputs.cpp" />
     <ClCompile Include="Engine\Maths\Color.cpp" />
     <ClCompile Include="Engine\Maths\Trigonometry.cpp" />
     <ClCompile Include="Engine\Maths\Vector2.cpp" />
     <ClCompile Include="Engine\Maths\Vector3.cpp" />
-    <ClCompile Include="Engine\Physics\Collisions\Collider.cpp" />
     <ClCompile Include="Engine\Collisions\CollisionDetection.cpp" />
     <ClCompile Include="Engine\Collisions\CollisionResult.cpp" />
     <ClCompile Include="Engine\Collisions\CollisionShapes.cpp" />
@@ -230,10 +302,15 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Source\Components\CameraRotationComponent.cpp" />
     <ClCompile Include="Source\Components\PlayerMovementComponent.cpp" />
+    <ClCompile Include="Source\Components\WeaponComponents.cpp" />
+    <ClCompile Include="Source\Debug\PlayerDebugSystem.cpp" />
+    <ClCompile Include="Source\Helpers\BulletCreationHelpers.cpp" />
     <ClCompile Include="Source\Helpers\PlayerCreationHelpers.cpp" />
     <ClCompile Include="Source\Levels\DungeonLevel.cpp" />
+    <ClCompile Include="Source\Systems\BulletSystem.cpp" />
     <ClCompile Include="Source\Systems\CameraRotationSystem.cpp" />
     <ClCompile Include="Source\Systems\PlayerMovementSystem.cpp" />
+    <ClCompile Include="Source\Systems\PlayerWeaponSystem.cpp" />
     <ClCompile Include="_include\ImGui\imgui.cpp" />
     <ClCompile Include="_include\ImGui\imgui_demo.cpp" />
     <ClCompile Include="_include\ImGui\imgui_draw.cpp" />
@@ -251,10 +328,11 @@
     <ClInclude Include="Engine\Collisions\CollisionQuadtree.h" />
     <ClInclude Include="Engine\Collisions\CollisionQuadtreeTests.h" />
     <ClInclude Include="Engine\Config\GameConfig.h" />
+    <ClInclude Include="Engine\Core\GameState.h" />
     <ClInclude Include="Engine\Debugging\DebugDraws.h" />
     <ClInclude Include="Engine\Debugging\DebugSystem.h" />
-    <ClInclude Include="Engine\Debugging\FloatingCamera.h" />
-    <ClInclude Include="Engine\ecs\EntityTag.h" />
+    <ClInclude Include="Engine\Debugging\IDebuggingSystem.h" />
+    <ClInclude Include="Engine\Debugging\PerformanceDebugSystem.h" />
     <ClInclude Include="Engine\Events\EventDispatcher.h" />
     <ClInclude Include="Engine\Events\EventsContext.h" />
     <ClInclude Include="Engine\GamePlay\Health.h" />
@@ -269,9 +347,7 @@
     <ClInclude Include="Engine\Physics\Collisions\CollisionComponents.h" />
     <ClInclude Include="Engine\Physics\Collisions\CollisionEvent.h" />
     <ClInclude Include="Engine\Collisions\CollisionResult.h" />
-    <ClInclude Include="Engine\Core\Behaviour.h" />
     <ClInclude Include="Engine\Events\Event.h" />
-    <ClInclude Include="Engine\Core\GameObject.h" />
     <ClInclude Include="Engine\Core\GameTime.h" />
     <ClInclude Include="Engine\Core\Level.h" />
     <ClInclude Include="Engine\Maths\Transform.h" />
@@ -283,8 +359,6 @@
     <ClInclude Include="Engine\ecs\System.h" />
     <ClInclude Include="Engine\Game.h" />
     <ClInclude Include="Engine\Inputs\InputConfiguration.h" />
-    <ClInclude Include="Engine\Inputs\InputReceiver.h" />
-    <ClInclude Include="Engine\Inputs\Inputs.h" />
     <ClInclude Include="Engine\Inputs\InputValues.h" />
     <ClInclude Include="Engine\Maths\Color.h" />
     <ClInclude Include="Engine\Maths\Trigonometry.h" />
@@ -327,22 +401,30 @@
     <ClInclude Include="Engine\UI\Widget.h" />
     <ClInclude Include="Engine\Utils\BitsSet.h" />
     <ClInclude Include="Engine\Utils\ComponentUtils.h" />
+    <ClInclude Include="Engine\Utils\EngineDefines.h" />
     <ClInclude Include="Engine\Utils\FileIO.h" />
     <ClInclude Include="Engine\Utils\Signature.h" />
     <ClInclude Include="Engine\Utils\SortedVector.h" />
     <ClInclude Include="Engine\Utils\STLUtils.h" />
     <ClInclude Include="Engine\Utils\XMLReader.h" />
+    <ClInclude Include="Source\Components\BulletTags.h" />
     <ClInclude Include="Source\Components\CameraRotationComponent.h" />
     <ClInclude Include="Source\Components\PlayerTags.h" />
     <ClInclude Include="Source\Components\PlayerMovementComponent.h" />
     <ClInclude Include="Source\Components\RotatorComponent.h" />
+    <ClInclude Include="Source\Components\WeaponComponents.h" />
     <ClInclude Include="Source\Config\TestInputConfig.h" />
+    <ClInclude Include="Source\Debug\DebugSystemsSetup.h" />
+    <ClInclude Include="Source\Debug\PlayerDebugSystem.h" />
+    <ClInclude Include="Source\Helpers\BulletCreationHelpers.h" />
     <ClInclude Include="Source\Helpers\PlayerCreationHelpers.h" />
     <ClInclude Include="Source\Levels\DungeonLevel.h" />
     <ClInclude Include="Source\PhysicsTest\PhysicsBallSpawnerSystem.h" />
     <ClInclude Include="Source\PhysicsTest\PhysicsTestLevel.h" />
+    <ClInclude Include="Source\Systems\BulletSystem.h" />
     <ClInclude Include="Source\Systems\CameraRotationSystem.h" />
     <ClInclude Include="Source\Systems\PlayerMovementSystem.h" />
+    <ClInclude Include="Source\Systems\PlayerWeaponSystem.h" />
     <ClInclude Include="_include\ImGui\imconfig.h" />
     <ClInclude Include="_include\ImGui\imgui.h" />
     <ClInclude Include="_include\ImGui\imgui_impl_glfw.h" />
@@ -359,6 +441,7 @@
     <Xml Include="Resources\Textures\_Textures.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Engine\Core\World.inl" />
     <None Include="Resources\Materials\TestMaterial.mat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

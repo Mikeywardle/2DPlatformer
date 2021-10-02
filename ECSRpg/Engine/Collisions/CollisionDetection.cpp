@@ -89,40 +89,25 @@ CollisionResult TestSpherevsSphere(const CollisionSphere& A, const CollisionSphe
 CollisionResult TestSphereVsAABB(const CollisionSphere& sphere, const CollisionAABB& box)
 {
 	CollisionResult result;
-	const Vector3 NormalVector = Vector3::Normalize(sphere.Position - box.Position);
 
-	const Vector3 CollisionDepths = Vector3(
-		(sphere.Radius + box.HalfLimits.x) - fabsf(sphere.Position.x - box.Position.x),
-		(sphere.Radius + box.HalfLimits.y) - fabsf(sphere.Position.y - box.Position.y),
-		(sphere.Radius + box.HalfLimits.z) - fabsf(sphere.Position.z - box.Position.z)
-	);
+	const Vector3 boxMax = box.Position + box.HalfLimits;
+	const Vector3 boxMin = box.Position - box.HalfLimits;
 
-	result.hasCollision = CollisionDepths.x >= 0 && CollisionDepths.y >= 0 && CollisionDepths.z >= 0;
+	const Vector3 closestPosition = sphere.Position.Clamp(boxMax, boxMin);
+
+	const Vector3 vectorFromClosestPoint = sphere.Position - closestPosition;
+
+	const float distanceFromClosestPoint = Vector3::Magnitude(vectorFromClosestPoint);
+
+	result.hasCollision = distanceFromClosestPoint <= sphere.Radius;
 
 	if (!result.hasCollision)
+	{
 		return result;
-
-	//Find Better way to do this
-	float SmallestElement = CollisionDepths.x;
-	Vector3 ResolutionDirection = Vector3::Right;
-
-	if (CollisionDepths.y < SmallestElement)
-	{
-		SmallestElement = CollisionDepths.y;
-		ResolutionDirection = Vector3::Up;
 	}
 
-	if (CollisionDepths.z < SmallestElement)
-	{
-		SmallestElement = CollisionDepths.z;
-		ResolutionDirection = Vector3::Forwards;
-	}
-
-	if (Vector3::DotProduct(NormalVector, ResolutionDirection) < 0)
-		ResolutionDirection *= -1;
-
-	result.collisionDepth = SmallestElement;
-	result.normal = ResolutionDirection;
+	result.normal = Vector3::Normalize(vectorFromClosestPoint);
+	result.collisionDepth = sphere.Radius - distanceFromClosestPoint;
 
 	return result;
 }

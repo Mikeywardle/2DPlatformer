@@ -2,7 +2,6 @@
 
 #include <Events/Event.h>
 #include <ecs/Entity.h>
-#include "GameObject.h"
 #include <Maths/Transform.h>
 #include <vector>
 
@@ -12,6 +11,7 @@ public:
 	Level(class World* world);
 	~Level();
 
+	virtual void LoadLevel() = 0;
 	virtual void OnStart();
 	virtual void OnFrame(float deltaTime);
 	virtual void OnDestroy();

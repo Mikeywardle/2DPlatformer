@@ -6,8 +6,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/mat4x4.hpp>
 
-#include <Game.h>
-
 FT_Library ft;
 FT_Face face;
 
@@ -90,49 +88,49 @@ void InitializeTextData()
 
 void RenderText(std::string string, Vector2 position, Color color)
 {
-    glUseProgram(textShaderId);
-    glUniform3f(glGetUniformLocation(textShaderId, "textColor"), color.r, color.g, color.b);
-    glActiveTexture(GL_TEXTURE0);
-    glBindVertexArray(textVAO);
+    //glUseProgram(textShaderId);
+    //glUniform3f(glGetUniformLocation(textShaderId, "textColor"), color.r, color.g, color.b);
+    //glActiveTexture(GL_TEXTURE0);
+    //glBindVertexArray(textVAO);
 
 
-    glm::mat4 projection = glm::ortho(0.f, (float)WINDOW_WIDTH, 0.f, (float)WINDOW_HEIGHT, 0.f, 100.f);
+    //glm::mat4 projection = glm::ortho(0.f, (float)WINDOW_WIDTH, 0.f, (float)WINDOW_HEIGHT, 0.f, 100.f);
 
-    glUniformMatrix4fv(glGetUniformLocation(textShaderId, "projection"), 1, GL_FALSE, &projection[0][0]);
+    //glUniformMatrix4fv(glGetUniformLocation(textShaderId, "projection"), 1, GL_FALSE, &projection[0][0]);
 
-    for (int i = 0; i < string.length(); ++i)
-    {
-        char c = string[i];
-        Character ch = characters[(int)c];
+    //for (int i = 0; i < string.length(); ++i)
+    //{
+    //    char c = string[i];
+    //    Character ch = characters[(int)c];
 
-        float xpos = position.x + ch.Bearing.x;
-        float ypos = position.y - (ch.Size.y - ch.Bearing.y);
+    //    float xpos = position.x + ch.Bearing.x;
+    //    float ypos = position.y - (ch.Size.y - ch.Bearing.y);
 
-        float w = ch.Size.x;
-        float h = ch.Size.y;
+    //    float w = ch.Size.x;
+    //    float h = ch.Size.y;
 
-        float vertices[6][4] = {
-             { xpos,     ypos + h,   0.0f, 0.0f },
-             { xpos,     ypos,       0.0f, 1.0f },
-             { xpos + w, ypos,       1.0f, 1.0f },
+    //    float vertices[6][4] = {
+    //         { xpos,     ypos + h,   0.0f, 0.0f },
+    //         { xpos,     ypos,       0.0f, 1.0f },
+    //         { xpos + w, ypos,       1.0f, 1.0f },
 
-             { xpos,     ypos + h,   0.0f, 0.0f },
-             { xpos + w, ypos,       1.0f, 1.0f },
-             { xpos + w, ypos + h,   1.0f, 0.0f }
-        };
+    //         { xpos,     ypos + h,   0.0f, 0.0f },
+    //         { xpos + w, ypos,       1.0f, 1.0f },
+    //         { xpos + w, ypos + h,   1.0f, 0.0f }
+    //    };
 
-        // render glyph texture over quad
-        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-        // update content of VBO memory
-        glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        // render quad
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-        position.x += (ch.Advance >> 6);
-    }
+    //    // render glyph texture over quad
+    //    glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+    //    // update content of VBO memory
+    //    glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+    //    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+    //    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    //    // render quad
+    //    glDrawArrays(GL_TRIANGLES, 0, 6);
+    //    // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+    //    position.x += (ch.Advance >> 6);
+    //}
 
-    glBindVertexArray(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    //glBindVertexArray(0);
+    //glBindTexture(GL_TEXTURE_2D, 0);
 }

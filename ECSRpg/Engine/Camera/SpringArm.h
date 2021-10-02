@@ -2,6 +2,7 @@
 
 #include <ecs/System.h>
 #include <Maths/Vector3.h>
+#include <ecs/Entity.h>
 
 class World;
 

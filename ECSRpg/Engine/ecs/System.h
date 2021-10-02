@@ -1,8 +1,7 @@
 #pragma once
-#include "EcsContext.h"
-#include <vector>
 
 class World;
+struct InputData;
 
 class System
 {
@@ -10,14 +9,10 @@ public:
 
 	System(World* world);
 
-	virtual void OnFrame(float deltaTime) = 0;
+	virtual void OnInput(const float deltaTime, const InputData* inputData) {};
+	virtual void OnFrame(const float deltaTime) {};
 
 protected:
 
 	World* world;
-};
-
-struct OptionalSystemsConfig
-{
-	std::vector<System*> gameSystems;
 };

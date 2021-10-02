@@ -10,10 +10,8 @@ class CameraRotationSystem : public System
 public:
 	CameraRotationSystem(World* world);
 
-	virtual void OnFrame(float deltaTime) override;
+
+	virtual void OnInput(const float deltaTime, const InputData* inputData) override;
 
 private:
-	InputReceiver* inputReceiver;
-
-	void OnMousePositionChanged(Vector2 Position, Vector2 Delta);
 };

@@ -11,9 +11,7 @@ PositionAttatchmentComponent::PositionAttatchmentComponent(Entity Parent, Vector
 
 void PositionAttachmentSystem::OnFrame(float deltaTime)
 {
-	std::vector<Entity> entities = world->GetEntities<PositionAttatchmentComponent, Transform>();
-
-	for (Entity entity : entities)
+	ForEntities(world, PositionAttatchmentComponent, Transform)
 	{
 		PositionAttatchmentComponent* pac = world->GetComponent<PositionAttatchmentComponent>(entity);
 		Transform* parentTransform = world->GetComponent<Transform>(pac->Parent);
@@ -22,7 +20,8 @@ void PositionAttachmentSystem::OnFrame(float deltaTime)
 		{
 			Transform* transform = world->GetComponent<Transform>(entity);
 
-			transform->SetPosition(parentTransform->GetPosition() + pac->LocalOffset);
+			transform->SetPosition(parentTransform->TransformPoint(pac->LocalOffset));
+			transform->SetRotation(parentTransform->GetRotation());
 		}
 		else if (pac->DestroyOnNoParent)
 		{

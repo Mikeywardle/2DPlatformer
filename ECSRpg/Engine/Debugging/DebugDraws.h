@@ -1,5 +1,11 @@
 #pragma once
 
-void DrawDebugLine()
+namespace DebugDraws
 {
+	void DrawDebugLine()
+	{
+	}
+
+
 }
+

@@ -9,6 +9,7 @@ class DungeonLevel : public Level
 public:
 	DungeonLevel(World* world) : Level(world) {};
 
+	virtual void LoadLevel() override;
 	virtual void OnStart() override;
 
 private:

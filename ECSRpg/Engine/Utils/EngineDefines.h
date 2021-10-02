@@ -1,0 +1,5 @@
+#pragma once
+
+#define NOT_RELEASE_BUILD _DEBUG || _DEVELOPMENT
+
+#define USE_ISOMETRIC_PROJECTION 0

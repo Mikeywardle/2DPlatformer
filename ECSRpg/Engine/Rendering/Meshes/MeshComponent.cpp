@@ -1,5 +1,4 @@
 #include "MeshComponent.h"
-#include <Core/GameObject.h>
 
 void MeshComponent::SetMesh(Mesh* mesh)
 {

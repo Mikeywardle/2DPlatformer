@@ -13,13 +13,13 @@
 #include <Physics/RigidBody.h>
 #include <Physics/Collisions/CollisionComponents.h>
 
-#include <Camera/SpringArm.h>
-
 #include <Components/PlayerMovementComponent.h>
 #include <Components/PlayerTags.h>
+#include <Components/WeaponComponents.h>
 
 #include <Camera/CameraComponent.h>
-#include <Components/CameraRotationComponent.h>
+
+#include <GamePlay/TransformParenting.h>
 
 namespace PlayerCreation
 {
@@ -34,13 +34,13 @@ void SpawnPlayer(World* world)
 		Entity player = world->CreateEntity();
 
 		Transform* t = world->AddComponent<Transform>(player);
-		t->SetPosition(Vector3(5, 5, 5));
+		t->SetPosition(Vector3(5, 2, 5));
 		t->SetRotation(Vector3(0, 0, 0));
 		t->SetScale(Vector3(0.5f, 0.5f, 0.5f));
 
-		MeshComponent* m = world->AddComponent<MeshComponent>(player);
-		m->SetMesh(meshAsset);
-		m->SetMaterial(testMaterial);
+		//MeshComponent* m = world->AddComponent<MeshComponent>(player);
+		//m->SetMesh(meshAsset);
+		//m->SetMaterial(testMaterial);
 
 		SphereColliderComponent* sphere = world->AddComponent<SphereColliderComponent>(player);
 		new(sphere) SphereColliderComponent(.5);
@@ -53,7 +53,7 @@ void SpawnPlayer(World* world)
 		RigidBodyComponent* rb = world->AddComponent<RigidBodyComponent>(player);
 		rb->mass = 10;
 		rb->Restitution = .01f;
-		rb->Friction = 0.5f;
+		rb->Friction = 1.f;
 
 		GravityComponent* g = world->AddComponent<GravityComponent>(player);
 		g->GravityScale = 1.f;
@@ -68,9 +68,13 @@ void SpawnPlayer(World* world)
 			, 2.f
 			, 100.f
 			, 2
+			, 1000.f
 		);
 
 		world->AddComponent<CurrentPossesedPlayer>(player);
+
+		PlayerWeaponComponent* weapon = world->AddComponent<PlayerWeaponComponent>(player);
+		*weapon = PlayerWeaponComponent(0.2f);
 
 
 		//Create Camera
@@ -87,20 +91,9 @@ void SpawnPlayer(World* world)
 
 		CameraComponent::SetMainCamera(camera);
 
-		//Create Camera SpringArm
-		Entity springArm = world->CreateEntity();
+		PositionAttatchmentComponent* pac = world->AddComponent<PositionAttatchmentComponent>(camera);
+		*pac = PositionAttatchmentComponent(player, Vector3(0,1,0));
 
-		SpringArmComponent* smc = world->AddComponent<SpringArmComponent>(springArm);
-
-		*smc = SpringArmComponent(10, 0.5f, camera, player);
-
-		Transform* springArmTransform = world->AddComponent<Transform>(springArm);
-		springArmTransform->SetRotation(Vector3(0, 90, -20));
-
-		CameraRotationComponent* crc = world->AddComponent<CameraRotationComponent>(springArm);
-		*crc = CameraRotationComponent(1.f);
-
-		world->AddComponent<CurrentPossesedPlayer>(springArm);
 	}
 
 }

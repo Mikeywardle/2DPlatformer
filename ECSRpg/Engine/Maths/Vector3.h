@@ -39,6 +39,8 @@ struct Vector3
 	static Vector3 Lerp(Vector3 a, Vector3 b, float alpha);
 	static float ReverseLerp(Vector3 a, Vector3 b, Vector3 output);
 
+	Vector3 Clamp(const Vector3 Max, const Vector3 Min) const;
+
 	static const Vector3 Up;
 	static const Vector3 Down;
 	static const Vector3 Right;

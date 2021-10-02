@@ -1,5 +1,6 @@
 #include "Vector3.h"
 #include <math.h>
+#include "MathsHelpers.h"
 
 const Vector3 Vector3::Up = { 0,1,0 };
 const Vector3 Vector3::Down = { 0,-1,0 };
@@ -159,5 +160,14 @@ float Vector3::ReverseLerp(Vector3 a, Vector3 b, Vector3 output)
 {
     Vector3 result = (output - a) / (b-a);
     return Vector3::Magnitude(result);
+}
+Vector3 Vector3::Clamp(const Vector3 Max, const Vector3 Min) const
+{
+    return Vector3
+    (
+        ClampValue(x, Max.x, Min.x)
+        , ClampValue(y, Max.y, Min.y)
+        , ClampValue(z, Max.z, Min.z)
+    );
 }
 #pragma endregion
