@@ -59,7 +59,7 @@ public:
 
 private:
 
-	void FindDynamicCollisions(std::vector<PhysicsCollisionResult>& results, PhysicsWorld* physWorld);
+	void FindDynamicCollisions(std::vector<PhysicsCollisionResult>& colliderResults, std::vector<PhysicsCollisionResult>& triggerResults, PhysicsWorld* physWorld);
 	IColliderComponent* GetEntityCollider(const Entity entity, const ColliderMetaComponent* metaData);
 
 	void ResolveCollisions(std::vector<PhysicsCollisionResult>& results);

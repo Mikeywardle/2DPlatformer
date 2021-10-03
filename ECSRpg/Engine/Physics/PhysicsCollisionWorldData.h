@@ -9,14 +9,14 @@ struct CollisionAABB;
 
 struct PhysicsCollisionWorldData
 {
-	PhysicsCollisionWorldData(Entity Entity, Vector3 InPosition, Vector3 HalfLimits, ColliderType InType);
+	PhysicsCollisionWorldData(Entity Entity, Vector3 InPosition, Vector3 HalfLimits, ColliderType InType, bool isTrigger);
 
 	Entity entity;
 
 	CollisionAABB BoundingBox;
 	CollisionAABB2D BoundingBox2D;
 
-	bool IsTrigger;
+	bool IsTrigger = false;
 	ColliderType type;
 
 	CollisionAABB GetAABB() const;

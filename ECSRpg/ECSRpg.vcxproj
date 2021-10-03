@@ -270,6 +270,7 @@
     <ClCompile Include="Engine\Physics\ForceHandler.cpp" />
     <ClCompile Include="Engine\Physics\Forces\AirResistance.cpp" />
     <ClCompile Include="Engine\Physics\Forces\Gravity.cpp" />
+    <ClCompile Include="Engine\Physics\PhysicsCollisionLayer.cpp" />
     <ClCompile Include="Engine\Physics\PhysicsCollisionWorldData.cpp" />
     <ClCompile Include="Engine\Physics\PhysicsSystem.cpp" />
     <ClCompile Include="Engine\Physics\PhysicsWorld.cpp" />
@@ -303,6 +304,7 @@
     <ClCompile Include="Source\Components\CameraRotationComponent.cpp" />
     <ClCompile Include="Source\Components\PlayerMovementComponent.cpp" />
     <ClCompile Include="Source\Components\WeaponComponents.cpp" />
+    <ClCompile Include="Source\Data\NeOniCollisionLayers.cpp" />
     <ClCompile Include="Source\Debug\PlayerDebugSystem.cpp" />
     <ClCompile Include="Source\Helpers\BulletCreationHelpers.cpp" />
     <ClCompile Include="Source\Helpers\PlayerCreationHelpers.cpp" />
@@ -371,6 +373,7 @@
     <ClInclude Include="Engine\Physics\ForceHandler.h" />
     <ClInclude Include="Engine\Physics\Forces\AirResistance.h" />
     <ClInclude Include="Engine\Physics\Forces\Gravity.h" />
+    <ClInclude Include="Engine\Physics\PhysicsCollisionLayer.h" />
     <ClInclude Include="Engine\Physics\PhysicsCollisionWorldData.h" />
     <ClInclude Include="Engine\Physics\PhysicsSystem.h" />
     <ClInclude Include="Engine\Physics\PhysicsWorld.h" />
@@ -414,6 +417,7 @@
     <ClInclude Include="Source\Components\RotatorComponent.h" />
     <ClInclude Include="Source\Components\WeaponComponents.h" />
     <ClInclude Include="Source\Config\TestInputConfig.h" />
+    <ClInclude Include="Source\Data\NeOniCollisionLayers.h" />
     <ClInclude Include="Source\Debug\DebugSystemsSetup.h" />
     <ClInclude Include="Source\Debug\PlayerDebugSystem.h" />
     <ClInclude Include="Source\Helpers\BulletCreationHelpers.h" />

@@ -2,10 +2,11 @@
 
 #include <Collisions/CollisionShapes.h>
 
-PhysicsCollisionWorldData::PhysicsCollisionWorldData(Entity InEntity, Vector3 InPosition, Vector3 InHalfLimits, ColliderType InType)
+PhysicsCollisionWorldData::PhysicsCollisionWorldData(Entity InEntity, Vector3 InPosition, Vector3 InHalfLimits, ColliderType InType, bool isTrigger)
 {
     entity = InEntity;
     type = InType;
+    IsTrigger = isTrigger;
 
     BoundingBox = CollisionAABB(InPosition, InHalfLimits);
 

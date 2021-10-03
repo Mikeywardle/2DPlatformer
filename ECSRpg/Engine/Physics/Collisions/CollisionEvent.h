@@ -7,3 +7,8 @@ struct CollisionEvent
 {
 	std::vector<PhysicsCollisionResult> results;
 };
+
+struct TriggerOverlapEvent
+{
+	std::vector<PhysicsCollisionResult> results;
+};

@@ -15,6 +15,10 @@
 
 #include <GamePlay/Lifetime.h>
 
+#include <Physics/Collisions/CollisionComponents.h>
+
+#include <Data/NeOniCollisionLayers.h>
+
 
 void BulletCreation::SpawnPlayerBullet(World* world, Vector3 position, Vector3 heading)
 {
@@ -27,7 +31,7 @@ void BulletCreation::SpawnPlayerBullet(World* world, Vector3 position, Vector3 h
 
 	Transform* transform = world->AddComponent<Transform>(bullet);
 	transform->SetPosition(position);
-	transform->SetScale(Vector3(0.2f, 0.2f, 0.2f));
+	transform->SetScale(Vector3(0.15f, 0.15f, 0.15f));
 
 	MeshComponent* mesh = world->AddComponent<MeshComponent>(bullet);
 	mesh->SetMesh(meshAsset);
@@ -36,9 +40,24 @@ void BulletCreation::SpawnPlayerBullet(World* world, Vector3 position, Vector3 h
 	world->AddComponent<PlayerBullet>(bullet);
 
 	BulletMovementComponent* bulletMovement = world->AddComponent<BulletMovementComponent>(bullet);
-	bulletMovement->velocity = heading * 10.0f;
+	bulletMovement->velocity = heading * 20.0f;
 
 	LifetimeComponent* lifeTime = world->AddComponent<LifetimeComponent>(bullet);
 	*lifeTime = LifetimeComponent(5.f, bullet);
+
+	SphereColliderComponent* sphere = world->AddComponent<SphereColliderComponent>(bullet);
+	new(sphere) SphereColliderComponent(0.15f);
+
+	ColliderMetaComponent* colliderMeta = world->AddComponent< ColliderMetaComponent>(bullet);
+	colliderMeta->type = ColliderType::Sphere;
+	colliderMeta->isTrigger = true;
+
+	colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Default);
+	colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Environment);
+	colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Enemies);
+
+	colliderMeta->collisionLayer = NeOniCollisionLayers::PlayerBullets;
+
+	world->AddComponent<DynamicCollider>(bullet);
 
 }

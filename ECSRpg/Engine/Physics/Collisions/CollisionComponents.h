@@ -1,7 +1,9 @@
 #pragma once
 #include <Maths/MathsTypes.h>
 #include <Maths/Transform.h>
+
 #include <Collisions/CollisionShapes.h>
+#include<vector>
 
 struct DynamicCollider {};
 struct StaticCollider {};
@@ -19,6 +21,9 @@ struct ColliderMetaComponent
 {
 	ColliderType type = ColliderType::None;
 	bool isTrigger = false;
+	uint8 collisionLayer = 0;
+
+	std::vector<uint8> toCollideLayers;
 };
 
 struct IColliderComponent 
@@ -39,6 +44,7 @@ public:
 	virtual ColliderType GetColliderType() const override { return ColliderType::AABB; };
 
 public:
+
 	Vector3 HalfLimits;
 };
 

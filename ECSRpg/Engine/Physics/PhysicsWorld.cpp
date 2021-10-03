@@ -11,13 +11,11 @@
 #include <Physics/PhysicsCollisionWorldData.h>
 #include <Physics/Collisions/PhysicsCollisionResult.h>
 #include <Physics/Collisions/CollisionComponents.h>
+#include <Physics/PhysicsCollisionLayer.h>
 
 PhysicsWorld::PhysicsWorld(World* InWorld)
 {
 	world = InWorld;
-
-	dynamicTree = new CollisionQuadtree<PhysicsCollisionWorldData>();
-	staticTree = new CollisionQuadtree<PhysicsCollisionWorldData>();
 
 	CollisionFunctionsCallbacks =
 	{
@@ -28,62 +26,87 @@ PhysicsWorld::PhysicsWorld(World* InWorld)
 		,&PhysicsWorldCollisionFunctions::SpherevsAABB
 		,&PhysicsWorldCollisionFunctions::SpherevsSphere
 	};
+
+	const uint8 TotalCollisionLayers = 6;
+
+	for (int i = 0; i < TotalCollisionLayers; ++i)
+	{
+		CollisionLayers.push_back(new PhysicsCollisionLayer());
+	}
 }
 
 PhysicsWorld::~PhysicsWorld()
 {
-	delete(dynamicTree);
-	delete(staticTree);
+	for(PhysicsCollisionLayer* layer : CollisionLayers)
+	{
+		delete(layer);
+	}
 }
 
 void PhysicsWorld::ClearDynamicWorld()
 {
-	dynamicTree->Clear();
+	for (int i = 0; i < CollisionLayers.size(); ++i)
+	{
+		CollisionLayers[i]->ClearDynamicObjects();
+	}
 }
 
-void PhysicsWorld::AddDynamicBody(const PhysicsCollisionWorldData& toAdd)
+void PhysicsWorld::AddDynamicBody(const PhysicsCollisionWorldData& toAdd, const uint8 CollisionLayer)
 {
-	dynamicTree->Insert(toAdd);
+	CollisionLayers[CollisionLayer]->AddDynamicBody(toAdd);
 }
 
 void PhysicsWorld::ClearStaticWorld()
 {
-	staticTree->Clear();
+	for (int i = 0; i < CollisionLayers.size(); ++i)
+	{
+		CollisionLayers[i]->ClearStaticObjects();
+	}
 }
 
-void PhysicsWorld::AddStaticBody(const PhysicsCollisionWorldData& toAdd)
+void PhysicsWorld::AddStaticBody(const PhysicsCollisionWorldData& toAdd, const uint8 CollisionLayer)
 {
-	staticTree->Insert(toAdd);
+	CollisionLayers[CollisionLayer]->AddStaticBody(toAdd);
 }
 
 void PhysicsWorld::SetDynamicWorldLimits(const Vector2& position, const Vector2& halfLimits)
 {
-	dynamicTree->position = position;
-	dynamicTree->halfLimits = halfLimits + Vector2(QuadTreeBorderWidth, QuadTreeBorderWidth);
+	for (int i = 0; i < CollisionLayers.size(); ++i)
+	{
+		CollisionLayers[i]->SetDynamicLimits(position, halfLimits);
+	}
 }
 
 void PhysicsWorld::SetStaticWorldLimits(const Vector2& position, const Vector2& halfLimits)
 {
-	staticTree->position = position;
-	staticTree->halfLimits = halfLimits + Vector2(QuadTreeBorderWidth, QuadTreeBorderWidth);
+	for (int i = 0; i < CollisionLayers.size(); ++i)
+	{
+		CollisionLayers[i]->SetStaticLimits(position, halfLimits);
+	}
 }
 
-void PhysicsWorld::QueryCollider(std::vector<PhysicsCollisionResult>& results, const PhysicsCollisionWorldData query, const IColliderComponent* collider, Transform* transform) const
+void PhysicsWorld::QueryCollider
+(
+	std::vector<PhysicsCollisionResult>& colliderResults
+	,std::vector<PhysicsCollisionResult>& triggerResults
+	, const PhysicsCollisionWorldData query
+	, const IColliderComponent* collider, Transform* transform
+	, const std::vector<uint8>& collisionLayers
+) const
 {
 	//BroadPhase Culling
 	std::vector<PhysicsCollisionWorldData> broadPhaseResults;
+	std::vector<PhysicsCollisionWorldData> broadPhaseTriggerResults;
 
-	dynamicTree->Query(query, broadPhaseResults);
-	staticTree->Query(query, broadPhaseResults);
+	for (uint8 layer : collisionLayers)
+	{
+		CollisionLayers[layer]->QueryCollider(broadPhaseResults, broadPhaseTriggerResults, query);
+	}
 
 	//Narrow Phase get results
-	const CollisionAABB QueryAABB = collider->GetAABBLimits(transform);
-
-	//TODO: refactor to handle multiple collider types
+	//Colliders
 	for (const PhysicsCollisionWorldData broadPhaseCollider : broadPhaseResults)
 	{
-		const CollisionAABB colliderAABB = broadPhaseCollider.GetAABB();
-
 		PhysicsCollisionResult result;
 
 		result.entityA = query.entity;
@@ -94,7 +117,24 @@ void PhysicsWorld::QueryCollider(std::vector<PhysicsCollisionResult>& results, c
 
 		if (result.collisionInfo.hasCollision)
 		{
-			results.push_back(result);
+			colliderResults.push_back(result);
+		}
+	}
+
+	//Triggers
+	for (const PhysicsCollisionWorldData broadPhaseCollider : broadPhaseTriggerResults)
+	{
+		PhysicsCollisionResult result;
+
+		result.entityA = query.entity;
+		result.entityB = broadPhaseCollider.entity;
+
+		const int colliderFunctionIndex = GetColliderPairingIndex((int8)query.type, (int8)broadPhaseCollider.type);
+		result.collisionInfo = CollisionFunctionsCallbacks[colliderFunctionIndex](collider, transform, broadPhaseCollider, world);
+
+		if (result.collisionInfo.hasCollision)
+		{
+			triggerResults.push_back(result);
 		}
 	}
 

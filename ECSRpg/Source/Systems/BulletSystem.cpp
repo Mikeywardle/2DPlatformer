@@ -5,9 +5,28 @@
 #include <Components/BulletTags.h>
 #include <Maths/Transform.h>
 
+#include <Physics/Collisions/CollisionEvent.h>
+
 BulletSystem::BulletSystem(World* world)
 	:System(world)
 {
+	world->AddListener<TriggerOverlapEvent&>(this, &BulletSystem::OnBulletOverlap);
+
+}
+
+void BulletSystem::OnBulletOverlap(TriggerOverlapEvent& triggerOverlaps)
+{
+	for (PhysicsCollisionResult result : triggerOverlaps.results)
+	{
+		if (world->HasComponent<BulletMovementComponent>(result.entityA))
+		{
+			world->DestroyEntity(result.entityA);
+		}
+		else if (world->HasComponent<BulletMovementComponent>(result.entityB))
+		{
+			world->DestroyEntity(result.entityB);
+		}
+	}
 }
 
 void BulletSystem::OnFrame(const float deltaTime)

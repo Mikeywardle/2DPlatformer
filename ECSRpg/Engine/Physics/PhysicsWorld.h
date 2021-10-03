@@ -5,20 +5,20 @@
 
 class World;
 
-template <typename T>
-class CollisionQuadtree;
 
 struct PhysicsCollisionWorldData;
 struct PhysicsCollisionResult;
-struct Transform;
+struct PhysicsCollisionLayer;
+
 struct ColliderMetaComponent;
 struct IColliderComponent;
-struct Vector2;
-struct Vector3;
 struct CollisionResult;
 
-typedef unsigned int Entity;
+struct Transform;
+struct Vector2;
+struct Vector3;
 
+typedef unsigned int Entity;
 
 typedef CollisionResult (*FunctionCallBack)(const IColliderComponent* colliderA, Transform* transformA, const PhysicsCollisionWorldData entityB, World* world);
 
@@ -32,21 +32,26 @@ public:
 	void ClearDynamicWorld();
 	void ClearStaticWorld();
 
-	void AddDynamicBody(const PhysicsCollisionWorldData& toAdd);
-	void AddStaticBody(const PhysicsCollisionWorldData& toAdd);
+	void AddDynamicBody(const PhysicsCollisionWorldData& toAdd, const uint8 CollisionLayer);
+	void AddStaticBody(const PhysicsCollisionWorldData& toAdd, const uint8 CollisionLayer);
 
 	void SetDynamicWorldLimits(const Vector2& position, const Vector2& halfLimits);
 	void SetStaticWorldLimits(const Vector2& position, const Vector2& halfLimits);
 
-	void QueryCollider(std::vector<PhysicsCollisionResult>& results, const PhysicsCollisionWorldData query, const IColliderComponent* collider, Transform* transform) const;
+	void QueryCollider(
+		std::vector<PhysicsCollisionResult>& colliderResults
+		, std::vector<PhysicsCollisionResult>& triggerResults
+		, const PhysicsCollisionWorldData query
+		, const IColliderComponent* collider
+		, Transform* transform
+		, const std::vector<uint8>& collisionLayers
+	) const;
 
 	Vector3 GetGravity() const;
 
 	void BoxCast() const;
 	void SphereCast() const;
 	void CastRay() const;
-
-
 
 private:
 
@@ -58,9 +63,7 @@ private:
 	World* world;
 
 	std::vector<FunctionCallBack> CollisionFunctionsCallbacks;
-
-	CollisionQuadtree<PhysicsCollisionWorldData>* dynamicTree;
-	CollisionQuadtree<PhysicsCollisionWorldData>* staticTree;
+	std::vector<PhysicsCollisionLayer*> CollisionLayers;
 
 	const float QuadTreeBorderWidth = 10.f;
 };

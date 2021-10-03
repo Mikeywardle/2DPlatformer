@@ -21,6 +21,8 @@
 
 #include <GamePlay/TransformParenting.h>
 
+#include <Data/NeOniCollisionLayers.h>
+
 namespace PlayerCreation
 {
 void SpawnPlayer(World* world)
@@ -48,6 +50,13 @@ void SpawnPlayer(World* world)
 		ColliderMetaComponent* colliderMeta = world->AddComponent< ColliderMetaComponent>(player);
 		colliderMeta->type = ColliderType::Sphere;
 
+		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Default);
+		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Environment);
+		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Enemies);
+		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::EnemyBullets);
+
+		colliderMeta->collisionLayer = NeOniCollisionLayers::Players;
+
 		world->AddComponent<DynamicCollider>(player);
 
 		RigidBodyComponent* rb = world->AddComponent<RigidBodyComponent>(player);
@@ -73,10 +82,6 @@ void SpawnPlayer(World* world)
 
 		world->AddComponent<CurrentPossesedPlayer>(player);
 
-		PlayerWeaponComponent* weapon = world->AddComponent<PlayerWeaponComponent>(player);
-		*weapon = PlayerWeaponComponent(0.2f);
-
-
 		//Create Camera
 		Entity camera = world->CreateEntity();
 
@@ -94,6 +99,7 @@ void SpawnPlayer(World* world)
 		PositionAttatchmentComponent* pac = world->AddComponent<PositionAttatchmentComponent>(camera);
 		*pac = PositionAttatchmentComponent(player, Vector3(0,1,0));
 
+		PlayerWeaponComponent* weapon = world->AddComponent<PlayerWeaponComponent>(camera);
+		*weapon = PlayerWeaponComponent(0.1f);
 	}
-
 }
