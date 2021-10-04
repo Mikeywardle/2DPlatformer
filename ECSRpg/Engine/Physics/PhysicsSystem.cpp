@@ -12,9 +12,10 @@
 #include "Forces/AirResistance.h"
 
 #include "PhysicsWorld.h"
+#include "PhysicsSystemConfig.h"
 
 
-PhysicsSystem::PhysicsSystem(World* world)
+PhysicsSystem::PhysicsSystem(World* world, PhysicsSystemConfig physicsConfig)
 {
 	this->world = world;
 
@@ -25,7 +26,7 @@ PhysicsSystem::PhysicsSystem(World* world)
 	};
 
 	this->collisionSystem = new CollisionSystem(world);
-	physicsWorld = new PhysicsWorld(world);
+	physicsWorld = new PhysicsWorld(world, physicsConfig.maxCollisionLayers);
 }
 
 PhysicsSystem::~PhysicsSystem()

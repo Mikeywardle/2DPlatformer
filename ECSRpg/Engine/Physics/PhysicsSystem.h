@@ -4,11 +4,11 @@
 #include "Collisions/CollisionSystem.h"
 
 class RigidBodyComponent;
-
+struct PhysicsSystemConfig;
 class PhysicsSystem
 {
 public:
-	PhysicsSystem(World* world);
+	PhysicsSystem(World* world, PhysicsSystemConfig physicsConfig);
 	~PhysicsSystem();
 
 	void ProcessPhysicsForFrame(float deltaTime);

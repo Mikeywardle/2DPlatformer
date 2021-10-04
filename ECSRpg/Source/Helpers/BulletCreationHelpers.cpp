@@ -39,6 +39,9 @@ void BulletCreation::SpawnPlayerBullet(World* world, Vector3 position, Vector3 h
 
 	world->AddComponent<PlayerBullet>(bullet);
 
+	BulletComponent* bulletComp = world->AddComponent<BulletComponent>(bullet);
+	bulletComp->damage = 20;
+
 	BulletMovementComponent* bulletMovement = world->AddComponent<BulletMovementComponent>(bullet);
 	bulletMovement->velocity = heading * 20.0f;
 

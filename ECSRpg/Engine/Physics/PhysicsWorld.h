@@ -26,7 +26,7 @@ class PhysicsWorld
 {
 public:
 
-	PhysicsWorld(World* InWorld);
+	PhysicsWorld(World* InWorld, const uint8 TotalCollisionLayers);
 	~PhysicsWorld();
 
 	void ClearDynamicWorld();

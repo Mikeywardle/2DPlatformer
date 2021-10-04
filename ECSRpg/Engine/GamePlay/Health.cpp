@@ -13,7 +13,8 @@ void HealthComponent::DealDamage(short Damage)
 {
 	Health -= Damage * !isInvincible;
 
-	if (canBeInvincible)
+	//Trigger invincibilty for player
+	if (canBeInvincible && !isInvincible)
 	{
 		isInvincible = true;
 		remainingInvincibilityTime = InvincibilityTime;

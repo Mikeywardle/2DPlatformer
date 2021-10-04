@@ -5,13 +5,15 @@
 #include <Inputs/InputConfiguration.h>
 #include <Inputs/InputData.h>
 
+#include <Physics/PhysicsSystemConfig.h>
+
 #include <Platform/GameWindow.h>
 #include <Core/World.h>
 
-GameContext::GameContext(InputConfiguration InputConfig)
+GameContext::GameContext(InputConfiguration InputConfig, PhysicsSystemConfig physicsConfig)
 {
 	gameWindow = new GameWindow(InputConfig);
-	gameWorld = new World(this);
+	gameWorld = new World(this, physicsConfig);
 }
 
 GameContext::~GameContext()

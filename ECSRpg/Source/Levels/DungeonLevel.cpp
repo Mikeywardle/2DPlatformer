@@ -22,6 +22,7 @@
 #include <Systems/PlayerWeaponSystem.h>
 
 #include <Helpers/PlayerCreationHelpers.h>
+#include <Helpers/EnemyCreationHelpers.h>
 
 #include <GamePlay/TransformParenting.h>
 #include <GamePlay/Lifetime.h>
@@ -31,6 +32,7 @@
 void DungeonLevel::LoadLevel()
 {
 	PlayerCreation::SpawnPlayer(world);
+	EnemyCreation::SpawnEnemy(world, Vector3(0, 2, 0));
 
 	CreateDirectionalLight(Vector3(80, -10, 30));
 
@@ -65,7 +67,6 @@ void DungeonLevel::OnStart()
 
 	//Gameplay Utils
 	world->RegisterSystem<PositionAttachmentSystem>();
-
 	world->RegisterSystem<LifeTimeDecaySystem>();
 }
 

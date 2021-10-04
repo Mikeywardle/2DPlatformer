@@ -21,6 +21,7 @@ class Level;
 class PhysicsSystem;
 
 struct InputData;
+struct PhysicsSystemConfig;
 
 typedef unsigned int Entity;
 
@@ -30,7 +31,7 @@ class World
 {
 public:
 
-	World(GameContext* InGame);
+	World(GameContext* InGame, PhysicsSystemConfig physicsConfig);
 	~World();
 
 #pragma region Levels

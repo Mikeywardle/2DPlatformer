@@ -42,7 +42,14 @@ public:
 	ComponentBatch<T>* GetComponentBatch() const
 	{
 		const char* hash = typeid(T).raw_name();
-		return (ComponentBatch<T>*)componentsLookup.at(hash);
+		try
+		{
+			return (ComponentBatch<T>*)componentsLookup.at(hash);
+		}
+		catch (std::out_of_range e)
+		{
+			return nullptr;
+		}
 	}
 
 	template<typename T>

@@ -4,12 +4,13 @@ class GameWindow;
 class World;
 
 struct InputConfiguration;
+struct PhysicsSystemConfig;
 
 
 class GameContext
 {
 public:
-	GameContext(InputConfiguration InputConfig);
+	GameContext(InputConfiguration InputConfig, PhysicsSystemConfig physicsConfig);
 	~GameContext();
 
 	int StartGame();

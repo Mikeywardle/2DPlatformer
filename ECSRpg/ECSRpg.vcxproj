@@ -307,6 +307,7 @@
     <ClCompile Include="Source\Data\NeOniCollisionLayers.cpp" />
     <ClCompile Include="Source\Debug\PlayerDebugSystem.cpp" />
     <ClCompile Include="Source\Helpers\BulletCreationHelpers.cpp" />
+    <ClCompile Include="Source\Helpers\EnemyCreationHelpers.cpp" />
     <ClCompile Include="Source\Helpers\PlayerCreationHelpers.cpp" />
     <ClCompile Include="Source\Levels\DungeonLevel.cpp" />
     <ClCompile Include="Source\Systems\BulletSystem.cpp" />
@@ -376,6 +377,7 @@
     <ClInclude Include="Engine\Physics\PhysicsCollisionLayer.h" />
     <ClInclude Include="Engine\Physics\PhysicsCollisionWorldData.h" />
     <ClInclude Include="Engine\Physics\PhysicsSystem.h" />
+    <ClInclude Include="Engine\Physics\PhysicsSystemConfig.h" />
     <ClInclude Include="Engine\Physics\PhysicsWorld.h" />
     <ClInclude Include="Engine\Physics\RigidBody.h" />
     <ClInclude Include="Engine\Platform\GameWindow.h" />
@@ -412,15 +414,19 @@
     <ClInclude Include="Engine\Utils\XMLReader.h" />
     <ClInclude Include="Source\Components\BulletTags.h" />
     <ClInclude Include="Source\Components\CameraRotationComponent.h" />
+    <ClInclude Include="Source\Components\EnemyComponents.h" />
     <ClInclude Include="Source\Components\PlayerTags.h" />
     <ClInclude Include="Source\Components\PlayerMovementComponent.h" />
     <ClInclude Include="Source\Components\RotatorComponent.h" />
     <ClInclude Include="Source\Components\WeaponComponents.h" />
+    <ClInclude Include="Source\Config\NeOniPhysicsConfig.h" />
     <ClInclude Include="Source\Config\TestInputConfig.h" />
+    <ClInclude Include="Source\Data\EntityColour.h" />
     <ClInclude Include="Source\Data\NeOniCollisionLayers.h" />
     <ClInclude Include="Source\Debug\DebugSystemsSetup.h" />
     <ClInclude Include="Source\Debug\PlayerDebugSystem.h" />
     <ClInclude Include="Source\Helpers\BulletCreationHelpers.h" />
+    <ClInclude Include="Source\Helpers\EnemyCreationHelpers.h" />
     <ClInclude Include="Source\Helpers\PlayerCreationHelpers.h" />
     <ClInclude Include="Source\Levels\DungeonLevel.h" />
     <ClInclude Include="Source\PhysicsTest\PhysicsBallSpawnerSystem.h" />

@@ -12,19 +12,20 @@
 #include <Physics/Collisions/CollisionSystem.h>
 #include <Core/GameState.h>
 #include <Physics/PhysicsSystem.h>
+#include <Physics/PhysicsSystemConfig.h>
 
 #if NOT_RELEASE_BUILD
 #include <Debugging/DebugSystem.h>
 #endif
 
-World::World(GameContext* InGame)
+World::World(GameContext* InGame, PhysicsSystemConfig physicsConfig)
 {
 	game = InGame;
 
 	ecsContext = new ECSContext();
 	eventsContext = new EventsContext();
 
-	physicsSystem = new PhysicsSystem(this);
+	physicsSystem = new PhysicsSystem(this, physicsConfig);
 	renderingSystem = new RenderingSystem(this);
 
 	resourceManager = new ResourceManager(this);

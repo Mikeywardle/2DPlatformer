@@ -13,7 +13,7 @@
 #include <Physics/Collisions/CollisionComponents.h>
 #include <Physics/PhysicsCollisionLayer.h>
 
-PhysicsWorld::PhysicsWorld(World* InWorld)
+PhysicsWorld::PhysicsWorld(World* InWorld, const uint8 TotalCollisionLayers)
 {
 	world = InWorld;
 
@@ -25,9 +25,7 @@ PhysicsWorld::PhysicsWorld(World* InWorld)
 		//Sphere vs
 		,&PhysicsWorldCollisionFunctions::SpherevsAABB
 		,&PhysicsWorldCollisionFunctions::SpherevsSphere
-	};
-
-	const uint8 TotalCollisionLayers = 6;
+	};	
 
 	for (int i = 0; i < TotalCollisionLayers; ++i)
 	{

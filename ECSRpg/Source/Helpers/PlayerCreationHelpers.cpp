@@ -81,6 +81,7 @@ void SpawnPlayer(World* world)
 		);
 
 		world->AddComponent<CurrentPossesedPlayer>(player);
+		world->AddComponent<PlayerTag>(player);
 
 		//Create Camera
 		Entity camera = world->CreateEntity();
