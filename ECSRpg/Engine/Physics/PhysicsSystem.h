@@ -15,6 +15,7 @@ public:
 
 
 	void GenerateStaticWorld();
+	void ClearWorld();
 
 	template<typename ...Args>
 	RaycastingResult CastRay(Vector3 Start, Vector3 End, Entity ignoreEntity)

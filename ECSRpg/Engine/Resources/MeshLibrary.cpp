@@ -10,7 +10,17 @@ Mesh* MeshLibrary::GetMesh(std::string name)
 	if (resourceTable.find(name) == resourceTable.end())
 		LoadMeshFromFile(FileLookupMap[name]);
 	
-	return &resourceTable[name];
+	return resourceTable[name];
+}
+
+void MeshLibrary::ClearAssets()
+{
+	for (std::unordered_map<std::string, Mesh*>::iterator p = resourceTable.begin();
+		p != resourceTable.end(); p++)
+	{
+		delete(p->second);
+	}
+	resourceTable.clear();
 }
 
 MeshLibrary::MeshLibrary()
@@ -95,7 +105,7 @@ void MeshLibrary::LoadMesh(aiMesh* mesh, const aiScene* scene)
 	}
 
 	std::string name(mesh->mName.C_Str());
-	resourceTable[name] = Mesh(vertices, indices);
+	resourceTable[name] = new Mesh(vertices, indices);
 }
 
 void MeshLibrary::ProcessNode(aiNode* node, const aiScene* scene)

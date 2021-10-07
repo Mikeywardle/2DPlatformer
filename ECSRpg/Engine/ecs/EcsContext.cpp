@@ -22,3 +22,15 @@ void ECSContext::DestroyEntity(Entity entity)
         ++it;
     }
 }
+
+void ECSContext::ClearEntities()
+{
+    unsigned int aliveEntities = entitiesManager->GetAliveEntities();
+
+    for (unsigned int i = 0; i < aliveEntities; ++i)
+    {
+        DestroyEntity(i);
+    }
+
+    entitiesManager->ResetState();
+}

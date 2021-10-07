@@ -17,7 +17,11 @@ inline T* World::SwitchLevel()
 	if (currentlyLoadedLevel != nullptr)
 	{
 		delete(currentlyLoadedLevel);
+
+		DeRegisterAllSystems();
+		ClearWorld();
 	}
+
 
 	T* newLevel = new T(this);
 	currentlyLoadedLevel = dynamic_cast<Level*>(newLevel);
@@ -27,6 +31,8 @@ inline T* World::SwitchLevel()
 
 	BuildWorld();
 	currentlyLoadedLevel->OnStart();
+
+
 	return newLevel;
 
 }

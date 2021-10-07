@@ -17,6 +17,8 @@ public:
 	Material* GetMaterial(std::string name);
 	int GetShader(std::string name);
 
+	void ClearResources();
+
 private:
 	class TextureLibrary* textureLibrary;
 	class ShaderLibrary* shaderLibrary;

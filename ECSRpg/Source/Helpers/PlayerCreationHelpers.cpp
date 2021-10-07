@@ -36,7 +36,7 @@ void SpawnPlayer(World* world)
 		Entity player = world->CreateEntity();
 
 		Transform* t = world->AddComponent<Transform>(player);
-		t->SetPosition(Vector3(5, 2, 5));
+		t->SetPosition(Vector3(0, 2, 5));
 		t->SetRotation(Vector3(0, 0, 0));
 		t->SetScale(Vector3(0.5f, 0.5f, 0.5f));
 

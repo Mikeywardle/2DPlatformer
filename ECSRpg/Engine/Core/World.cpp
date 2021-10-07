@@ -70,6 +70,7 @@ void World::RunFrame(const float deltaTime, const InputData* inputData)
 	}
 
 	//Process Level
+	currentlyLoadedLevel->OnInput(deltaTime, inputData);
 	currentlyLoadedLevel->OnFrame(deltaTime);
 
 	//Draw World
@@ -99,6 +100,23 @@ PhysicsSystem* World::GetPhysicsSystem() const
 void World::BuildWorld()
 {
 	physicsSystem->GenerateStaticWorld();
+}
+
+void World::ClearWorld()
+{
+	ecsContext->ClearEntities();
+	physicsSystem->ClearWorld();
+	resourceManager->ClearResources();
+}
+
+void World::DeRegisterAllSystems()
+{
+	for (System* system : systems)
+	{
+		delete(system);
+	}
+
+	systems.clear();
 }
 
 Entity World::CreateEntity()

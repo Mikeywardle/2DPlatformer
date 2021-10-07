@@ -19,5 +19,4 @@ int main()
 	SetupDebugSystems(world);
 
 	return game.StartGame();
-
 }

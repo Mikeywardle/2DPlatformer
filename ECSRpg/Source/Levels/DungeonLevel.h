@@ -12,6 +12,8 @@ public:
 	virtual void LoadLevel() override;
 	virtual void OnStart() override;
 
+	virtual void OnInput(float deltaTime, const InputData* inputData) override;
+
 private:
 
 	void CreatePlayerCamera();

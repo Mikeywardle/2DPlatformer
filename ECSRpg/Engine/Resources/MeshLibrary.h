@@ -6,12 +6,14 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-class MeshLibrary : public ResourceLibrary<Mesh>
+class MeshLibrary : public ResourceLibrary<Mesh*>
 {
 public:
 	MeshLibrary();
 	void LoadMeshFromFile(std::string fileName);
 	Mesh* GetMesh(std::string name);
+
+	virtual void ClearAssets() override;
 
 private:
 	static std::string MESH_PATH;

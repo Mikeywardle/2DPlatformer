@@ -5,6 +5,7 @@
 #include <Maths/Transform.h>
 #include <vector>
 
+struct InputData;
 class Level
 {
 public:
@@ -13,6 +14,7 @@ public:
 
 	virtual void LoadLevel() = 0;
 	virtual void OnStart();
+	virtual void OnInput(float deltaTime, const InputData* inputData) {};
 	virtual void OnFrame(float deltaTime);
 	virtual void OnDestroy();
 

@@ -12,6 +12,8 @@ public :
 	void LoadTexture(std::string name, std::string filepath, bool alpha);
 	Texture2D* GetTexture(std::string name);
 
+	virtual void ClearAssets() override;
+
 private:
 	static std::string TEXTURE_PATH;
 

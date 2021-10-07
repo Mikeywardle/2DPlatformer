@@ -15,7 +15,12 @@
 BulletSystem::BulletSystem(World* world)
 	:System(world)
 {
-	world->AddListener<TriggerOverlapEvent&>(this, &BulletSystem::OnBulletOverlap);
+	TriggerOverlapDelegate =  world->AddListener<TriggerOverlapEvent&>(this, &BulletSystem::OnBulletOverlap);
+}
+
+BulletSystem::~BulletSystem()
+{
+	world->RemoveListener(TriggerOverlapDelegate);
 }
 
 void BulletSystem::OnBulletOverlap(TriggerOverlapEvent& triggerOverlaps)

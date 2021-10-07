@@ -9,6 +9,8 @@ public:
 	void LoadShader(std::string name, std::string path, int type);
 	GLuint GetShader(std::string name);
 
+	virtual void ClearAssets() override;
+
 private:
 	static std::string SHADER_PATH;
 

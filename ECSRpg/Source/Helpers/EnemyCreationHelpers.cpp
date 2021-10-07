@@ -30,7 +30,7 @@ void EnemyCreation::SpawnEnemy(World* world, Vector3 position)
 	Entity enemy = world->CreateEntity();
 
 	Transform* t = world->AddComponent<Transform>(enemy);
-	t->SetPosition(Vector3(5, 2, 5));
+	t->SetPosition(position);
 	t->SetRotation(Vector3(0, 0, 0));
 	t->SetScale(Vector3(1, 1, 1));
 

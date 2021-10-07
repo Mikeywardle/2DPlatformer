@@ -34,3 +34,11 @@ int ResourceManager::GetShader(std::string name)
 {
     return shaderLibrary->GetShader(name);
 }
+
+void ResourceManager::ClearResources()
+{
+    textureLibrary->ClearAssets();
+    meshLibrary->ClearAssets();
+    shaderLibrary->ClearAssets();
+    materialLibrary->ClearAssets();
+}

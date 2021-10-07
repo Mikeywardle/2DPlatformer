@@ -27,12 +27,17 @@
 #include <GamePlay/TransformParenting.h>
 #include <GamePlay/Lifetime.h>
 
+#include <Config/TestInputConfig.h>
+#include <Inputs/InputData.h>
+
 
 
 void DungeonLevel::LoadLevel()
 {
 	PlayerCreation::SpawnPlayer(world);
-	EnemyCreation::SpawnEnemy(world, Vector3(0, 2, 0));
+
+
+	EnemyCreation::SpawnEnemy(world, Vector3(5, 2, 5));
 
 	CreateDirectionalLight(Vector3(80, -10, 30));
 
@@ -70,8 +75,13 @@ void DungeonLevel::OnStart()
 	world->RegisterSystem<LifeTimeDecaySystem>();
 }
 
-void DungeonLevel::CreatePlayerCamera()
+void DungeonLevel::OnInput(float deltaTime, const InputData* inputData)
 {
+	if (inputData->GetInputValue(TestConfigInputId::Right_click, InputTypes::BUTTON_RELEASED))
+	{
+		printf("Reload level");
+		world->SwitchLevel<DungeonLevel>();
+	}
 
 }
 

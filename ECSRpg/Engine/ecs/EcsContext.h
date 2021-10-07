@@ -15,6 +15,7 @@ public:
 
 	Entity CreateEntity();
 	void DestroyEntity(Entity entity);
+	void ClearEntities();
 
 	template<typename T>
 	T* AddComponent(Entity entity)

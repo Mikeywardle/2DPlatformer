@@ -28,6 +28,16 @@ GLuint ShaderLibrary::GetShader(std::string name)
     return resourceTable[name];
 }
 
+void ShaderLibrary::ClearAssets()
+{
+	for (std::unordered_map<std::string, GLuint>::iterator p = resourceTable.begin();
+		p != resourceTable.end(); p++)
+	{
+		glDeleteShader(p->second);
+	}
+	resourceTable.clear();
+}
+
 void ShaderLibrary::LoadMetaData()
 {
 	std::string shaderPath = "Resources\\" + SHADER_PATH + "\\_Shaders.xml";

@@ -25,6 +25,20 @@ Texture2D* TextureLibrary::GetTexture(std::string name)
     return &resourceTable[name];
 }
 
+void TextureLibrary::ClearAssets()
+{
+    std::vector<GLuint> texturesToDelete;
+
+    for (std::unordered_map<std::string, Texture2D>::iterator p = resourceTable.begin();
+        p != resourceTable.end(); p++)
+    {
+        texturesToDelete.push_back(p->second.ID);
+    }
+
+    glDeleteTextures(texturesToDelete.size(), texturesToDelete.data());
+    resourceTable.clear();
+}
+
 void TextureLibrary::LoadFileMetaData()
 {
     std::string texturesPath = "Resources\\" + TEXTURE_PATH + "\\_Textures.xml";

@@ -105,6 +105,8 @@ public:
 
 private:
 	void BuildWorld();
+	void ClearWorld();
+	void DeRegisterAllSystems();
 
 private:
 

@@ -23,5 +23,5 @@ private:
 	int GetBufferIndex(const int BoundButtonId, const InputType inputType) const;
 
 private:
-	char* DataBuffer;
+	bool* DataBuffer;
 };

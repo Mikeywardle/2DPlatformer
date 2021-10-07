@@ -10,6 +10,10 @@ public:
 	Entity CreateEntity();
 	void DestroyEntity(Entity entity);
 
+	void ResetState();
+
+	unsigned int GetAliveEntities() const;
+
 private:
 
 	std::queue<Entity> availableEntities;

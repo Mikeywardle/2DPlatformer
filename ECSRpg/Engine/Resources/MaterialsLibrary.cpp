@@ -37,7 +37,7 @@ void MaterialsLibrary::LoadMaterial(std::string name, std::string path)
 	int vertexShader = resourceManager->GetShader(vertex);
 	int fragShader = resourceManager->GetShader(frag);
 
-	Material toAdd = Material(vertexShader, fragShader);
+	Material* toAdd = new Material(vertexShader, fragShader);
 
 	//Colors
 	for (xml_node colorNode = rootNode.child("Colors").child("Color"); colorNode; colorNode = colorNode.next_sibling())
@@ -51,16 +51,15 @@ void MaterialsLibrary::LoadMaterial(std::string name, std::string path)
 
 		Color color = Color(r, g, b, a);
 
-		toAdd.SetColor(colorname, color);
+		toAdd->SetColor(colorname, color);
 	}
-
 
 	//Textures
 
 	//floats
 
 	//BindUniforms
-	unsigned int toAddID = toAdd.ID;
+	unsigned int toAddID = toAdd->ID;
 	BindUniforms(toAddID);
 
 	resourceTable[name] = toAdd;
@@ -102,5 +101,16 @@ Material* MaterialsLibrary::GetMaterial(std::string name)
 	if (resourceTable.find(name) == resourceTable.end())
 		LoadMaterial(name, FileLookup[name]);
 
-	return &resourceTable[name];
+	return resourceTable[name];
+}
+
+void MaterialsLibrary::ClearAssets()
+{
+	for (std::unordered_map<std::string, Material*>::iterator p = resourceTable.begin();
+		p != resourceTable.end(); p++)
+	{
+		glDeleteProgram(p->second->ID);
+		delete(p->second);
+	}
+	resourceTable.clear();
 }

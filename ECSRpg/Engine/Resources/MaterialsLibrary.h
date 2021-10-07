@@ -5,13 +5,14 @@
 
 class World;
 
-class MaterialsLibrary : public ResourceLibrary<Material>
+class MaterialsLibrary : public ResourceLibrary< Material*>
 {
 public:
 
 	MaterialsLibrary(World* world);
 
 	Material* GetMaterial(std::string name);
+	virtual void ClearAssets() override;
 
 private:
 	static std::string MATERIAL_PATH;

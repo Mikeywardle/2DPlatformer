@@ -23,3 +23,14 @@ void EntitiesManager::DestroyEntity(Entity entity)
 	availableEntities.push(entity);
 	--aliveEntities;
 }
+
+void EntitiesManager::ResetState()
+{
+	availableEntities = std::queue<Entity>();
+	aliveEntities = 0;
+}
+
+unsigned int EntitiesManager::GetAliveEntities() const
+{
+	return aliveEntities;
+}

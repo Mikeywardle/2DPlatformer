@@ -14,7 +14,8 @@ struct Vertex
 
 struct Mesh
 {
-	Mesh() {}
+	Mesh() = default;
+	~Mesh();
 
 	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
 	GLuint VAO, VBO, EBO;

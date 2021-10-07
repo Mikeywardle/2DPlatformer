@@ -48,6 +48,12 @@ void PhysicsSystem::GenerateStaticWorld()
 	collisionSystem->GenerateStaticColiisions(physicsWorld);
 }
 
+void PhysicsSystem::ClearWorld()
+{
+	physicsWorld->ClearDynamicWorld();
+	physicsWorld->ClearStaticWorld();
+}
+
 void PhysicsSystem::ProcessForceHandlers(float deltaTime)
 {
 	for (IForceHandler* handler : forceHandlers)
