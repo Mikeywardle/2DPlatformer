@@ -2,19 +2,21 @@
 
 #include "PhysicsCollisionWorldData.h"
 
-#include <Collisions/CollisionQuadtree.h>
-#include <Maths/Vector2.h>
+#include <Collisions/CollisionGrid.h>
+#include <Maths/Vector3.h>
+
+#include <Core/World.h>
 
 
-const float PhysicsCollisionLayer::QuadTreeBorderWidth = 10.f;
+const float PhysicsCollisionLayer::BorderWidth = 2.f;
 
 PhysicsCollisionLayer::PhysicsCollisionLayer()
 {
-	dynamicColliders = new CollisionQuadtree<PhysicsCollisionWorldData>();
-	dynamicTriggers = new CollisionQuadtree<PhysicsCollisionWorldData>();
+	dynamicColliders = new CollisionGrid<PhysicsCollisionWorldData>();
+	dynamicTriggers = new CollisionGrid<PhysicsCollisionWorldData>();
 
-	staticColliders = new CollisionQuadtree<PhysicsCollisionWorldData>();
-	staticTriggers = new CollisionQuadtree<PhysicsCollisionWorldData>();
+	staticColliders = new CollisionGrid<PhysicsCollisionWorldData>();
+	staticTriggers = new CollisionGrid<PhysicsCollisionWorldData>();
 }
 
 PhysicsCollisionLayer::~PhysicsCollisionLayer()
@@ -62,22 +64,20 @@ void PhysicsCollisionLayer::AddStaticBody(const PhysicsCollisionWorldData& toAdd
 	}
 }
 
-void PhysicsCollisionLayer::SetDynamicLimits(const Vector2& position, const Vector2& halfLimits)
+void PhysicsCollisionLayer::SetDynamicLimits(const Vector3& position, const Vector3& limits)
 {
-	dynamicColliders->position = position;
-	dynamicColliders->halfLimits = halfLimits + Vector2(QuadTreeBorderWidth, QuadTreeBorderWidth);
+	const Vector3 borderWidthVector = Vector3(BorderWidth, BorderWidth, BorderWidth);
 
-	dynamicTriggers->position = position;
-	dynamicTriggers->halfLimits = halfLimits + Vector2(QuadTreeBorderWidth, QuadTreeBorderWidth);
+	dynamicColliders->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), Vector3(2.0f, 2.0f, 2.0f));
+	dynamicTriggers->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), Vector3(2.0f, 2.0f, 2.0f));
 }
 
-void PhysicsCollisionLayer::SetStaticLimits(const Vector2& position, const Vector2& halfLimits)
+void PhysicsCollisionLayer::SetStaticLimits(const Vector3& position, const Vector3& limits)
 {
-	staticColliders->position = position;
-	staticColliders->halfLimits = halfLimits + Vector2(QuadTreeBorderWidth, QuadTreeBorderWidth);
+	const Vector3 borderWidthVector = Vector3(BorderWidth, BorderWidth, BorderWidth);
 
-	staticTriggers->position = position;
-	staticTriggers->halfLimits = halfLimits + Vector2(QuadTreeBorderWidth, QuadTreeBorderWidth);
+	staticColliders->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), Vector3(2.0f,2.0f,2.0f));
+	staticTriggers->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), Vector3(2.0f, 2.0f, 2.0f));
 }
 
 void PhysicsCollisionLayer::QueryCollider
@@ -87,19 +87,43 @@ void PhysicsCollisionLayer::QueryCollider
 	, const PhysicsCollisionWorldData query
 ) const
 {
+	const CollisionAABB queryAABB = query.GetAABB();
+
 	//If is trigger only test against colliders (as trigger/trigger interactions are not valid)
 	if (query.IsTrigger)
 	{
-		dynamicColliders->Query(query, triggerOverlapResults);
-		staticColliders->Query(query, triggerOverlapResults);
+		dynamicColliders->Query(queryAABB, triggerOverlapResults);
+		staticColliders->Query(queryAABB, triggerOverlapResults);
 	}
 	else
 	{
-		dynamicColliders->Query(query, colliderOverlapResults);
-		staticColliders->Query(query, colliderOverlapResults);
+		dynamicColliders->Query(queryAABB, colliderOverlapResults);
+		staticColliders->Query(queryAABB, colliderOverlapResults);
 
-		dynamicTriggers->Query(query, triggerOverlapResults);
-		staticTriggers->Query(query, triggerOverlapResults);
+		dynamicTriggers->Query(queryAABB, triggerOverlapResults);
+		staticTriggers->Query(queryAABB, triggerOverlapResults);
 	}
 
+}
+
+RaycastingResult PhysicsCollisionLayer::CastRay(const Ray ray, const unsigned int IgnoreEntity, PhysicsRaycastingCallback callback, const World* world) const
+{
+	const RaycastingResult dynamicResult = dynamicColliders->CastRay(ray, IgnoreEntity, callback, world);
+	const RaycastingResult staticResult  = staticColliders->CastRay(ray, IgnoreEntity, callback, world);
+
+	if (staticResult.hasHit && dynamicResult.hasHit)
+	{
+		if (staticResult.Distance < dynamicResult.Distance)
+			return staticResult;
+		else
+			return dynamicResult;
+	}
+	else if(staticResult.hasHit)
+	{
+		return staticResult;
+	}
+	else
+	{
+		return dynamicResult;
+	}
 }

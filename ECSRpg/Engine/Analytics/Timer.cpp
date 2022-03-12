@@ -2,12 +2,13 @@
 
 void Timer::StartTimer()
 {
-	startTime = std::chrono::high_resolution_clock::now();
+	startTime = std::chrono::steady_clock::now();
 }
 
 double Timer::StopTimer()
 {
-	auto endTime = std::chrono::high_resolution_clock::now();
+	auto endTime = std::chrono::steady_clock::now();
 
-	return std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+	 std::chrono::duration<double> elapsed_seconds = endTime - startTime;
+	return elapsed_seconds.count() * 1000;
 }

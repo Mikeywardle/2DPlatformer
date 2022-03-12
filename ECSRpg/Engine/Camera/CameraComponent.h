@@ -33,7 +33,7 @@ public:
 	Vector3 ScreenSpaceLocationToWorldSpaceDirection(Vector2 ScreenPosition, Transform* transform, GameWindow* gameWindow) const;
 
 private:
-	static Entity mainCamera;
+	static Entity mainCamera ;
 
 };
 

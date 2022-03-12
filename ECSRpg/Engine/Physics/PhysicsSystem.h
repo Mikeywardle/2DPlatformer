@@ -17,11 +17,7 @@ public:
 	void GenerateStaticWorld();
 	void ClearWorld();
 
-	template<typename ...Args>
-	RaycastingResult CastRay(Vector3 Start, Vector3 End, Entity ignoreEntity)
-	{
-		return collisionSystem->CastRay<Args...>(Start, End, ignoreEntity);
-	}
+	RaycastingResult CastRay(const Ray ray, const Entity ignoreEntity = NO_ENTITY, const std::vector<uint8> layers = std::vector<uint8>()) const;
 
 private:
 	void ProcessForceHandlers(float deltaTime);

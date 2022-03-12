@@ -70,7 +70,7 @@ inline std::vector<Entity> World::GetEntities() const
 }
 
 template<typename T>
-inline bool World::HasComponent(Entity entity) const
+inline bool World::HasComponent(const Entity entity) const
 {
 	return ecsContext->HasComponent<T>(entity);
 }

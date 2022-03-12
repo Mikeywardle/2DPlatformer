@@ -3,6 +3,14 @@
     <name>TestMaterial</name>
     <file>TestMaterial.mat</file>
   </Material>
+    <Material>
+    <name>UnitTestMaterial</name>
+    <file>UnitTestMaterial.mat</file>
+  </Material>
+   <Material>
+    <name>MarkerMaterial</name>
+    <file>MarkerMaterial.mat</file>
+  </Material>
   <Material>
     <name>BlueBullet</name>
     <file>BlueBullet.mat</file>

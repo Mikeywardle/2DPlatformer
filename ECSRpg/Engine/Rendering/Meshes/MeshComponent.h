@@ -23,8 +23,6 @@ protected:
 	int MeshVAO;
 	int NumberOfIndices;
 
-
-
 	Material* material;
 	int MaterialIndex;
 };

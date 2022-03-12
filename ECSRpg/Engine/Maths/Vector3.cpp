@@ -171,3 +171,20 @@ Vector3 Vector3::Clamp(const Vector3 Max, const Vector3 Min) const
     );
 }
 #pragma endregion
+
+Vector3Int::Vector3Int(int x, int y, int z)
+{
+    this->x = x;
+    this->y = y;
+    this->z = z;
+}
+
+Vector3Int Vector3Int::operator+(const Vector3Int b) const
+{
+    return Vector3Int(x + b.x, y + b.y, z + b.z);
+}
+
+Vector3Int Vector3Int::operator-(const Vector3Int b) const
+{
+    return Vector3Int(x - b.x, y - b.y, z - b.z);
+}

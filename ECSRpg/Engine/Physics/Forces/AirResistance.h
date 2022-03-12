@@ -7,7 +7,7 @@ struct AirResistanceComponent
 	float DragCoefficient;
 };
 
-class AirResistanceForceHandler : public IForceHandler
+class AirResistanceForceHandler final : public IForceHandler
 {
-	virtual void ApplyForceForFrame(World* world, float deltaTime);
+	virtual void ApplyForceForFrame(World* world, float deltaTime) const;
 };

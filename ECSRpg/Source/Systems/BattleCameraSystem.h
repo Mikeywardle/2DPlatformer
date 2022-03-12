@@ -2,10 +2,11 @@
 
 #include <ecs/System.h>
 
-class PlayerWeaponSystem final : public System
+class BattleCameraSystem : public System
 {
 public:
 
-	PlayerWeaponSystem(World* InWorld);
+	BattleCameraSystem(World* world);
+
 	virtual void OnInput(const float deltaTime, const InputData* inputData) override;
 };

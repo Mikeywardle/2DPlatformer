@@ -169,7 +169,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_DEVELOPMENT;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</AdditionalIncludeDirectories>
     </ClCompile>
@@ -220,7 +220,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_DEVELOPMENT;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)/_include;$(ProjectDir)/Engine;$(ProjectDir)/Source;</AdditionalIncludeDirectories>
     </ClCompile>
@@ -240,6 +240,8 @@
     <ClCompile Include="Engine\Camera\SpringArm.cpp" />
     <ClCompile Include="Engine\Collisions\CollisionQuadtree.cpp" />
     <ClCompile Include="Engine\Collisions\CollisionQuadtreeTests.cpp" />
+    <ClCompile Include="Engine\Debugging\CollisionDebugSystem.cpp" />
+    <ClCompile Include="Engine\Debugging\DebugDraws.cpp" />
     <ClCompile Include="Engine\Debugging\DebugSystem.cpp" />
     <ClCompile Include="Engine\Debugging\PerformanceDebugSystem.cpp" />
     <ClCompile Include="Engine\GamePlay\Health.cpp" />
@@ -301,19 +303,12 @@
     <ClCompile Include="Engine\Utils\FileIO.cpp" />
     <ClCompile Include="Engine\Utils\XMLReader.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Source\Components\CameraRotationComponent.cpp" />
-    <ClCompile Include="Source\Components\PlayerMovementComponent.cpp" />
-    <ClCompile Include="Source\Components\WeaponComponents.cpp" />
     <ClCompile Include="Source\Data\NeOniCollisionLayers.cpp" />
-    <ClCompile Include="Source\Debug\PlayerDebugSystem.cpp" />
-    <ClCompile Include="Source\Helpers\BulletCreationHelpers.cpp" />
-    <ClCompile Include="Source\Helpers\EnemyCreationHelpers.cpp" />
-    <ClCompile Include="Source\Helpers\PlayerCreationHelpers.cpp" />
     <ClCompile Include="Source\Levels\DungeonLevel.cpp" />
-    <ClCompile Include="Source\Systems\BulletSystem.cpp" />
-    <ClCompile Include="Source\Systems\CameraRotationSystem.cpp" />
-    <ClCompile Include="Source\Systems\PlayerMovementSystem.cpp" />
-    <ClCompile Include="Source\Systems\PlayerWeaponSystem.cpp" />
+    <ClCompile Include="Source\Levels\MainMenuLevel.cpp" />
+    <ClCompile Include="Source\Levels\PhysicsTestLevel.cpp" />
+    <ClCompile Include="Source\Systems\BattleCameraSystem.cpp" />
+    <ClCompile Include="Source\Systems\MouseSelectionSystem.cpp" />
     <ClCompile Include="_include\ImGui\imgui.cpp" />
     <ClCompile Include="_include\ImGui\imgui_demo.cpp" />
     <ClCompile Include="_include\ImGui\imgui_draw.cpp" />
@@ -328,10 +323,12 @@
     <ClInclude Include="Engine\Camera\CameraComponent.h" />
     <ClInclude Include="Engine\Camera\CameraUniformBufferHandler.h" />
     <ClInclude Include="Engine\Camera\SpringArm.h" />
+    <ClInclude Include="Engine\Collisions\CollisionGrid.h" />
     <ClInclude Include="Engine\Collisions\CollisionQuadtree.h" />
     <ClInclude Include="Engine\Collisions\CollisionQuadtreeTests.h" />
     <ClInclude Include="Engine\Config\GameConfig.h" />
     <ClInclude Include="Engine\Core\GameState.h" />
+    <ClInclude Include="Engine\Debugging\CollisionDebugSystem.h" />
     <ClInclude Include="Engine\Debugging\DebugDraws.h" />
     <ClInclude Include="Engine\Debugging\DebugSystem.h" />
     <ClInclude Include="Engine\Debugging\IDebuggingSystem.h" />
@@ -412,29 +409,21 @@
     <ClInclude Include="Engine\Utils\SortedVector.h" />
     <ClInclude Include="Engine\Utils\STLUtils.h" />
     <ClInclude Include="Engine\Utils\XMLReader.h" />
-    <ClInclude Include="Source\Components\BulletTags.h" />
-    <ClInclude Include="Source\Components\CameraRotationComponent.h" />
-    <ClInclude Include="Source\Components\EnemyComponents.h" />
-    <ClInclude Include="Source\Components\PlayerTags.h" />
-    <ClInclude Include="Source\Components\PlayerMovementComponent.h" />
+    <ClInclude Include="Source\Components\BattleCameraComponent.h" />
     <ClInclude Include="Source\Components\RotatorComponent.h" />
-    <ClInclude Include="Source\Components\WeaponComponents.h" />
+    <ClInclude Include="Source\Components\UnitComponents.h" />
     <ClInclude Include="Source\Config\NeOniPhysicsConfig.h" />
     <ClInclude Include="Source\Config\TestInputConfig.h" />
     <ClInclude Include="Source\Data\EntityColour.h" />
     <ClInclude Include="Source\Data\NeOniCollisionLayers.h" />
     <ClInclude Include="Source\Debug\DebugSystemsSetup.h" />
-    <ClInclude Include="Source\Debug\PlayerDebugSystem.h" />
-    <ClInclude Include="Source\Helpers\BulletCreationHelpers.h" />
-    <ClInclude Include="Source\Helpers\EnemyCreationHelpers.h" />
-    <ClInclude Include="Source\Helpers\PlayerCreationHelpers.h" />
     <ClInclude Include="Source\Levels\DungeonLevel.h" />
+    <ClInclude Include="Source\Levels\MainMenuLevel.h" />
+    <ClInclude Include="Source\Levels\PhysicsTestLevel.h" />
     <ClInclude Include="Source\PhysicsTest\PhysicsBallSpawnerSystem.h" />
     <ClInclude Include="Source\PhysicsTest\PhysicsTestLevel.h" />
-    <ClInclude Include="Source\Systems\BulletSystem.h" />
-    <ClInclude Include="Source\Systems\CameraRotationSystem.h" />
-    <ClInclude Include="Source\Systems\PlayerMovementSystem.h" />
-    <ClInclude Include="Source\Systems\PlayerWeaponSystem.h" />
+    <ClInclude Include="Source\Systems\BattleCameraSystem.h" />
+    <ClInclude Include="Source\Systems\MouseSelectionSystem.h" />
     <ClInclude Include="_include\ImGui\imconfig.h" />
     <ClInclude Include="_include\ImGui\imgui.h" />
     <ClInclude Include="_include\ImGui\imgui_impl_glfw.h" />

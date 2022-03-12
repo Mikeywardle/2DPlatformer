@@ -5,5 +5,5 @@ class IForceHandler
 {
 public:
 
-	virtual void ApplyForceForFrame(World* world, float deltaTime) = 0;
+	virtual void ApplyForceForFrame(World* world, float deltaTime) const = 0;
 };

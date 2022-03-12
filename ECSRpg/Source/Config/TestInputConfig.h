@@ -7,13 +7,15 @@
 enum TestConfigInputId : int
 {
 	Up = 0
-	,Down = 1
-	, Left = 2
-	,Right = 3
-	, Left_click = 4
-	, Right_click = 5
-	, Jump = 6
-	, Fire = 7
+	, Down
+	, Left
+	, Right
+	, Turn_Left
+	, Turn_Right
+	, Left_click
+	, Right_click
+	, Jump
+	, Fire
 };
 
 static InputConfiguration TestInputConfig =
@@ -35,6 +37,14 @@ static InputConfiguration TestInputConfig =
 		{
 			TestConfigInputId::Right,
 			{InputKeys::KEYBOARD_D_KEY}
+		},
+		{
+			TestConfigInputId::Turn_Left,
+			{InputKeys::KEYBOARD_Q_KEY}
+		},
+		{
+			TestConfigInputId::Turn_Right,
+			{InputKeys::KEYBOARD_E_KEY}
 		},
 		{
 			TestConfigInputId::Left_click,

@@ -52,4 +52,16 @@ struct Vector3
 	static const Vector3 One;
 };
 
+struct Vector3Int
+{
+	Vector3Int() {}
+	Vector3Int(int x, int y, int z);
+
+	Vector3Int operator+ (const Vector3Int b) const;
+	Vector3Int operator- (const Vector3Int b) const;
+
+	int x;
+	int y;
+	int z;
+};
 

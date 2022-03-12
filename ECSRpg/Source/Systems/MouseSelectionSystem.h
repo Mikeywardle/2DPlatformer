@@ -2,16 +2,12 @@
 
 #include <ecs/System.h>
 
-class InputReceiver;
-struct Vector2;
+struct MouseSelectionDebugMarker {};
 
-class CameraRotationSystem : public System
+class MouseSelectionSystem : public System
 {
 public:
-	CameraRotationSystem(World* world);
-
+	MouseSelectionSystem(World* world);
 
 	virtual void OnInput(const float deltaTime, const InputData* inputData) override;
-
-private:
 };

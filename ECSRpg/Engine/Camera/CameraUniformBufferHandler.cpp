@@ -38,6 +38,10 @@ void CameraUniformBufferHandler::BindCameraBuffers(World* world)
 {
 	Entity mainCamera = CameraComponent::GetMainCamera();
 
+	if (!world->HasComponent<CameraComponent>(mainCamera))
+		return;
+
+
 	CameraComponent* camera = world->GetComponent<CameraComponent>(mainCamera);
 	Transform* transform = world->GetComponent<Transform>(mainCamera);
 

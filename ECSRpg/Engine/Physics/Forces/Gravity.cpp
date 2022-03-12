@@ -2,11 +2,9 @@
 #include "../RigidBody.h"
 
 
-void GravityForceHandler::ApplyForceForFrame(World* world, float deltaTime)
+void GravityForceHandler::ApplyForceForFrame(World* world, float deltaTime) const
 {
-	std::vector<Entity> entities = world->GetEntities<GravityComponent, RigidBodyComponent>();
-
-	for (Entity entity : entities)
+	ForEntities(world, GravityComponent, RigidBodyComponent)
 	{
 		RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
 		GravityComponent* gravComponent = world->GetComponent<GravityComponent>(entity);

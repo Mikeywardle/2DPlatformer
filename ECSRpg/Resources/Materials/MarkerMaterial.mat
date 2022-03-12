@@ -1,0 +1,14 @@
+<Material>
+  <Vertex>BuildingVertex</Vertex>
+  <Fragment>BuildingFragment</Fragment>
+  <Colors>
+    <Color>
+      <name>localColor</name>
+      <r>6.f</r>
+      <g>6.f</g>
+      <b>0.f</b>
+      <a>1.0</a>
+    </Color>
+  </Colors>
+</Material>
+

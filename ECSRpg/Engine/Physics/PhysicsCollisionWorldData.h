@@ -7,18 +7,25 @@
 
 struct CollisionAABB;
 
+#pragma pack(push, 1)
 struct PhysicsCollisionWorldData
 {
+public:
 	PhysicsCollisionWorldData(Entity Entity, Vector3 InPosition, Vector3 HalfLimits, ColliderType InType, bool isTrigger);
 
+public:
 	Entity entity;
 
 	CollisionAABB BoundingBox;
-	CollisionAABB2D BoundingBox2D;
 
 	bool IsTrigger = false;
 	ColliderType type;
 
+public:
+
 	CollisionAABB GetAABB() const;
-	CollisionAABB2D GetAABB2D() const;
+
+	bool operator < (const PhysicsCollisionWorldData& in) const { return entity < in.entity; };
 };
+
+#pragma pack(pop)

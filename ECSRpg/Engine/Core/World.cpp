@@ -14,6 +14,8 @@
 #include <Physics/PhysicsSystem.h>
 #include <Physics/PhysicsSystemConfig.h>
 
+#include <Analytics/Timer.h>
+
 #if NOT_RELEASE_BUILD
 #include <Debugging/DebugSystem.h>
 #endif
@@ -56,9 +58,16 @@ void World::UnRegisterSystem(System* system)
 
 void World::RunFrame(const float deltaTime, const InputData* inputData)
 {
+
+	Timer timer = Timer();
+
+	timer.StartTimer();
 	//Update Physics
 	physicsSystem->ProcessPhysicsForFrame(deltaTime);
 
+	const double physTime = timer.StopTimer();
+
+	timer.StartTimer();
 	//Iterate through systems
 	for (System* system : systems)
 	{
@@ -68,13 +77,19 @@ void World::RunFrame(const float deltaTime, const InputData* inputData)
 	{
 		system->OnFrame(deltaTime);
 	}
+	const double sysTime = timer.StopTimer();
 
 	//Process Level
 	currentlyLoadedLevel->OnInput(deltaTime, inputData);
 	currentlyLoadedLevel->OnFrame(deltaTime);
 
+	timer.StartTimer();
 	//Draw World
 	renderingSystem->DrawWorld();
+
+	const double drawTime = timer.StopTimer();
+
+	printf("Phys- %.3fms, Sys- %.3fms, Draw- %.3fms\n", physTime, sysTime, drawTime);
 
 #if NOT_RELEASE_BUILD
 	ProcessDebug(deltaTime, inputData);

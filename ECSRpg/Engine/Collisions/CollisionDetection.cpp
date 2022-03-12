@@ -2,6 +2,7 @@
 
 #include <math.h>
 
+#pragma region 2D Collisions
 bool TestAABB2DvsAABB2DSimple(const CollisionAABB2D& A, const CollisionAABB2D& B)
 {
 	const Vector2 CollisionDepths = Vector2(
@@ -23,6 +24,9 @@ bool TestAABB2DContainsAABB2D(const CollisionAABB2D& Container, const CollisionA
 		&& LongestYDistance <= Container.HalfLimits.y;
 }
 
+#pragma endregion
+
+#pragma region 3D Collision
 CollisionResult TestABBvAABB(const CollisionAABB& A, const CollisionAABB& B)
 {
 	CollisionResult result;
@@ -111,7 +115,9 @@ CollisionResult TestSphereVsAABB(const CollisionSphere& sphere, const CollisionA
 
 	return result;
 }
+#pragma endregion
 
+#pragma region Raycasting
 //Rays
 RaycastingResult TestRayVsSphere(const Ray& ray, const CollisionSphere& sphere)
 {
@@ -138,7 +144,7 @@ RaycastingResult TestRayVsSphere(const Ray& ray, const CollisionSphere& sphere)
 	//Ray has hit
 
 	result.hasHit = true;
-	result.Distance = fmaxf(-fb - sqrtf(discriminant),0)/ray.Length;
+	result.Distance = fmaxf(-fb - sqrtf(discriminant),0);
 	result.Position = ray.Start + (ray.Direction * result.Distance);
 	result.Normal = Vector3::Normalize(result.Position - sphere.Position);
 
@@ -166,18 +172,19 @@ RaycastingResult TestRayVsAABB(const Ray& ray, const CollisionAABB& box)
 
 	// if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
 	if (tmax < 0
-		|| tmin > tmax
-		|| tmin > ray.Length)
+		|| tmin > tmax)
 	{
 		result.hasHit = false;
 		return result;
 	}
 
 	result.hasHit = true;
-	result.Distance = tmin/ray.Length;
-	result.Position = ray.Start + (ray.Direction * result.Distance);
+	result.Distance = tmin;
+	result.Position = ray.Start + (ray.Direction * result.Distance );
 
 	//result.Normal = Vector3::Normalize(result.Position - sphere.Position);
 
 	return result;
 }
+
+#pragma endregion

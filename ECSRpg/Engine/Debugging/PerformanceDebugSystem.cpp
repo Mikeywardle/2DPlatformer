@@ -3,7 +3,7 @@
 
 void PerformanceDebugSystem::OnDebugUpdate(World* world, float deltaTime)
 {
-	ImGui::Begin("Debug Tool");
+	ImGui::Begin("Performance");
 
 	ImGui::Text("Frame Time:");
 	ImGui::Text("%.2f fps", 1 / deltaTime);

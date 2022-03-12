@@ -29,7 +29,6 @@ struct ColliderMetaComponent
 struct IColliderComponent 
 {
 	virtual CollisionAABB GetAABBLimits(Transform* transform) const  = 0;
-	virtual CollisionAABB2D GetAABB2DLimits(Transform* transform) const  = 0;
 	virtual ColliderType GetColliderType() const = 0;
 };
 
@@ -40,7 +39,6 @@ public:
 	AABBColliderComponent(Vector3 halfLimits);
 
 	virtual CollisionAABB GetAABBLimits(Transform* transform) const override;
-	virtual CollisionAABB2D GetAABB2DLimits(Transform* transform) const override;
 	virtual ColliderType GetColliderType() const override { return ColliderType::AABB; };
 
 public:
@@ -55,7 +53,6 @@ public:
 	SphereColliderComponent(float radius);
 
 	virtual CollisionAABB GetAABBLimits(Transform* transform) const override;
-	virtual CollisionAABB2D GetAABB2DLimits(Transform* transform) const override;
 	virtual ColliderType GetColliderType() const override { return ColliderType::Sphere; };
 
 	CollisionSphere GetCollisionSphere(Transform* transform) const;

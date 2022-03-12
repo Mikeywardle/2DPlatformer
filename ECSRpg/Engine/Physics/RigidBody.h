@@ -5,7 +5,9 @@ struct RigidBodyComponent
 {
 	bool isInfiniteMass;
 	bool isAwake;
-	float mass;
+	bool frictionAllowed = true;
+
+	float mass = 0.0f;
 	float Restitution = 0;
 	float Friction = 0;
 

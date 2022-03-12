@@ -198,21 +198,6 @@
     <ClCompile Include="Engine\Camera\SpringArm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Systems\PlayerMovementSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Components\PlayerMovementComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Helpers\PlayerCreationHelpers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Systems\CameraRotationSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Components\CameraRotationComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Platform\GameWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -255,28 +240,28 @@
     <ClCompile Include="Engine\Debugging\PerformanceDebugSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Debug\PlayerDebugSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Systems\PlayerWeaponSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Helpers\BulletCreationHelpers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Systems\BulletSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Components\WeaponComponents.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Physics\PhysicsCollisionLayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Data\NeOniCollisionLayers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Helpers\EnemyCreationHelpers.cpp">
+    <ClCompile Include="Source\Levels\MainMenuLevel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Debugging\CollisionDebugSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Debugging\DebugDraws.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Systems\BattleCameraSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Systems\MouseSelectionSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Levels\PhysicsTestLevel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -521,25 +506,7 @@
     <ClInclude Include="Engine\Camera\SpringArm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Systems\PlayerMovementSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Maths\MathsTypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Helpers\PlayerCreationHelpers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Components\PlayerMovementComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Components\PlayerTags.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Components\CameraRotationComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Systems\CameraRotationSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Platform\GameWindow.h">
@@ -599,25 +566,7 @@
     <ClInclude Include="Engine\Debugging\PerformanceDebugSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Debug\PlayerDebugSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Debug\DebugSystemsSetup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Components\BulletTags.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Systems\PlayerWeaponSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Components\WeaponComponents.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Helpers\BulletCreationHelpers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Systems\BulletSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Physics\PhysicsCollisionLayer.h">
@@ -635,10 +584,28 @@
     <ClInclude Include="Source\Config\NeOniPhysicsConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Components\EnemyComponents.h">
+    <ClInclude Include="Source\Levels\MainMenuLevel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Helpers\EnemyCreationHelpers.h">
+    <ClInclude Include="Engine\Debugging\CollisionDebugSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Systems\BattleCameraSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Components\BattleCameraComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Systems\MouseSelectionSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Components\UnitComponents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collisions\CollisionGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Levels\PhysicsTestLevel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -45,7 +45,8 @@ void SpringArmSystem::OnFrame(float deltaTime)
 
 		const Vector3 springArmEnd = springArmPos + (springArmForward * NegativeDistance);
 
-		const RaycastingResult result =  physicsSystem->CastRay(springArmPos, springArmEnd, springArm->parent);
+		const Ray ray = Ray(springArmPos, springArmEnd);
+		const RaycastingResult result =  physicsSystem->CastRay(ray, springArm->parent);
 
 		Vector3 CameraOffset;
 

@@ -256,7 +256,7 @@ void GameWindow::InitialiseWindow()
 
 	glfwSetWindowUserPointer(glfwWindow, (void*)this);
 
-	glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSwapInterval(1);
 
 	initialised = true;

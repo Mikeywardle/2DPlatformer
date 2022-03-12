@@ -22,7 +22,7 @@ public:
 	ComponentBatch()
 	{}
 
-	virtual bool ContainsComponent(const Entity entity) const  override
+	virtual bool ContainsComponent(const Entity entity) const override
 	{
 		if (entityToIndexArray.size() <= entity)
 		{

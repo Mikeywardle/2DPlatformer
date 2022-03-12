@@ -43,11 +43,11 @@ public:
 	ComponentBatch<T>* GetComponentBatch() const
 	{
 		const char* hash = typeid(T).raw_name();
-		try
+		if(componentsLookup.count(hash))
 		{
 			return (ComponentBatch<T>*)componentsLookup.at(hash);
 		}
-		catch (std::out_of_range e)
+		else
 		{
 			return nullptr;
 		}
@@ -130,9 +130,9 @@ public:
 	}
 
 	template<typename T>
-	bool HasComponent(Entity entity) const
+	bool HasComponent(const Entity entity) const
 	{
-		ComponentBatch<T>* batch = GetComponentBatch<T>();
+		const ComponentBatch<T>* batch = GetComponentBatch<T>();
 
 		if (batch == nullptr)
 			return false;
@@ -156,11 +156,11 @@ private:
 
 	IComponentBatch* GetComponentBatchFromHash(const char* hash) const
 	{
-		try 
+		if (componentsLookup.count(hash))
 		{
 			return componentsLookup.at(hash);
 		}
-		catch(std::out_of_range e)
+		else
 		{
 			return nullptr;
 		}

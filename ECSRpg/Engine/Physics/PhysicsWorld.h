@@ -18,9 +18,12 @@ struct Transform;
 struct Vector2;
 struct Vector3;
 
+struct RaycastingResult;
+struct Ray;
+
 typedef unsigned int Entity;
 
-typedef CollisionResult (*FunctionCallBack)(const IColliderComponent* colliderA, Transform* transformA, const PhysicsCollisionWorldData entityB, World* world);
+typedef CollisionResult (*CollisionFunctionCallBack)(const IColliderComponent* colliderA, Transform* transformA, const PhysicsCollisionWorldData entityB, World* world);
 
 class PhysicsWorld
 {
@@ -35,8 +38,8 @@ public:
 	void AddDynamicBody(const PhysicsCollisionWorldData& toAdd, const uint8 CollisionLayer);
 	void AddStaticBody(const PhysicsCollisionWorldData& toAdd, const uint8 CollisionLayer);
 
-	void SetDynamicWorldLimits(const Vector2& position, const Vector2& halfLimits);
-	void SetStaticWorldLimits(const Vector2& position, const Vector2& halfLimits);
+	void SetDynamicWorldLimits(const Vector3& position, const Vector3& limits);
+	void SetStaticWorldLimits(const Vector3& position, const Vector3& limits);
 
 	void QueryCollider(
 		std::vector<PhysicsCollisionResult>& colliderResults
@@ -49,9 +52,10 @@ public:
 
 	Vector3 GetGravity() const;
 
+	RaycastingResult CastRay(const Ray ray, const std::vector<uint8> collisionLayers, const Entity toIgnoreEntity) const;
+
 	void BoxCast() const;
 	void SphereCast() const;
-	void CastRay() const;
 
 private:
 
@@ -62,10 +66,10 @@ private:
 
 	World* world;
 
-	std::vector<FunctionCallBack> CollisionFunctionsCallbacks;
+	std::vector<CollisionFunctionCallBack> CollisionFunctionsCallbacks;
 	std::vector<PhysicsCollisionLayer*> CollisionLayers;
 
-	const float QuadTreeBorderWidth = 10.f;
+	int totalCollisionLayers = 0;
 };
 
 namespace PhysicsWorldCollisionFunctions
@@ -77,4 +81,7 @@ namespace PhysicsWorldCollisionFunctions
 	//Sphere vs
 	CollisionResult SpherevsAABB(const IColliderComponent* colliderA, Transform* transformA, const PhysicsCollisionWorldData entityB, World* world);
 	CollisionResult SpherevsSphere(const IColliderComponent* colliderA, Transform* transformA, const PhysicsCollisionWorldData entityB, World* world);
+
+	//Raycast Callback
+	RaycastingResult RaycastingCallback(const Ray ray, const PhysicsCollisionWorldData item, const unsigned int IgnoreEntity, const void* userData);
 }

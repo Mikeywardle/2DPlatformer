@@ -29,3 +29,19 @@ struct CollisionSphere
 	float Radius;
 	Vector3 Position;
 };
+
+struct CollisionTriangle
+{
+	CollisionTriangle() = default;
+	CollisionTriangle(Vector3 point0, Vector3 point1, Vector3 point2, Vector3 Normal );
+
+	Vector3 point0;
+	Vector3 point1;
+	Vector3 point2;
+	Vector3 Normal;
+};
+
+struct CollisionCapsule
+{
+
+};

@@ -2,11 +2,9 @@
 
 #include "../RigidBody.h"
 
-void AirResistanceForceHandler::ApplyForceForFrame(World* world, float deltaTime)
+void AirResistanceForceHandler::ApplyForceForFrame(World* world, float deltaTime) const
 {
-	std::vector<Entity> entities = world->GetEntities<AirResistanceComponent, RigidBodyComponent>();
-
-	for (Entity entity : entities)
+	ForEntities(world, AirResistanceComponent, RigidBodyComponent)
 	{
 		RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
 		AirResistanceComponent* arComponent = world->GetComponent<AirResistanceComponent>(entity);

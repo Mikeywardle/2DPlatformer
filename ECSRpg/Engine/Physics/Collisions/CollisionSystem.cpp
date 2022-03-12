@@ -41,7 +41,13 @@ void CollisionSystem::FindDynamicCollisions(std::vector<PhysicsCollisionResult>&
 	std::vector<std::vector<Entity>> sortedColliderEntities;
 
 	//Calculate world limits
-	float rightX, leftX, topY, bottomY;
+	float rightX = 0;
+	float leftX = 0;
+	float topY = 0;
+	float bottomY = 0;
+	float nearZ = 0;
+	float farZ = 0;
+
 	bool first = true;
 
 	for (Entity entity : entities)
@@ -50,27 +56,33 @@ void CollisionSystem::FindDynamicCollisions(std::vector<PhysicsCollisionResult>&
 		Transform* transform = world->GetComponent<Transform>(entity);
 		const IColliderComponent* collider = GetEntityCollider(entity, meta);
 
-		const CollisionAABB2D ColliderLimits = collider->GetAABB2DLimits(transform);
+		const CollisionAABB ColliderLimits = collider->GetAABBLimits(transform);
 
 		const Vector3 position = transform->GetPosition();
 
 		//Calculate Tree bounds
 		if (first)
 		{
-			leftX = position.x - ColliderLimits.Position.x;
-			rightX = position.x + ColliderLimits.Position.x;
+			leftX = position.x - ColliderLimits.HalfLimits.x;
+			rightX = position.x + ColliderLimits.HalfLimits.x;
 
-			bottomY = position.z - ColliderLimits.Position.y;
-			topY = position.z + ColliderLimits.Position.y;
+			bottomY = position.y - ColliderLimits.HalfLimits.y;
+			topY = position.y + ColliderLimits.HalfLimits.y;
+
+			nearZ = position.z - ColliderLimits.HalfLimits.z;
+			farZ = position.z + ColliderLimits.HalfLimits.z;
 			first = false;
 		}
 		else
 		{
-			leftX = fminf(leftX, position.x - ColliderLimits.Position.x);
-			rightX = fmaxf(rightX, position.x + ColliderLimits.Position.x);
+			leftX = fminf(leftX, position.x - ColliderLimits.HalfLimits.x);
+			rightX = fmaxf(rightX, position.x + ColliderLimits.HalfLimits.x);
 
-			bottomY = fminf(bottomY, position.z - ColliderLimits.Position.y);
-			topY = fmaxf(topY, position.z + ColliderLimits.Position.y);
+			bottomY = fminf(bottomY, position.y - ColliderLimits.HalfLimits.y);
+			topY = fmaxf(topY, position.y + ColliderLimits.HalfLimits.y);
+
+			nearZ = fminf(nearZ, position.z - ColliderLimits.HalfLimits.z);
+			farZ = fmaxf(farZ, position.z + ColliderLimits.HalfLimits.z);
 		}
 
 		uint8 colliderLayer = meta->collisionLayer;
@@ -84,10 +96,10 @@ void CollisionSystem::FindDynamicCollisions(std::vector<PhysicsCollisionResult>&
 	}
 
 	//Set World limits
-	const Vector2 TreeHalfLimits = Vector2((rightX - leftX) / 2.0f, (topY - bottomY) / 2.0f);
-	const Vector2 TreePosition = Vector2(leftX + TreeHalfLimits.x, bottomY + TreeHalfLimits.y);
+	const Vector3 GridSize = Vector3((rightX - leftX), (topY - bottomY), (farZ - nearZ));
+	const Vector3 Position = Vector3(leftX, bottomY, nearZ);
 
-	physWorld->SetDynamicWorldLimits(TreePosition, TreeHalfLimits);
+	physWorld->SetDynamicWorldLimits(Position, GridSize);
 
 	for (int i = 0; i < sortedColliderEntities.size(); ++i)
 	{
@@ -140,7 +152,13 @@ void CollisionSystem::GenerateStaticColiisions(PhysicsWorld* physWorld)
 	std::vector<Entity> entities = world->GetEntities<StaticCollider, ColliderMetaComponent>();
 
 	//Calculate world limits
-	float rightX, leftX, topY, bottomY;
+	float rightX = 0; 
+	float leftX = 0;
+	float topY = 0;
+	float bottomY = 0;
+	float nearZ = 0;
+	float farZ = 0;
+
 	bool first = true;
 
 	for (Entity entity : entities)
@@ -149,33 +167,39 @@ void CollisionSystem::GenerateStaticColiisions(PhysicsWorld* physWorld)
 		Transform* transform = world->GetComponent<Transform>(entity);
 		const IColliderComponent* collider = GetEntityCollider(entity, meta);
 
-		const CollisionAABB2D ColliderLimits = collider->GetAABB2DLimits(transform);
+		const CollisionAABB ColliderLimits = collider->GetAABBLimits(transform);
 
 		const Vector3 position = transform->GetPosition();
 
 		if (first)
 		{
-			leftX = position.x - ColliderLimits.Position.x;
-			rightX = position.x + ColliderLimits.Position.x;
+			leftX = position.x - ColliderLimits.HalfLimits.x;
+			rightX = position.x + ColliderLimits.HalfLimits.x;
 
-			bottomY = position.z - ColliderLimits.Position.y;
-			topY = position.z + ColliderLimits.Position.y;
+			bottomY = position.y - ColliderLimits.HalfLimits.y;
+			topY = position.y + ColliderLimits.HalfLimits.y;
+
+			nearZ = position.z - ColliderLimits.HalfLimits.z;
+			farZ = position.z + ColliderLimits.HalfLimits.z;
 			first = false;
 		}
 		else
 		{
-			leftX = fminf(leftX, position.x - ColliderLimits.Position.x);
-			rightX = fmaxf(rightX, position.x + ColliderLimits.Position.x);
+			leftX = fminf(leftX, position.x - ColliderLimits.HalfLimits.x);
+			rightX = fmaxf(rightX, position.x + ColliderLimits.HalfLimits.x);
 
-			bottomY = fminf(bottomY, position.z - ColliderLimits.Position.y);
-			topY = fmaxf(topY, position.z + ColliderLimits.Position.y);
+			bottomY = fminf(bottomY, position.y - ColliderLimits.HalfLimits.y);
+			topY = fmaxf(topY, position.y + ColliderLimits.HalfLimits.y);
+
+			nearZ = fminf(nearZ, position.z - ColliderLimits.HalfLimits.z);
+			farZ = fmaxf(farZ, position.z + ColliderLimits.HalfLimits.z);
 		}
 	}
 
-	const Vector2 TreeHalfLimits = Vector2((rightX - leftX) / 2.0f, (topY - bottomY) / 2.0f);
-	const Vector2 TreePosition = Vector2(leftX + TreeHalfLimits.x, bottomY + TreeHalfLimits.y);
+	const Vector3 GridSize = Vector3((rightX - leftX), (topY - bottomY), (farZ - nearZ));
+	const Vector3 Position = Vector3(leftX, bottomY, nearZ);
 
-	physWorld->SetStaticWorldLimits(TreePosition, TreeHalfLimits);
+	physWorld->SetStaticWorldLimits(Position, GridSize);
 
 	for (Entity entity : entities)
 	{
@@ -256,24 +280,28 @@ void CollisionSystem::ResolveCollisions(std::vector<PhysicsCollisionResult>& res
 		AddImpulseIfNotNull(rbb, ImpulserPerIMass * -1);
 
 		//Add Friction
-		const float TotalFrictionCoefficient = GetTotalFrictionCoefficient(rba, rbb);
-		const Vector3 tangent = Vector3::Normalize(relativeVelocity - (collisionNormal * Vector3::DotProduct(relativeVelocity, collisionNormal)));
-
-		const float frictionMagnitude = -(Vector3::DotProduct(relativeVelocity, tangent) / TotalInverseMass);
-		const float normalImpulseMagnitude = Vector3::Magnitude(ImpulserPerIMass);
-
-		Vector3 frictionImpulse;
-		if (fabsf(frictionMagnitude) < normalImpulseMagnitude * TotalFrictionCoefficient)
+		if (rba->frictionAllowed && rbb->frictionAllowed)
 		{
-			frictionImpulse = tangent * frictionMagnitude;
-		}
-		else
-		{
-			frictionImpulse = tangent * -normalImpulseMagnitude * TotalFrictionCoefficient;
+			const float TotalFrictionCoefficient = GetTotalFrictionCoefficient(rba, rbb);
+			const Vector3 tangent = Vector3::Normalize(relativeVelocity - (collisionNormal * Vector3::DotProduct(relativeVelocity, collisionNormal)));
+
+			const float frictionMagnitude = -(Vector3::DotProduct(relativeVelocity, tangent) / TotalInverseMass);
+			const float normalImpulseMagnitude = Vector3::Magnitude(ImpulserPerIMass);
+
+			Vector3 frictionImpulse;
+			if (fabsf(frictionMagnitude) < normalImpulseMagnitude * TotalFrictionCoefficient)
+			{
+				frictionImpulse = tangent * frictionMagnitude;
+			}
+			else
+			{
+				frictionImpulse = tangent * -normalImpulseMagnitude * TotalFrictionCoefficient;
+			}
+
+			AddImpulseIfNotNull(rba, frictionImpulse);
+			AddImpulseIfNotNull(rbb, frictionImpulse * -1);
 		}
 
-		AddImpulseIfNotNull(rba, frictionImpulse);
-		AddImpulseIfNotNull(rbb, frictionImpulse * -1);
 	}
 
 }

@@ -12,6 +12,9 @@
 #include <Inputs/InputData.h>
 
 #include "PerformanceDebugSystem.h"
+#include "CollisionDebugSystem.h"
+
+#include "DebugDraws.h"
 
 DebugSystem::DebugSystem(World* world)
 {
@@ -30,6 +33,9 @@ DebugSystem::DebugSystem(World* world)
 	ImGui_ImplOpenGL3_Init("#version 150");
 
 	AddSystem<PerformanceDebugSystem>();
+	AddSystem<CollisionDebugSystem>();
+
+	DebugDraws::InitialiseDebugShader();
 }
 
 DebugSystem::~DebugSystem()

@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-Entity CameraComponent::mainCamera;
+Entity CameraComponent::mainCamera = NO_ENTITY;
 
 
 Entity CameraComponent::GetMainCamera()

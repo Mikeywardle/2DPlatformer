@@ -15,29 +15,24 @@
 
 #include <Physics/RigidBody.h>
 #include <Physics/Collisions/CollisionComponents.h>
+#include <Physics/Forces/Gravity.h>
 
-
-#include <Systems/PlayerMovementSystem.h>
-#include <Systems/BulletSystem.h>
-#include <Systems/PlayerWeaponSystem.h>
-
-#include <Helpers/PlayerCreationHelpers.h>
-#include <Helpers/EnemyCreationHelpers.h>
+#include <Systems/BattleCameraSystem.h>
+#include <Systems/MouseSelectionSystem.h>
 
 #include <GamePlay/TransformParenting.h>
 #include <GamePlay/Lifetime.h>
 
-#include <Config/TestInputConfig.h>
-#include <Inputs/InputData.h>
+#include <Data/NeOniCollisionLayers.h>
+
+#include <Components/BattleCameraComponent.h>
+#include <Components/UnitComponents.h>
 
 
 
 void DungeonLevel::LoadLevel()
 {
-	PlayerCreation::SpawnPlayer(world);
-
-
-	EnemyCreation::SpawnEnemy(world, Vector3(5, 2, 5));
+	CreatePlayerCamera();
 
 	CreateDirectionalLight(Vector3(80, -10, 30));
 
@@ -54,21 +49,17 @@ void DungeonLevel::LoadLevel()
 	CreateTile(Vector3(-5, 2, 5), Vector3(.2, 2, 10), "TestWall");
 	CreateTile(Vector3(15, 2, 5), Vector3(.2, 2, 10), "TestWall");
 
-	//Steps
-	//CreateTile(Vector3(5, .2, 9), Vector3(2, .05, 5), "TestFloor");
+	//Mouse marker
+	CreateMouseSelectionMarker();
 
-	//CreateMesh(Vector3(5, 5, 5), "SmoothSphere");
-	//CreateMesh(Vector3(8, 5, 8), "SmoothSphere");
+	//Units
+	CreateUnit(Vector3(0, 5, 0));
 }
 
 void DungeonLevel::OnStart()
 {
-	//Player Systems
-	world->RegisterSystem<PlayerMovementSystem>();
-	world->RegisterSystem<PlayerWeaponSystem>();
-
-	//Bullet Systems
-	world->RegisterSystem<BulletSystem>();
+	world->RegisterSystem<BattleCameraSystem>();
+	world->RegisterSystem<MouseSelectionSystem>();
 
 	//Gameplay Utils
 	world->RegisterSystem<PositionAttachmentSystem>();
@@ -77,12 +68,70 @@ void DungeonLevel::OnStart()
 
 void DungeonLevel::OnInput(float deltaTime, const InputData* inputData)
 {
-	if (inputData->GetInputValue(TestConfigInputId::Right_click, InputTypes::BUTTON_RELEASED))
-	{
-		printf("Reload level");
-		world->SwitchLevel<DungeonLevel>();
-	}
+	//if (inputData->GetInputValue(TestConfigInputId::Right_click, InputTypes::BUTTON_RELEASED))
+	//{
+	//	printf("Reload level");
+	//	world->SwitchLevel<DungeonLevel>();
+	//}
 
+}
+
+void DungeonLevel::CreatePlayerCamera()
+{
+	Entity entity = world->CreateEntity();
+
+	Transform* transform = world->AddComponent<Transform>(entity);
+
+	transform->SetPosition(Vector3(0, 5, -6));
+	transform->SetRotation(Vector3(0, 0, -30));
+
+	CameraComponent* camera = world->AddComponent<CameraComponent>(entity);
+
+	camera->fov = 45.f;
+	camera->farPlane = 1000.f;
+	camera->nearPlane = 0.1f;
+	camera->projectionType = ProjectionType::PERSPECTIVE;
+
+	CameraComponent::SetMainCamera(entity);
+
+	BattleCameraComponent* battleCamera = world->AddComponent<BattleCameraComponent>(entity);
+
+	battleCamera->MovementSpeed = 10.f;
+	battleCamera->RotationSpeed = 10.f;
+}
+
+void DungeonLevel::CreateUnit(Vector3 position)
+{
+	Entity unit = CreateMesh(position, "SmoothSphere", "UnitTestMaterial");
+
+	world->AddComponent<SelectableUnitComponent>(unit);
+
+	SphereColliderComponent* sc = world->AddComponent<SphereColliderComponent>(unit);
+	new(sc) SphereColliderComponent(1.0f);
+
+	ColliderMetaComponent* colliderMeta = world->AddComponent<ColliderMetaComponent>(unit);
+	colliderMeta->type = ColliderType::Sphere;
+//	colliderMeta->collisionLayer = NeOniCollisionLayers::Players;
+	colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Environment);
+
+	world->AddComponent<DynamicCollider>(unit);
+
+	RigidBodyComponent* rb = world->AddComponent<RigidBodyComponent>(unit);
+	rb->mass = 10;
+	rb->Restitution = .01f;
+	rb->Friction = 1.f;
+
+	GravityComponent* gravity = world->AddComponent<GravityComponent>(unit);
+}
+
+void DungeonLevel::CreateMouseSelectionMarker()
+{
+	Entity marker = CreateMesh(Vector3(0,2,0), "Sphere", "MarkerMaterial");
+
+	Transform* transform = world->GetComponent<Transform>(marker);
+	transform->SetScale(Vector3(0.1f, 0.1f, 0.1f));
+
+	world->AddComponent<MouseSelectionDebugMarker>(marker);
 }
 
 void DungeonLevel::CreateTile(Vector3 Position, Vector3 Scale, std::string materialName)
@@ -113,13 +162,13 @@ void DungeonLevel::CreateTile(Vector3 Position, Vector3 Scale, std::string mater
 
 	ColliderMetaComponent* colliderMeta = world->AddComponent< ColliderMetaComponent>(platform);
 	colliderMeta->type = ColliderType::AABB;
+	colliderMeta->collisionLayer = NeOniCollisionLayers::Environment;
 
 	world->AddComponent<StaticCollider>(platform);
 }
 
 void DungeonLevel::CreateDirectionalLight(Vector3 rotation)
 {
-
 	Entity light = world->CreateEntity();
 
 	DirectionalLightComponent* dl = world->AddComponent<DirectionalLightComponent>(light);
@@ -127,15 +176,14 @@ void DungeonLevel::CreateDirectionalLight(Vector3 rotation)
 
 	Transform* t = world->AddComponent<Transform>(light);
 	t->SetRotation(rotation);
-
 }
 
-void DungeonLevel::CreateMesh(Vector3 position, std::string mesh)
+Entity DungeonLevel::CreateMesh(Vector3 position, std::string mesh, std::string material)
 {
 	ResourceManager* resourceManager = world->GetResourceManager();
 
 	Mesh* meshAsset = resourceManager->GetMesh(mesh);
-	Material* testMaterial = resourceManager->GetMaterial("TestMaterial");
+	Material* testMaterial = resourceManager->GetMaterial(material);
 
 	//Spawn Mesh
 	Entity platform = world->CreateEntity();
@@ -146,6 +194,8 @@ void DungeonLevel::CreateMesh(Vector3 position, std::string mesh)
 
 	Transform* t = world->AddComponent<Transform>(platform);
 	t->SetPosition(position);
-	t->SetStatic(true);
+	t->SetStatic(false);
 	t->SetScale(Vector3::One);
+
+	return platform;
 }

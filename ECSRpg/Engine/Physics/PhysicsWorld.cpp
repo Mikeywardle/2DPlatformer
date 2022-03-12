@@ -31,6 +31,8 @@ PhysicsWorld::PhysicsWorld(World* InWorld, const uint8 TotalCollisionLayers)
 	{
 		CollisionLayers.push_back(new PhysicsCollisionLayer());
 	}
+
+	totalCollisionLayers = TotalCollisionLayers;
 }
 
 PhysicsWorld::~PhysicsWorld()
@@ -67,19 +69,19 @@ void PhysicsWorld::AddStaticBody(const PhysicsCollisionWorldData& toAdd, const u
 	CollisionLayers[CollisionLayer]->AddStaticBody(toAdd);
 }
 
-void PhysicsWorld::SetDynamicWorldLimits(const Vector2& position, const Vector2& halfLimits)
+void PhysicsWorld::SetDynamicWorldLimits(const Vector3& position, const Vector3& limits)
 {
 	for (int i = 0; i < CollisionLayers.size(); ++i)
 	{
-		CollisionLayers[i]->SetDynamicLimits(position, halfLimits);
+		CollisionLayers[i]->SetDynamicLimits(position, limits);
 	}
 }
 
-void PhysicsWorld::SetStaticWorldLimits(const Vector2& position, const Vector2& halfLimits)
+void PhysicsWorld::SetStaticWorldLimits(const Vector3& position, const Vector3& limits)
 {
 	for (int i = 0; i < CollisionLayers.size(); ++i)
 	{
-		CollisionLayers[i]->SetStaticLimits(position, halfLimits);
+		CollisionLayers[i]->SetStaticLimits(position, limits);
 	}
 }
 
@@ -141,6 +143,47 @@ void PhysicsWorld::QueryCollider
 Vector3 PhysicsWorld::GetGravity() const
 {
 	return Vector3(0.0f, -9.81f, 0.0f);
+}
+
+RaycastingResult PhysicsWorld::CastRay(const Ray ray, const std::vector<uint8> collisionLayers, const Entity toIgnoreEntity) const
+{
+	RaycastingResult result;
+
+	if (collisionLayers.size() == 0)
+	{
+		//Test All layers
+		for (int i = 0; i < totalCollisionLayers; ++i)
+		{
+			const RaycastingResult layerResult = CollisionLayers[i]->CastRay(ray, toIgnoreEntity, PhysicsWorldCollisionFunctions::RaycastingCallback, world);
+
+			if (layerResult.hasHit)
+			{
+				if (!result.hasHit || layerResult.Distance < result.Distance)
+				{
+					result = layerResult;
+				}
+			}
+		}
+	}
+	else
+	{
+		for (const uint8& layer : collisionLayers)
+		{
+			const RaycastingResult layerResult = CollisionLayers[layer]->CastRay(ray, toIgnoreEntity, PhysicsWorldCollisionFunctions::RaycastingCallback, world);
+
+
+			if (layerResult.hasHit)
+			{
+				if (!result.hasHit || layerResult.Distance < result.Distance)
+				{
+					result = layerResult;
+				}
+			}
+		}
+	}
+
+
+	return result;
 }
 
 int PhysicsWorld::GetColliderPairingIndex(const int8& a, const int8& b) const
@@ -207,5 +250,50 @@ namespace PhysicsWorldCollisionFunctions
 		const CollisionSphere sphereB = sphereColliderB->GetCollisionSphere(transformB);
 
 		return TestSpherevsSphere(sphereA, sphereB);
+	}
+
+	RaycastingResult RaycastingCallback(const Ray ray, const PhysicsCollisionWorldData item, const unsigned int IgnoreEntity, const void* userData)
+	{
+
+		if (item.entity == IgnoreEntity)
+			return RaycastingResult();
+
+
+		const World* world = (World*)userData;
+
+		switch (item.type)
+		{
+		case ColliderType::AABB:
+
+		{
+			Transform* transform = world->GetComponent<Transform>(item.entity);
+			const AABBColliderComponent* boxcollider = world->GetComponent<AABBColliderComponent>(item.entity);
+			const CollisionAABB aabb = boxcollider->GetAABBLimits(transform);
+
+			RaycastingResult result = TestRayVsAABB(ray, aabb);
+			result.HitEntity = item.entity;
+			return result;
+			break;
+		}
+
+		case::ColliderType::Sphere:
+		{
+			Transform* transform = world->GetComponent<Transform>(item.entity);
+			const SphereColliderComponent* spherecollider = world->GetComponent<SphereColliderComponent>(item.entity);
+			const CollisionSphere sphere = spherecollider->GetCollisionSphere(transform);
+
+			RaycastingResult result = TestRayVsSphere(ray, sphere);
+			result.HitEntity = item.entity;
+
+			return result;
+			break;
+		}
+
+
+		default:
+			return RaycastingResult();
+			break;
+		}
+
 	}
 }

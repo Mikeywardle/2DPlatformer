@@ -6,20 +6,17 @@
 
 void MeshRenderer::Draw(World* world)
 {
-	glm::mat4 model;
-
 	int currentVAO = -1;
 	int currentProgram = -1;
 	int currentNumberOfIndices = 0;
 
 	ForEntities(world, MeshComponent, Transform)
 	{
-
-		MeshComponent* mesh = world->GetComponent<MeshComponent>(entity);
+		const MeshComponent* mesh = world->GetComponent<MeshComponent>(entity);
 		Transform* transform = world->GetComponent<Transform>(entity);
 
-		int mat = mesh->GetMaterialIndex();
-		int vao = mesh->GetMeshVAO();
+		const int mat = mesh->GetMaterialIndex();
+		const int vao = mesh->GetMeshVAO();
 
 		if (currentProgram != mat)
 		{
@@ -34,12 +31,10 @@ void MeshRenderer::Draw(World* world)
 			currentNumberOfIndices = mesh->GetNumberOfIndices();
 		}
 
-		model = transform->GetModel();
+		const glm::mat4 model = transform->GetModel();
 		SetShaderMatrix4(mat, "model", model);
 
-
 		glDrawElements(GL_TRIANGLES, currentNumberOfIndices, GL_UNSIGNED_INT, 0);
-
 	}
 
 }

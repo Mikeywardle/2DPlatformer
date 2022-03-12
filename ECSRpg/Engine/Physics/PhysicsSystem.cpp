@@ -54,6 +54,11 @@ void PhysicsSystem::ClearWorld()
 	physicsWorld->ClearStaticWorld();
 }
 
+RaycastingResult PhysicsSystem::CastRay(const Ray ray, const Entity ignoreEntity, const std::vector<uint8> layers) const
+{
+	return physicsWorld->CastRay(ray, layers, ignoreEntity);
+}
+
 void PhysicsSystem::ProcessForceHandlers(float deltaTime)
 {
 	for (IForceHandler* handler : forceHandlers)
