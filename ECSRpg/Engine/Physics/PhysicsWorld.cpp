@@ -186,6 +186,11 @@ RaycastingResult PhysicsWorld::CastRay(const Ray ray, const std::vector<uint8> c
 	return result;
 }
 
+PhysicsCollisionLayer* PhysicsWorld::GetCollisionLayer(int index) const
+{
+	return CollisionLayers[index];
+}
+
 int PhysicsWorld::GetColliderPairingIndex(const int8& a, const int8& b) const
 {
 	return b + ((int8)ColliderType::TotalCollisionComponents * a);

@@ -10,6 +10,11 @@
 #include <algorithm>
 #include <set>
 
+struct  CompressedCollection
+{
+	unsigned int index : 24;
+	unsigned int length : 8;
+};
 
 #pragma pack(push, 1)
 template<typename T>
@@ -21,6 +26,7 @@ public:
 
 	void Add(const T& toInsert);
 	void Clear();
+	T* GetDataPtr(T* inPtr)const;
 
 	std::vector<T> ToVector()const;
 
@@ -41,8 +47,9 @@ public:
 
 	void Clear();
 	void SetGridDimensions(Vector3 origin, Vector3 gridSize, Vector3 cellSize = Vector3::One);
+	void SetDataArrayLength(const int& length);
+	void BuildGridCells();
 
-	CollisionAABB GetAABBBounds() const;
 
 	void Query(const CollisionAABB& QueryAABB, std::vector<T>& results) const;
 	void GetAABBClampIndices(const CollisionAABB& queryAABB, Vector3Int& bottomLeft, Vector3Int& topRight) const;
@@ -53,7 +60,7 @@ public:
 	Vector3 origin;
 	Vector3 cellSize;
 	Vector3Int dimensions;
-	int numberOfCells;
+	uint32 numberOfCells;
 
 	//AABB vars
 	Vector3 centre;
@@ -66,11 +73,17 @@ private:
 	Vector3Int GetCoordinatesFromPosition(const Vector3& position) const;
 	Vector3 GetCellPositionFromCoordinates(const Vector3Int& coords) const;
 	int GetIndexFromCoords(const Vector3Int& coords) const;
+
+	CollisionAABB GetAABBBounds() const;
 private:
 
 	//3D data stored in a 1-D array (the data is an array of T)
 	std::vector<CollisionGridCellCollection<int>> gridData;
 	std::vector<T> dataArray;
+
+	uint32* indicesBuffer;
+	uint32 indicesBufferSize = 0;
+	uint32 currentIndicesBufferIndex = 0;
 };
 
 template<typename T>
@@ -85,7 +98,6 @@ inline void CollisionGrid<T>::Insert(const T& item)
 	const int dataIndex = dataArray.size() - 1;
 
 	GetAABBClampIndices(insertAABB, bottomLeft, topRight);
-
 
 	for (int z = bottomLeft.z; z <= topRight.z; ++z)
 	{
@@ -178,8 +190,6 @@ inline void CollisionGrid<T>::Clear()
 template<typename T>
 inline void CollisionGrid<T>::SetGridDimensions(Vector3 origin, Vector3 gridSize, Vector3 cellSize)
 {
-	Clear();
-
 	const Vector3 fdimensions = gridSize/cellSize;
 	this->origin = origin;
 	this->dimensions = Vector3Int((int)fdimensions.x, (int)fdimensions.y, (int)fdimensions.z);
@@ -192,6 +202,17 @@ inline void CollisionGrid<T>::SetGridDimensions(Vector3 origin, Vector3 gridSize
 	numberOfCells = dimensions.x * dimensions.y * dimensions.z;
 
 	gridData.resize(numberOfCells);
+}
+
+template<typename T>
+inline void CollisionGrid<T>::SetDataArrayLength(const int& length)
+{
+	dataArray.resize(length);
+}
+
+template<typename T>
+inline void CollisionGrid<T>::BuildGridCells()
+{
 }
 
 template<typename T>
@@ -335,7 +356,8 @@ inline RaycastingResult CollisionGrid<T>::CastRay(const Ray ray, const unsigned 
 		}
 		else
 		{
-			const CollisionGridCellCollection<int>& hitData = gridData[GetIndexFromCoords(worldIndex)];
+			const int worldIndexInt = GetIndexFromCoords(worldIndex);
+			const CollisionGridCellCollection<int>& hitData = gridData[worldIndexInt];
 
 			//if grid box has objects then do raycasting
 			for (int i = 0; i<hitData.size; ++i)
@@ -426,7 +448,18 @@ inline void CollisionGridCellCollection<T>::Add(const T& toInsert)
 template<typename T>
 inline void CollisionGridCellCollection<T>::Clear()
 {
-	data = (T*)realloc(data, 0);
+	if (data != nullptr)
+	{
+		data = (T*)realloc(data, 0);
+		size = 0;
+	}
+
+}
+
+template<typename T>
+inline T* CollisionGridCellCollection<T>::GetDataPtr(T* inPtr) const
+{
+	return NULL;
 }
 
 template<typename T>

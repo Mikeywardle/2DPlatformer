@@ -31,6 +31,8 @@ struct Vector3
 	void operator /= (const float b);
 	void operator *= (const float b);
 
+	bool operator == (const Vector3 b) const;
+
 	//Static methods
 	static Vector3 CrossProduct(const Vector3 a, const Vector3 b);
 	static float DotProduct(const Vector3 a, const Vector3 b);

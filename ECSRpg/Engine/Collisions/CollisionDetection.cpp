@@ -142,9 +142,15 @@ RaycastingResult TestRayVsSphere(const Ray& ray, const CollisionSphere& sphere)
 	}
 
 	//Ray has hit
+	result.Distance = fmaxf(-fb - sqrtf(discriminant), 0);
+
+	if (result.Distance > ray.Length)
+	{
+		result.hasHit = false;
+		return result;
+	}
 
 	result.hasHit = true;
-	result.Distance = fmaxf(-fb - sqrtf(discriminant),0);
 	result.Position = ray.Start + (ray.Direction * result.Distance);
 	result.Normal = Vector3::Normalize(result.Position - sphere.Position);
 
@@ -178,8 +184,15 @@ RaycastingResult TestRayVsAABB(const Ray& ray, const CollisionAABB& box)
 		return result;
 	}
 
-	result.hasHit = true;
 	result.Distance = tmin;
+
+	if(tmin > ray.Length)
+	{
+		result.hasHit = false;
+		return result;
+	}
+
+	result.hasHit = true;
 	result.Position = ray.Start + (ray.Direction * result.Distance );
 
 	//result.Normal = Vector3::Normalize(result.Position - sphere.Position);

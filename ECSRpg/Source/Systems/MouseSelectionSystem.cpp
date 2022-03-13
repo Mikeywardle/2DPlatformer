@@ -10,6 +10,8 @@
 
 #include <Components/UnitComponents.h>
 
+#include <Data/NeOniCollisionLayers.h>
+
 MouseSelectionSystem::MouseSelectionSystem(World* world)
 	: System(world)
 {}

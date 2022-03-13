@@ -7,6 +7,8 @@
 #include <Physics/RigidBody.h>
 #include <Physics/PhysicsCollisionWorldData.h>
 
+#include <Physics/PhysicsCollisionLayer.h>
+
 CollisionSystem::CollisionSystem(World* world)
 {
 	this->world = world;
@@ -38,17 +40,23 @@ void CollisionSystem::FindDynamicCollisions(std::vector<PhysicsCollisionResult>&
 
 	std::vector<Entity> entities = world->GetEntities<DynamicCollider, ColliderMetaComponent>();
 
-	std::vector<std::vector<Entity>> sortedColliderEntities;
+	std::vector<std::vector<PhysicsCollisionWorldData>> sortedColliderEntities;
+	std::vector<std::vector<PhysicsCollisionWorldData>> sortedTriggerEntities;
 
-	//Calculate world limits
-	float rightX = 0;
-	float leftX = 0;
-	float topY = 0;
-	float bottomY = 0;
-	float nearZ = 0;
-	float farZ = 0;
+	std::vector<CollisionWorldBoundariesData> sortedColliderBoundaries;
+	std::vector<CollisionWorldBoundariesData> sortedTriggerBoundaries;
 
-	bool first = true;
+	const int NumberOfCollisionLayers = physWorld->GetTotalCollisionLayers();
+
+	for (int i = 0; i < NumberOfCollisionLayers; ++i)
+	{
+		sortedColliderEntities.push_back(std::vector<PhysicsCollisionWorldData>());
+
+		sortedTriggerEntities.push_back(std::vector<PhysicsCollisionWorldData>());
+
+		sortedColliderBoundaries.push_back(CollisionWorldBoundariesData());
+		sortedTriggerBoundaries.push_back(CollisionWorldBoundariesData());
+	}	
 
 	for (Entity entity : entities)
 	{
@@ -60,69 +68,83 @@ void CollisionSystem::FindDynamicCollisions(std::vector<PhysicsCollisionResult>&
 
 		const Vector3 position = transform->GetPosition();
 
-		//Calculate Tree bounds
-		if (first)
+		const uint8 colliderLayer = meta->collisionLayer;
+
+		const PhysicsCollisionWorldData colliderData = PhysicsCollisionWorldData
+		(
+			entity
+			, position
+			, collider->GetAABBLimits(transform).HalfLimits
+			, collider->GetColliderType()
+			, meta->isTrigger
+		);
+
+		CollisionWorldBoundariesData* bounds;
+
+		if (colliderData.IsTrigger)
 		{
-			leftX = position.x - ColliderLimits.HalfLimits.x;
-			rightX = position.x + ColliderLimits.HalfLimits.x;
-
-			bottomY = position.y - ColliderLimits.HalfLimits.y;
-			topY = position.y + ColliderLimits.HalfLimits.y;
-
-			nearZ = position.z - ColliderLimits.HalfLimits.z;
-			farZ = position.z + ColliderLimits.HalfLimits.z;
-			first = false;
+			bounds = &sortedTriggerBoundaries[colliderLayer];
 		}
 		else
 		{
-			leftX = fminf(leftX, position.x - ColliderLimits.HalfLimits.x);
-			rightX = fmaxf(rightX, position.x + ColliderLimits.HalfLimits.x);
-
-			bottomY = fminf(bottomY, position.y - ColliderLimits.HalfLimits.y);
-			topY = fmaxf(topY, position.y + ColliderLimits.HalfLimits.y);
-
-			nearZ = fminf(nearZ, position.z - ColliderLimits.HalfLimits.z);
-			farZ = fmaxf(farZ, position.z + ColliderLimits.HalfLimits.z);
+			bounds = &sortedColliderBoundaries[colliderLayer];
 		}
 
-		uint8 colliderLayer = meta->collisionLayer;
-
-		if (sortedColliderEntities.size() <= colliderLayer)
+		//Calculate Tree bounds
+		if (bounds->first)
 		{
-			sortedColliderEntities.resize(colliderLayer + 1);
+
+			bounds->bottomLeft = position - ColliderLimits.HalfLimits;
+			bounds->topRight = position + ColliderLimits.HalfLimits;
+
+			bounds->first = false;
+		}
+		else
+		{
+			bounds->bottomLeft.x = fminf(bounds->bottomLeft.x, position.x - ColliderLimits.HalfLimits.x);
+			bounds->topRight.x = fmaxf(bounds->topRight.x, position.x + ColliderLimits.HalfLimits.x);
+
+			bounds->bottomLeft.y = fminf(bounds->bottomLeft.y, position.y - ColliderLimits.HalfLimits.y);
+			bounds->topRight.y = fmaxf(bounds->topRight.y, position.y + ColliderLimits.HalfLimits.y);
+
+			bounds->bottomLeft.z = fminf(bounds->bottomLeft.z, position.z - ColliderLimits.HalfLimits.z);
+			bounds->topRight.z = fmaxf(bounds->topRight.z, position.z + ColliderLimits.HalfLimits.z);
 		}
 
-		sortedColliderEntities[colliderLayer].push_back(entity);
+		sortedColliderEntities[colliderLayer].push_back(colliderData);
 	}
 
 	//Set World limits
-	const Vector3 GridSize = Vector3((rightX - leftX), (topY - bottomY), (farZ - nearZ));
-	const Vector3 Position = Vector3(leftX, bottomY, nearZ);
-
-	physWorld->SetDynamicWorldLimits(Position, GridSize);
-
-	for (int i = 0; i < sortedColliderEntities.size(); ++i)
+	for (int i = 0; i < NumberOfCollisionLayers; ++i)
 	{
-		//For each collider, query current world and then add collider
-		for (Entity entity : sortedColliderEntities[i])
+		PhysicsCollisionLayer* layer = physWorld->GetCollisionLayer(i);
+
+		layer->SetDataArrayLength(0, sortedColliderEntities[i].size());
+		layer->SetDataArrayLength(1, sortedTriggerEntities[i].size());
+
+		const CollisionWorldBoundariesData& colliderData = sortedColliderBoundaries[i];
+		const CollisionWorldBoundariesData& triggerData = sortedTriggerBoundaries[i];
+
+		const Vector3 colliderGridSize = Vector3((colliderData.topRight.x - colliderData.bottomLeft.x), (colliderData.topRight.y - colliderData.bottomLeft.y), (colliderData.topRight.z - colliderData.bottomLeft.z));
+		const Vector3 colliderPosition = colliderData.bottomLeft;
+		layer->SetLimits(0, colliderPosition, colliderGridSize);
+
+		const Vector3 triggerGridSize = Vector3((triggerData.topRight.x - triggerData.bottomLeft.x), (triggerData.topRight.y - triggerData.bottomLeft.y), (triggerData.topRight.z - triggerData.bottomLeft.z));
+		const Vector3 triggerPosition = triggerData.bottomLeft;
+		layer->SetLimits(1, triggerPosition, triggerGridSize);
+	}
+
+	//Add each item
+	for (int i = 0; i < NumberOfCollisionLayers; ++i)
+	{
+		for (const PhysicsCollisionWorldData& data : sortedColliderEntities[i])
 		{
-			const ColliderMetaComponent* meta = world->GetComponent<ColliderMetaComponent>(entity);
-			Transform* transform = world->GetComponent<Transform>(entity);
-			const IColliderComponent* collider = GetEntityCollider(entity, meta);
+			physWorld->AddDynamicBody(data, i);
+		}
 
-			//Create collider Data
-			const PhysicsCollisionWorldData colliderData = PhysicsCollisionWorldData
-			(
-				entity
-				, transform->GetPosition()
-				, collider->GetAABBLimits(transform).HalfLimits
-				, collider->GetColliderType()
-				, meta->isTrigger
-			);
-
-			physWorld->QueryCollider(colliderResults, triggerResults, colliderData, collider, transform, meta->toCollideLayers);
-
-			physWorld->AddDynamicBody(colliderData, meta->collisionLayer);
+		for (const PhysicsCollisionWorldData& data : sortedTriggerEntities[i])
+		{
+			physWorld->AddDynamicBody(data, i);
 		}
 	}
 

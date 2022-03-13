@@ -11,6 +11,7 @@ struct CollisionAABB;
 struct PhysicsCollisionWorldData
 {
 public:
+	PhysicsCollisionWorldData() = default;
 	PhysicsCollisionWorldData(Entity Entity, Vector3 InPosition, Vector3 HalfLimits, ColliderType InType, bool isTrigger);
 
 public:

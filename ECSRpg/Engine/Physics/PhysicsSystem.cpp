@@ -69,21 +69,23 @@ void PhysicsSystem::ProcessForceHandlers(float deltaTime)
 
 void PhysicsSystem::IntegrateForces(float deltaTime)
 {
-	std::vector<Entity> entities = world->GetEntities<RigidBodyComponent, Transform>();
-
 	const float MaxPhysicsFrameTime = .1f;
 
 	deltaTime = fminf(deltaTime, MaxPhysicsFrameTime);
 
-	for (Entity entity : entities)
+	ForEntities(world, RigidBodyComponent, Transform)
 	{
 		Transform* transform = world->GetComponent<Transform>(entity);
 		RigidBodyComponent* rigidBody = world->GetComponent<RigidBodyComponent>(entity);
 
-		Vector3 frameResultant = rigidBody->GetResultantForce();
+		if (!transform->IsStatic())
+		{
+			Vector3 frameResultant = rigidBody->GetResultantForce();
 
-		rigidBody->velocity += frameResultant * rigidBody->GetInverseMass() * deltaTime;
-		transform->AddTranslation(rigidBody->velocity * deltaTime);
-		rigidBody->ClearResultantForce();
+			rigidBody->velocity += frameResultant * rigidBody->GetInverseMass() * deltaTime;
+			transform->AddTranslation(rigidBody->velocity * deltaTime);
+			rigidBody->ClearResultantForce();
+		}
+
 	}
 }

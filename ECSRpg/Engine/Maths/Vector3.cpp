@@ -117,6 +117,10 @@ void Vector3::operator*=(const float b)
     y *= b;
     z *= b;
 }
+bool Vector3::operator==(const Vector3 b) const
+{
+    return x == b.x && y == b.y && z == b.z;
+}
 #pragma endregion
 
 #pragma region Static methods

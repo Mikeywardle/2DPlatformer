@@ -149,9 +149,9 @@ void PhysicsTestlevel::CreateTile(Vector3 Position, Vector3 Scale, std::string m
 	t4->SetScale(Scale);
 	t4->SetStatic(true);
 
-	RigidBodyComponent* rb = world->AddComponent<RigidBodyComponent>(platform);
-	rb->isInfiniteMass = true;
-	rb->Friction = 3.f;
+	//RigidBodyComponent* rb = world->AddComponent<RigidBodyComponent>(platform);
+	//rb->isInfiniteMass = true;
+	//rb->Friction = 3.f;
 
 	AABBColliderComponent* sc = world->AddComponent<AABBColliderComponent>(platform);
 	new(sc) AABBColliderComponent(Scale);

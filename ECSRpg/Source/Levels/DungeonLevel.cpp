@@ -20,6 +20,8 @@
 #include <Systems/BattleCameraSystem.h>
 #include <Systems/MouseSelectionSystem.h>
 
+#include <Systems/DungeonPlayerMovementSystem.h>
+
 #include <GamePlay/TransformParenting.h>
 #include <GamePlay/Lifetime.h>
 
@@ -28,20 +30,20 @@
 #include <Components/BattleCameraComponent.h>
 #include <Components/UnitComponents.h>
 
+#include <Helpers/PlayerCreationHelpers.h>
+
 
 
 void DungeonLevel::LoadLevel()
 {
-	CreatePlayerCamera();
-
 	CreateDirectionalLight(Vector3(80, -10, 30));
 
 	//Floor
-	CreateTile(Vector3(5, 0, 5), Vector3(10, .2, 10), "TestFloor");
+	CreateTile(Vector3(5, -.2f, 5), Vector3(10, .2, 10), "TestFloor");
 
 	//Blocks
-	CreateTile(Vector3(9, .7, 2), Vector3(.5, .5, 1), "TestMaterial");
-	CreateTile(Vector3(8, .7, 6), Vector3(1, .5, 1), "TestMaterial");
+/*	CreateTile(Vector3(9, .7, 2), Vector3(.5, .5, 1), "TestMaterial");
+	CreateTile(Vector3(8, .7, 6), Vector3(1, .5, 1), "TestMaterial")*/;
 
 	CreateTile(Vector3(5, 2, -5), Vector3(10, 2, .2), "TestWall");
 	CreateTile(Vector3(5, 2, 15), Vector3(10, 2, .2), "TestWall");
@@ -52,18 +54,36 @@ void DungeonLevel::LoadLevel()
 	//Mouse marker
 	CreateMouseSelectionMarker();
 
+	for (int i = -2; i < 8; ++i)
+	{
+		for (int j = -2; j < 8; ++j)
+		{
+			CreateFloorSectionMarker(Vector3(i * 2, 0, j * 2));
+		}
+	}
+
 	//Units
-	CreateUnit(Vector3(0, 5, 0));
+	//CreateUnit(Vector3(0, 5, 0));
+
+	//Spawn Player
+	PlayerCreation::SpawnDungeonPlayer(world, Vector3(0,0,0));
+
+	//CreatePlayerCamera();
 }
 
 void DungeonLevel::OnStart()
 {
-	world->RegisterSystem<BattleCameraSystem>();
+	//world->RegisterSystem<BattleCameraSystem>();
 	world->RegisterSystem<MouseSelectionSystem>();
+
+	//PlayerSystems
+	world->RegisterSystem<DungeonPlayerMovementSystem>();
 
 	//Gameplay Utils
 	world->RegisterSystem<PositionAttachmentSystem>();
 	world->RegisterSystem<LifeTimeDecaySystem>();
+
+
 }
 
 void DungeonLevel::OnInput(float deltaTime, const InputData* inputData)
@@ -82,8 +102,8 @@ void DungeonLevel::CreatePlayerCamera()
 
 	Transform* transform = world->AddComponent<Transform>(entity);
 
-	transform->SetPosition(Vector3(0, 5, -6));
-	transform->SetRotation(Vector3(0, 0, -30));
+	transform->SetPosition(Vector3(0, 20, 0));
+	transform->SetRotation(Vector3(0, 0, -90));
 
 	CameraComponent* camera = world->AddComponent<CameraComponent>(entity);
 
@@ -111,7 +131,7 @@ void DungeonLevel::CreateUnit(Vector3 position)
 
 	ColliderMetaComponent* colliderMeta = world->AddComponent<ColliderMetaComponent>(unit);
 	colliderMeta->type = ColliderType::Sphere;
-//	colliderMeta->collisionLayer = NeOniCollisionLayers::Players;
+	colliderMeta->collisionLayer = NeOniCollisionLayers::Players;
 	colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Environment);
 
 	world->AddComponent<DynamicCollider>(unit);
@@ -132,6 +152,14 @@ void DungeonLevel::CreateMouseSelectionMarker()
 	transform->SetScale(Vector3(0.1f, 0.1f, 0.1f));
 
 	world->AddComponent<MouseSelectionDebugMarker>(marker);
+}
+
+void DungeonLevel::CreateFloorSectionMarker(Vector3 position)
+{
+	Entity marker = CreateMesh(position, "Sphere", "MarkerMaterial");
+
+	Transform* transform = world->GetComponent<Transform>(marker);
+	transform->SetScale(Vector3(0.15f, 0.15f, 0.15f));
 }
 
 void DungeonLevel::CreateTile(Vector3 Position, Vector3 Scale, std::string materialName)

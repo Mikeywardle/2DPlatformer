@@ -264,6 +264,18 @@
     <ClCompile Include="Source\Levels\PhysicsTestLevel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Helpers\PlayerCreationHelpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Systems\PlayerMovementSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Components\PlayerMovementComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Systems\DungeonPlayerMovementSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\CameraComponent.h">
@@ -606,6 +618,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Levels\PhysicsTestLevel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Helpers\PlayerCreationHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Systems\PlayerMovementSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Components\PlayerTags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Components\PlayerMovementComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Systems\DungeonPlayerMovementSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

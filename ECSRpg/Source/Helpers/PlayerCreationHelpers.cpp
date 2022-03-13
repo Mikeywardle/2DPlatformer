@@ -15,7 +15,6 @@
 
 #include <Components/PlayerMovementComponent.h>
 #include <Components/PlayerTags.h>
-#include <Components/WeaponComponents.h>
 
 #include <Camera/CameraComponent.h>
 
@@ -25,13 +24,8 @@
 
 namespace PlayerCreation
 {
-void SpawnPlayer(World* world)
+	void SpawnPlayer(World* world, const Vector3& position)
 	{
-		ResourceManager* resourceManager = world->GetResourceManager();
-
-		Mesh* meshAsset = resourceManager->GetMesh("SmoothSphere");
-		Material* testMaterial = resourceManager->GetMaterial("TestMaterial");
-
 		//Create Player
 		Entity player = world->CreateEntity();
 
@@ -39,10 +33,6 @@ void SpawnPlayer(World* world)
 		t->SetPosition(Vector3(0, 2, 5));
 		t->SetRotation(Vector3(0, 0, 0));
 		t->SetScale(Vector3(0.5f, 0.5f, 0.5f));
-
-		//MeshComponent* m = world->AddComponent<MeshComponent>(player);
-		//m->SetMesh(meshAsset);
-		//m->SetMaterial(testMaterial);
 
 		SphereColliderComponent* sphere = world->AddComponent<SphereColliderComponent>(player);
 		new(sphere) SphereColliderComponent(.5);
@@ -99,8 +89,61 @@ void SpawnPlayer(World* world)
 
 		PositionAttatchmentComponent* pac = world->AddComponent<PositionAttatchmentComponent>(camera);
 		*pac = PositionAttatchmentComponent(player, Vector3(0,1,0));
+	}
 
-		PlayerWeaponComponent* weapon = world->AddComponent<PlayerWeaponComponent>(camera);
-		*weapon = PlayerWeaponComponent(0.1f);
+	void SpawnDungeonPlayer(World* world, const Vector3& position)
+	{
+		//Create Player
+		Entity player = world->CreateEntity();
+
+		Transform* t = world->AddComponent<Transform>(player);
+		t->SetPosition(position);
+		t->SetRotation(Vector3(0, 0, 0));
+		t->SetScale(Vector3(0.5f, 0.5f, 0.5f));
+
+		AABBColliderComponent* collider = world->AddComponent<AABBColliderComponent>(player);
+		collider->HalfLimits = Vector3(0.5f, 1.0f, 0.5f);
+
+		ColliderMetaComponent* colliderMeta = world->AddComponent< ColliderMetaComponent>(player);
+		colliderMeta->type = ColliderType::AABB;
+
+		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Default);
+		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Environment);
+		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Enemies);
+		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::EnemyBullets);
+
+		colliderMeta->collisionLayer = NeOniCollisionLayers::Players;
+
+		world->AddComponent<DynamicCollider>(player);
+
+		RigidBodyComponent* rb = world->AddComponent<RigidBodyComponent>(player);
+		rb->mass = 10;
+		rb->Restitution = .01f;
+		rb->Friction = 1.f;
+
+		GravityComponent* g = world->AddComponent<GravityComponent>(player);
+		g->GravityScale = 1.f;
+
+		world->AddComponent<CurrentPossesedPlayer>(player);
+		world->AddComponent<PlayerTag>(player);
+
+		world->AddComponent<DungeonPlayerMovementComponent>(player);
+
+		//Create Camera
+		Entity camera = world->CreateEntity();
+
+		CameraComponent* c = world->AddComponent<CameraComponent>(camera);
+
+		c->fov = 45.f;
+		c->farPlane = 1000.f;
+		c->nearPlane = 0.1f;
+		c->projectionType = ProjectionType::PERSPECTIVE;
+
+		world->AddComponent<Transform>(camera);
+
+		CameraComponent::SetMainCamera(camera);
+
+		PositionAttatchmentComponent* pac = world->AddComponent<PositionAttatchmentComponent>(camera);
+		*pac = PositionAttatchmentComponent(player, Vector3(0, 0.f, 0));
 	}
 }

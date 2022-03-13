@@ -31,6 +31,11 @@ public:
 	void SetDynamicLimits(const Vector3& position, const Vector3& limits);
 	void SetStaticLimits(const Vector3& position, const Vector3& limits);
 
+	void SetLimits(const int& layerType, const Vector3& position, const Vector3& limits);
+	void SetDataArrayLength(const int& layerType, const int& length);
+	void BuildGridCells(const int& layerType);
+
+
 	void QueryCollider(std::vector<PhysicsCollisionWorldData>& colliderOverlapResults, std::vector<PhysicsCollisionWorldData>& triggerOverlapResults, const PhysicsCollisionWorldData query) const;
 	RaycastingResult CastRay(const Ray ray, const unsigned int IgnoreEntity, PhysicsRaycastingCallback callback, const World* world) const;
 

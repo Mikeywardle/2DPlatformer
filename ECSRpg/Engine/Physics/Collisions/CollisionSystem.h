@@ -40,4 +40,11 @@ private:
 	float GetTotalFrictionCoefficient(RigidBodyComponent* rb1, RigidBodyComponent* rb2);
 
 	World* world;
+
+	struct CollisionWorldBoundariesData
+	{
+		bool first = true;
+		Vector3 bottomLeft;
+		Vector3 topRight;
+	};
 };

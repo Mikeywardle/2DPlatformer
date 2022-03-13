@@ -80,6 +80,65 @@ void PhysicsCollisionLayer::SetStaticLimits(const Vector3& position, const Vecto
 	staticTriggers->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), Vector3(2.0f, 2.0f, 2.0f));
 }
 
+void PhysicsCollisionLayer::SetLimits(const int& layerType, const Vector3& position, const Vector3& limits)
+{
+	const Vector3 borderWidthVector = Vector3(BorderWidth, BorderWidth, BorderWidth);
+
+	switch (layerType)
+	{
+	case 0:
+		dynamicColliders->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), Vector3(2.0f, 2.0f, 2.0f));
+		break;
+	case 1:
+		dynamicTriggers->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), Vector3(2.0f, 2.0f, 2.0f));
+		break;
+	case 2:
+		staticColliders->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), Vector3(2.0f, 2.0f, 2.0f));
+		break;
+	case 3:
+		staticTriggers->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), Vector3(2.0f, 2.0f, 2.0f));
+		break;
+	}
+}
+
+void PhysicsCollisionLayer::SetDataArrayLength(const int& layerType, const int& length)
+{
+	switch (layerType)
+	{
+	case 0:
+		dynamicColliders->SetDataArrayLength(length);
+		break;
+	case 1:
+		dynamicTriggers->SetDataArrayLength(length);
+		break;
+	case 2:
+		staticColliders->SetDataArrayLength(length);
+		break;
+	case 3:
+		staticTriggers->SetDataArrayLength(length);
+		break;
+	}
+}
+
+void PhysicsCollisionLayer::BuildGridCells(const int& layerType)
+{
+	switch (layerType)
+	{
+	case 0:
+		dynamicColliders->BuildGridCells();
+		break;
+	case 1:
+		dynamicTriggers->BuildGridCells();
+		break;
+	case 2:
+		staticColliders->BuildGridCells();
+		break;
+	case 3:
+		staticTriggers->BuildGridCells();
+		break;
+	}
+}
+
 void PhysicsCollisionLayer::QueryCollider
 (
 	std::vector<PhysicsCollisionWorldData>& colliderOverlapResults

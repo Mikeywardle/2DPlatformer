@@ -51,11 +51,14 @@ public:
 	) const;
 
 	Vector3 GetGravity() const;
+	int GetTotalCollisionLayers() const {return totalCollisionLayers;};
 
 	RaycastingResult CastRay(const Ray ray, const std::vector<uint8> collisionLayers, const Entity toIgnoreEntity) const;
 
 	void BoxCast() const;
 	void SphereCast() const;
+
+	PhysicsCollisionLayer* GetCollisionLayer(int index) const;
 
 private:
 
