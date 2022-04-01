@@ -2,7 +2,6 @@
 
 #include <Core/World.h>
 
-#include <Collisions/CollisionQuadtree.h>
 #include <Collisions/CollisionShapes.h>
 #include <Collisions/CollisionDetection.h>
 
@@ -90,7 +89,8 @@ void PhysicsWorld::QueryCollider
 	std::vector<PhysicsCollisionResult>& colliderResults
 	,std::vector<PhysicsCollisionResult>& triggerResults
 	, const PhysicsCollisionWorldData query
-	, const IColliderComponent* collider, Transform* transform
+	, const ColliderGeometryComponent* collider
+	, const Transform* transform
 	, const std::vector<uint8>& collisionLayers
 ) const
 {
@@ -109,11 +109,19 @@ void PhysicsWorld::QueryCollider
 	{
 		PhysicsCollisionResult result;
 
+		//Avoid testing object against itself
+		if (query.entity == broadPhaseCollider.entity)
+			continue;
+
 		result.entityA = query.entity;
 		result.entityB = broadPhaseCollider.entity;
 
+		const Transform* transformB = world->GetComponent<Transform>(result.entityB);
+		const ColliderGeometryComponent* colliderB = world->GetComponent<ColliderGeometryComponent>(result.entityB);
+
+
 		const int colliderFunctionIndex = GetColliderPairingIndex((int8)query.type, (int8)broadPhaseCollider.type);
-		result.collisionInfo = CollisionFunctionsCallbacks[colliderFunctionIndex](collider, transform, broadPhaseCollider, world);
+		result.collisionInfo = CollisionFunctionsCallbacks[colliderFunctionIndex](collider, transform, colliderB, transformB);
 
 		if (result.collisionInfo.hasCollision)
 		{
@@ -129,8 +137,11 @@ void PhysicsWorld::QueryCollider
 		result.entityA = query.entity;
 		result.entityB = broadPhaseCollider.entity;
 
+		const Transform* transformB = world->GetComponent<Transform>(result.entityB);
+		const ColliderGeometryComponent* colliderB = world->GetComponent<ColliderGeometryComponent>(result.entityB);
+
 		const int colliderFunctionIndex = GetColliderPairingIndex((int8)query.type, (int8)broadPhaseCollider.type);
-		result.collisionInfo = CollisionFunctionsCallbacks[colliderFunctionIndex](collider, transform, broadPhaseCollider, world);
+		result.collisionInfo = CollisionFunctionsCallbacks[colliderFunctionIndex](collider, transform, colliderB, transformB);
 
 		if (result.collisionInfo.hasCollision)
 		{
@@ -186,6 +197,79 @@ RaycastingResult PhysicsWorld::CastRay(const Ray ray, const std::vector<uint8> c
 	return result;
 }
 
+std::vector<PhysicsCollisionCastResult> PhysicsWorld::BoxCast(const CollisionAABB box, std::vector<uint8> collisionLayers) const
+{
+	std::vector<PhysicsCollisionWorldData> BroadPhaseHits;
+	if (collisionLayers.size() == 0)
+	{
+		//Test All layers
+		for (int i = 0; i < totalCollisionLayers; ++i)
+		{
+			CollisionLayers[i]->CastBox(box, BroadPhaseHits);
+		}
+	}
+	else
+	{
+		for (const uint8& layer : collisionLayers)
+		{
+			CollisionLayers[layer]->CastBox(box, BroadPhaseHits);
+		}
+	}
+
+	std::vector<PhysicsCollisionCastResult> results;
+
+	results.reserve(BroadPhaseHits.size());
+
+	for (const PhysicsCollisionWorldData& item : BroadPhaseHits)
+	{
+		switch (item.type)
+		{
+		case ColliderType::AABB :
+			{
+				Transform* transform = world->GetComponent<Transform>(item.entity);
+				const AABBCollisionGeometry* boxcollider = world->GetComponent<ColliderGeometryComponent>(item.entity)->GetAABBGeometry();
+				const CollisionAABB aabb = boxcollider->GetAABBLimits(transform);
+
+				CollisionResult collisionResult = TestABBvAABB(aabb, box);
+
+				if (collisionResult.hasCollision)
+				{
+					PhysicsCollisionCastResult result;
+					result.collisionInfo = collisionResult;
+					result.entity = item.entity;
+
+					results.push_back(result);
+				}
+			}
+
+			break;
+
+		case ColliderType::Sphere:
+			{
+				Transform* transform = world->GetComponent<Transform>(item.entity);
+				const SphereCollisionGeometry* sphereCollider = world->GetComponent<ColliderGeometryComponent>(item.entity)->GetSphereGeometry();
+				const CollisionSphere sphere = sphereCollider->GetCollisionSphere(transform);
+
+				CollisionResult collisionResult = TestSphereVsAABB(sphere, box);
+
+				if (collisionResult.hasCollision)
+				{
+					PhysicsCollisionCastResult result;
+					result.collisionInfo = collisionResult;
+					result.entity = item.entity;
+
+					results.push_back(result);
+				}
+			}
+			break;
+		}
+	}
+
+	results.shrink_to_fit();
+
+	return results;
+}
+
 PhysicsCollisionLayer* PhysicsWorld::GetCollisionLayer(int index) const
 {
 	return CollisionLayers[index];
@@ -204,12 +288,10 @@ int PhysicsWorld::GetTotalNumberOfColliderPairings()
 
 namespace PhysicsWorldCollisionFunctions
 {
-	CollisionResult PhysicsWorldCollisionFunctions::AABBvsAABB(const IColliderComponent* colliderA, Transform* transformA, const PhysicsCollisionWorldData entityB, World* world)
+	CollisionResult PhysicsWorldCollisionFunctions::AABBvsAABB(const ColliderGeometryComponent* colliderA, const Transform* transformA, const ColliderGeometryComponent* colliderB, const Transform* transformB)
 	{
-		const AABBColliderComponent* AABBColliderA = (AABBColliderComponent*)colliderA;
-
-		Transform* transformB = world->GetComponent<Transform>(entityB.entity);
-		const AABBColliderComponent* AABBColliderB = world->GetComponent< AABBColliderComponent>(entityB.entity);
+		const AABBCollisionGeometry* AABBColliderA = colliderA->GetAABBGeometry();
+		const AABBCollisionGeometry* AABBColliderB = colliderB->GetAABBGeometry();
 
 		const CollisionAABB boxA = AABBColliderA->GetAABBLimits(transformA);
 		const CollisionAABB boxB = AABBColliderB->GetAABBLimits(transformB);
@@ -217,52 +299,43 @@ namespace PhysicsWorldCollisionFunctions
 		return TestABBvAABB(boxA, boxB);
 	}
 
-	CollisionResult PhysicsWorldCollisionFunctions::AABBvsSphere(const IColliderComponent* colliderA, Transform* transformA, const PhysicsCollisionWorldData entityB, World* world)
+	CollisionResult PhysicsWorldCollisionFunctions::AABBvsSphere(const ColliderGeometryComponent* colliderA, const Transform* transformA, const ColliderGeometryComponent* colliderB, const Transform* transformB)
 	{
-		const AABBColliderComponent* AABBColliderA = (AABBColliderComponent*)colliderA;
-
-		Transform* transformB = world->GetComponent<Transform>(entityB.entity);
-		const SphereColliderComponent* SphereColliderB = world->GetComponent< SphereColliderComponent>(entityB.entity);
+		const AABBCollisionGeometry* AABBColliderA = colliderA->GetAABBGeometry();
+		const SphereCollisionGeometry* SphereColliderB = colliderB->GetSphereGeometry();
 
 		const CollisionAABB box = AABBColliderA->GetAABBLimits(transformA);
 		const CollisionSphere sphere = SphereColliderB->GetCollisionSphere(transformB);
 
-
 		return FlipCollisionResult(TestSphereVsAABB(sphere, box));
 	}
 
-	CollisionResult PhysicsWorldCollisionFunctions::SpherevsAABB(const IColliderComponent* colliderA, Transform* transformA, const PhysicsCollisionWorldData entityB, World* world)
+	CollisionResult PhysicsWorldCollisionFunctions::SpherevsAABB(const ColliderGeometryComponent* colliderA, const Transform* transformA, const ColliderGeometryComponent* colliderB, const Transform* transformB)
 	{
-		const SphereColliderComponent* sphereColliderA = (SphereColliderComponent*)colliderA;
+		const SphereCollisionGeometry* SphereColliderA = colliderA->GetSphereGeometry();
+		const AABBCollisionGeometry* AABBColliderB = colliderB->GetAABBGeometry();
 
-		Transform* transformB = world->GetComponent<Transform>(entityB.entity);
-		const AABBColliderComponent* AABBColliderB = world->GetComponent< AABBColliderComponent>(entityB.entity);
-
-		const CollisionSphere sphere = sphereColliderA->GetCollisionSphere(transformA);
+		const CollisionSphere sphere = SphereColliderA->GetCollisionSphere(transformA);
 		const CollisionAABB box = AABBColliderB->GetAABBLimits(transformB);
 
 		return TestSphereVsAABB(sphere, box);
 	}
 
-	CollisionResult PhysicsWorldCollisionFunctions::SpherevsSphere(const IColliderComponent* colliderA, Transform* transformA, const PhysicsCollisionWorldData entityB, World* world)
+	CollisionResult PhysicsWorldCollisionFunctions::SpherevsSphere(const ColliderGeometryComponent* colliderA, const Transform* transformA, const ColliderGeometryComponent* colliderB, const Transform* transformB)
 	{
-		const SphereColliderComponent* sphereColliderA = (SphereColliderComponent*) colliderA;
+		const SphereCollisionGeometry* SphereColliderA = colliderA->GetSphereGeometry();
+		const SphereCollisionGeometry* SphereColliderB = colliderB->GetSphereGeometry();
 
-		Transform* transformB = world->GetComponent<Transform>(entityB.entity);
-		const SphereColliderComponent* sphereColliderB = world->GetComponent< SphereColliderComponent>(entityB.entity);
-
-		const CollisionSphere sphereA = sphereColliderA->GetCollisionSphere(transformA);
-		const CollisionSphere sphereB = sphereColliderB->GetCollisionSphere(transformB);
+		const CollisionSphere sphereA = SphereColliderA->GetCollisionSphere(transformA);
+		const CollisionSphere sphereB = SphereColliderB->GetCollisionSphere(transformB);
 
 		return TestSpherevsSphere(sphereA, sphereB);
 	}
 
 	RaycastingResult RaycastingCallback(const Ray ray, const PhysicsCollisionWorldData item, const unsigned int IgnoreEntity, const void* userData)
 	{
-
 		if (item.entity == IgnoreEntity)
 			return RaycastingResult();
-
 
 		const World* world = (World*)userData;
 
@@ -271,8 +344,8 @@ namespace PhysicsWorldCollisionFunctions
 		case ColliderType::AABB:
 
 		{
-			Transform* transform = world->GetComponent<Transform>(item.entity);
-			const AABBColliderComponent* boxcollider = world->GetComponent<AABBColliderComponent>(item.entity);
+			const Transform* transform = world->GetComponent<Transform>(item.entity);
+			const AABBCollisionGeometry* boxcollider = world->GetComponent<ColliderGeometryComponent>(item.entity)->GetAABBGeometry();
 			const CollisionAABB aabb = boxcollider->GetAABBLimits(transform);
 
 			RaycastingResult result = TestRayVsAABB(ray, aabb);
@@ -283,9 +356,9 @@ namespace PhysicsWorldCollisionFunctions
 
 		case::ColliderType::Sphere:
 		{
-			Transform* transform = world->GetComponent<Transform>(item.entity);
-			const SphereColliderComponent* spherecollider = world->GetComponent<SphereColliderComponent>(item.entity);
-			const CollisionSphere sphere = spherecollider->GetCollisionSphere(transform);
+			const Transform* transform = world->GetComponent<Transform>(item.entity);
+			const SphereCollisionGeometry* sphereCollider = world->GetComponent<ColliderGeometryComponent>(item.entity)->GetSphereGeometry();
+			const CollisionSphere sphere = sphereCollider->GetCollisionSphere(transform);
 
 			RaycastingResult result = TestRayVsSphere(ray, sphere);
 			result.HitEntity = item.entity;

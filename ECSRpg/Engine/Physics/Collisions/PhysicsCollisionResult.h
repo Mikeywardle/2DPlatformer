@@ -12,3 +12,9 @@ struct PhysicsCollisionResult
 
 	CollisionResult collisionInfo;
 };
+
+struct PhysicsCollisionCastResult
+{
+	Entity entity;
+	CollisionResult collisionInfo;
+};

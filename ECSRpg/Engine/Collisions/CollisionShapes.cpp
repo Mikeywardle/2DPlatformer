@@ -11,9 +11,3 @@ CollisionSphere::CollisionSphere(float Radius, Vector3 Position)
 	this->Radius = Radius;
 	this->Position = Position;
 }
-
-CollisionAABB2D::CollisionAABB2D(Vector2 Position, Vector2 HalfLimits)
-{
-	this->Position = Position;
-	this->HalfLimits = HalfLimits;
-}

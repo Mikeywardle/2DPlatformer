@@ -1,10 +1,12 @@
 #pragma once
 
 #include <vector>
+//#include <Maths/Vector3.h>
 
 struct Vector3;
 struct PhysicsCollisionWorldData;
 struct PhysicsCollisionResult;
+struct CollisionAABB;
 
 struct RaycastingResult;
 struct Ray;
@@ -38,6 +40,7 @@ public:
 
 	void QueryCollider(std::vector<PhysicsCollisionWorldData>& colliderOverlapResults, std::vector<PhysicsCollisionWorldData>& triggerOverlapResults, const PhysicsCollisionWorldData query) const;
 	RaycastingResult CastRay(const Ray ray, const unsigned int IgnoreEntity, PhysicsRaycastingCallback callback, const World* world) const;
+	void CastBox(const CollisionAABB box, std::vector<PhysicsCollisionWorldData>& results);
 
 private:
 
@@ -48,4 +51,5 @@ private:
 	CollisionGrid<PhysicsCollisionWorldData>* staticTriggers;
 
 	static const float BorderWidth;
+	static const Vector3 CellSize;
 };

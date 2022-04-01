@@ -5,6 +5,8 @@
 
 class RigidBodyComponent;
 struct PhysicsSystemConfig;
+struct PhysicsCollisionCastResult;
+
 class PhysicsSystem
 {
 public:
@@ -18,6 +20,7 @@ public:
 	void ClearWorld();
 
 	RaycastingResult CastRay(const Ray ray, const Entity ignoreEntity = NO_ENTITY, const std::vector<uint8> layers = std::vector<uint8>()) const;
+	std::vector<PhysicsCollisionCastResult> CastBox(const CollisionAABB box, const std::vector<uint8> layers = std::vector<uint8>()) const;
 
 private:
 	void ProcessForceHandlers(float deltaTime);

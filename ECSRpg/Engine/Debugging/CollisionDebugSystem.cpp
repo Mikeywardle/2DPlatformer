@@ -35,26 +35,26 @@ void CollisionDebugSystem::OnDebugUpdate(World* world, float deltaTime)
 
 void CollisionDebugSystem::DrawAABBColliders(World* world)
 {
-	ForEntities(world, Transform, AABBColliderComponent)
-	{
-		Transform* transform = world->GetComponent<Transform>(entity);
-		AABBColliderComponent* collider = world->GetComponent<AABBColliderComponent>(entity);
+	//ForEntities(world, Transform, AABBColliderComponent)
+	//{
+	//	Transform* transform = world->GetComponent<Transform>(entity);
+	//	AABBColliderComponent* collider = world->GetComponent<AABBColliderComponent>(entity);
 
-		CollisionAABB aabb = collider->GetAABBLimits(transform);
+	//	CollisionAABB aabb = collider->GetAABBLimits(transform);
 
 
-	}
+	//}
 }
 
 void CollisionDebugSystem::DrawSphereColliders(World* world)
 {
-	ForEntities(world, Transform, SphereColliderComponent)
-	{
-		Transform* transform = world->GetComponent<Transform>(entity);
-		SphereColliderComponent* collider = world->GetComponent<SphereColliderComponent>(entity);
+	//ForEntities(world, Transform, SphereColliderComponent)
+	//{
+	//	Transform* transform = world->GetComponent<Transform>(entity);
+	//	SphereColliderComponent* collider = world->GetComponent<SphereColliderComponent>(entity);
 
-		CollisionSphere aabb = collider->GetCollisionSphere(transform);
+	//	CollisionSphere aabb = collider->GetCollisionSphere(transform);
 
-		DebugDraws::DrawDebugSphere(aabb.Position, aabb.Radius + 0.02, 12);
-	}
+	//	DebugDraws::DrawDebugSphere(aabb.Position, aabb.Radius + 0.02, 12);
+	//}
 }

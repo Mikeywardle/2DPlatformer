@@ -34,18 +34,17 @@ namespace PlayerCreation
 		t->SetRotation(Vector3(0, 0, 0));
 		t->SetScale(Vector3(0.5f, 0.5f, 0.5f));
 
-		SphereColliderComponent* sphere = world->AddComponent<SphereColliderComponent>(player);
-		new(sphere) SphereColliderComponent(.5);
+		SphereCollisionGeometry* geometry = new SphereCollisionGeometry();
+		geometry->radius = 0.5f;
 
-		ColliderMetaComponent* colliderMeta = world->AddComponent< ColliderMetaComponent>(player);
-		colliderMeta->type = ColliderType::Sphere;
+		ColliderGeometryComponent* collider = world->AddComponent<ColliderGeometryComponent>(player);
 
-		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Default);
-		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Environment);
-		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Enemies);
-		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::EnemyBullets);
+		collider->toCollideLayers.push_back(NeOniCollisionLayers::Default);
+		collider->toCollideLayers.push_back(NeOniCollisionLayers::Environment);
 
-		colliderMeta->collisionLayer = NeOniCollisionLayers::Players;
+		collider->collisionLayer = NeOniCollisionLayers::Players;
+
+		collider->SetCollisionGeometry(geometry);
 
 		world->AddComponent<DynamicCollider>(player);
 
@@ -101,18 +100,18 @@ namespace PlayerCreation
 		t->SetRotation(Vector3(0, 0, 0));
 		t->SetScale(Vector3(0.5f, 0.5f, 0.5f));
 
-		AABBColliderComponent* collider = world->AddComponent<AABBColliderComponent>(player);
-		collider->HalfLimits = Vector3(0.5f, 1.0f, 0.5f);
+		AABBCollisionGeometry* geometry = new AABBCollisionGeometry();
+		geometry->HalfLimits = Vector3(0.5f, 1.0f, 0.5f);
 
-		ColliderMetaComponent* colliderMeta = world->AddComponent< ColliderMetaComponent>(player);
-		colliderMeta->type = ColliderType::AABB;
+		ColliderGeometryComponent* collider = world->AddComponent<ColliderGeometryComponent>(player);
 
-		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Default);
-		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Environment);
-		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Enemies);
-		colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::EnemyBullets);
+		collider->toCollideLayers.push_back(NeOniCollisionLayers::Default);
+		collider->toCollideLayers.push_back(NeOniCollisionLayers::Environment);
+		collider->toCollideLayers.push_back(NeOniCollisionLayers::Floors);
 
-		colliderMeta->collisionLayer = NeOniCollisionLayers::Players;
+		collider->collisionLayer = NeOniCollisionLayers::Players;
+
+		collider->SetCollisionGeometry(geometry);
 
 		world->AddComponent<DynamicCollider>(player);
 

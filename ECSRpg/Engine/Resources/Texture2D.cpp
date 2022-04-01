@@ -14,7 +14,7 @@ Texture2D ImportTextureFromFile(const char* file, GLboolean alpha)
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* image = stbi_load(file, &width, &height, &nrChannels, 0);
 	
-	Texture2D texture = { 0, width, height, format, format, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR};
+	Texture2D texture = { 0, width, height, format, format, GL_REPEAT, GL_REPEAT, GL_LINEAR};
 
 	glGenTextures(1, &texture.ID);
 	glBindTexture(GL_TEXTURE_2D, texture.ID);

@@ -20,7 +20,7 @@ private:
 	void CreateUnit(Vector3 position);
 	void CreateMouseSelectionMarker();
 	void CreateFloorSectionMarker(Vector3 position);
-	void CreateTile(Vector3 Position, Vector3 Scale, std::string materialName);
+	void CreateTile(Vector3 Position, Vector3 Scale, std::string materialName, bool isFloor);
 	void CreateDirectionalLight(Vector3 rotation);
 
 	Entity CreateMesh(Vector3 position, std::string mesh, std::string material);

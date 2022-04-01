@@ -14,17 +14,14 @@
 #include <Physics/PhysicsCollisionWorldData.h>
 
 
-
-
 int main()
 {
 	GameContext game = GameContext(TestInputConfig, NeOniPhysicsConfig);
 
 	World* world = game.GetGameWorld();
-	world->SwitchLevel<PhysicsTestlevel>();
+	world->SwitchLevel<MainMenuLevel>();
 
 	SetupDebugSystems(world);
 
 	return game.StartGame();
-
 }

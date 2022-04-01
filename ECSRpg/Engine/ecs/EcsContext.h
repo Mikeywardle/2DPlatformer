@@ -53,16 +53,6 @@ public:
 		}
 	}
 
-	template<typename T>
-	ComponentBatch<T>* GetComponentBatchSafe() const
-	{
-		const char* hash = typeid(T).raw_name();
-		if (componentsLookup.find(hash) != componentsLookup.end())
-			return (ComponentBatch<T>*)componentsLookup.at(hash);
-		else
-			return nullptr;
-	}
-
 	template<typename... Args>
 	void FilterEntities(std::vector<Entity>& entities) const
 	{
@@ -121,7 +111,7 @@ public:
 	template<typename T>
 	std::vector<T>* GetComponents()
 	{
-		ComponentBatch<T>* batch = GetComponentBatchSafe<T>();
+		ComponentBatch<T>* batch = GetComponentBatch<T>();
 
 		if (batch != nullptr)
 			return batch->GetComponents();

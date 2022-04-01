@@ -39,17 +39,18 @@ void DungeonLevel::LoadLevel()
 	CreateDirectionalLight(Vector3(80, -10, 30));
 
 	//Floor
-	CreateTile(Vector3(5, -.2f, 5), Vector3(10, .2, 10), "TestFloor");
+	CreateTile(Vector3(5, -.2f, 5), Vector3(10, .2, 10), "TestFloor", true);
 
 	//Blocks
-/*	CreateTile(Vector3(9, .7, 2), Vector3(.5, .5, 1), "TestMaterial");
-	CreateTile(Vector3(8, .7, 6), Vector3(1, .5, 1), "TestMaterial")*/;
+	CreateTile(Vector3(9, .5, 2), Vector3(.5, .5, 1), "TestMaterial", false);
+	CreateTile(Vector3(8, .5, 6), Vector3(1, .5, 1), "TestMaterial", false);
 
-	CreateTile(Vector3(5, 2, -5), Vector3(10, 2, .2), "TestWall");
-	CreateTile(Vector3(5, 2, 15), Vector3(10, 2, .2), "TestWall");
+	//Wall
+	CreateTile(Vector3(5, 2, -5), Vector3(10, 2, .2), "TestWall", false);
+	CreateTile(Vector3(5, 2, 15), Vector3(10, 2, .2), "TestWall", false);
 
-	CreateTile(Vector3(-5, 2, 5), Vector3(.2, 2, 10), "TestWall");
-	CreateTile(Vector3(15, 2, 5), Vector3(.2, 2, 10), "TestWall");
+	CreateTile(Vector3(-5, 2, 5), Vector3(.2, 2, 10), "TestWall", false);
+	CreateTile(Vector3(15, 2, 5), Vector3(.2, 2, 10), "TestWall", false);
 
 	//Mouse marker
 	CreateMouseSelectionMarker();
@@ -63,17 +64,17 @@ void DungeonLevel::LoadLevel()
 	}
 
 	//Units
-	//CreateUnit(Vector3(0, 5, 0));
+	CreateUnit(Vector3(0, 5, 0));
 
 	//Spawn Player
-	PlayerCreation::SpawnDungeonPlayer(world, Vector3(0,0,0));
+	//PlayerCreation::SpawnDungeonPlayer(world, Vector3(0,0,0));
 
-	//CreatePlayerCamera();
+	CreatePlayerCamera();
 }
 
 void DungeonLevel::OnStart()
 {
-	//world->RegisterSystem<BattleCameraSystem>();
+	world->RegisterSystem<BattleCameraSystem>();
 	world->RegisterSystem<MouseSelectionSystem>();
 
 	//PlayerSystems
@@ -126,13 +127,16 @@ void DungeonLevel::CreateUnit(Vector3 position)
 
 	world->AddComponent<SelectableUnitComponent>(unit);
 
-	SphereColliderComponent* sc = world->AddComponent<SphereColliderComponent>(unit);
-	new(sc) SphereColliderComponent(1.0f);
+	SphereCollisionGeometry* geometry = new SphereCollisionGeometry();
+	geometry->radius = 1.0f;
 
-	ColliderMetaComponent* colliderMeta = world->AddComponent<ColliderMetaComponent>(unit);
-	colliderMeta->type = ColliderType::Sphere;
-	colliderMeta->collisionLayer = NeOniCollisionLayers::Players;
-	colliderMeta->toCollideLayers.push_back(NeOniCollisionLayers::Environment);
+	ColliderGeometryComponent* collider = world->AddComponent<ColliderGeometryComponent>(unit);
+
+	collider->collisionLayer = NeOniCollisionLayers::Players;
+	collider->toCollideLayers.push_back(NeOniCollisionLayers::Environment);
+	collider->toCollideLayers.push_back(NeOniCollisionLayers::Floors);
+
+	collider->SetCollisionGeometry(geometry);
 
 	world->AddComponent<DynamicCollider>(unit);
 
@@ -162,7 +166,7 @@ void DungeonLevel::CreateFloorSectionMarker(Vector3 position)
 	transform->SetScale(Vector3(0.15f, 0.15f, 0.15f));
 }
 
-void DungeonLevel::CreateTile(Vector3 Position, Vector3 Scale, std::string materialName)
+void DungeonLevel::CreateTile(Vector3 Position, Vector3 Scale, std::string materialName, bool isFloor)
 {
 	ResourceManager* resourceManager = world->GetResourceManager();
 
@@ -185,13 +189,21 @@ void DungeonLevel::CreateTile(Vector3 Position, Vector3 Scale, std::string mater
 	rb->isInfiniteMass = true;
 	rb->Friction = 3.f;
 
-	AABBColliderComponent* sc = world->AddComponent<AABBColliderComponent>(platform);
-	new(sc) AABBColliderComponent(Scale);
+	AABBCollisionGeometry* geometry = new AABBCollisionGeometry();
+	geometry->HalfLimits = Vector3::One;
 
-	ColliderMetaComponent* colliderMeta = world->AddComponent< ColliderMetaComponent>(platform);
-	colliderMeta->type = ColliderType::AABB;
-	colliderMeta->collisionLayer = NeOniCollisionLayers::Environment;
+	ColliderGeometryComponent* collider = world->AddComponent<ColliderGeometryComponent>(platform);
 
+	if (isFloor)
+	{
+		collider->collisionLayer = NeOniCollisionLayers::Floors;
+	}
+	else
+	{
+		collider->collisionLayer = NeOniCollisionLayers::Environment;
+	}
+
+	collider->SetCollisionGeometry(geometry);
 	world->AddComponent<StaticCollider>(platform);
 }
 

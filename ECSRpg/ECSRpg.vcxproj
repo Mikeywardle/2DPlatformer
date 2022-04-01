@@ -238,8 +238,6 @@
     <ClCompile Include="Engine\Camera\CameraComponent.cpp" />
     <ClCompile Include="Engine\Camera\CameraUniformBufferHandler.cpp" />
     <ClCompile Include="Engine\Camera\SpringArm.cpp" />
-    <ClCompile Include="Engine\Collisions\CollisionQuadtree.cpp" />
-    <ClCompile Include="Engine\Collisions\CollisionQuadtreeTests.cpp" />
     <ClCompile Include="Engine\Debugging\CollisionDebugSystem.cpp" />
     <ClCompile Include="Engine\Debugging\DebugDraws.cpp" />
     <ClCompile Include="Engine\Debugging\DebugSystem.cpp" />
@@ -266,6 +264,7 @@
     <ClCompile Include="Engine\Collisions\CollisionDetection.cpp" />
     <ClCompile Include="Engine\Collisions\CollisionResult.cpp" />
     <ClCompile Include="Engine\Collisions\CollisionShapes.cpp" />
+    <ClCompile Include="Engine\Physics\Collisions\ColliderGeometry.cpp" />
     <ClCompile Include="Engine\Physics\Collisions\CollisionComponents.cpp" />
     <ClCompile Include="Engine\Physics\Collisions\CollisionSystem.cpp" />
     <ClCompile Include="Engine\Collisions\RayCasting.cpp" />
@@ -328,10 +327,9 @@
     <ClInclude Include="Engine\Camera\CameraUniformBufferHandler.h" />
     <ClInclude Include="Engine\Camera\SpringArm.h" />
     <ClInclude Include="Engine\Collisions\CollisionGrid.h" />
-    <ClInclude Include="Engine\Collisions\CollisionQuadtree.h" />
-    <ClInclude Include="Engine\Collisions\CollisionQuadtreeTests.h" />
     <ClInclude Include="Engine\Config\GameConfig.h" />
     <ClInclude Include="Engine\Core\GameState.h" />
+    <ClInclude Include="Engine\Core\SceneTransform.h" />
     <ClInclude Include="Engine\Debugging\CollisionDebugSystem.h" />
     <ClInclude Include="Engine\Debugging\DebugDraws.h" />
     <ClInclude Include="Engine\Debugging\DebugSystem.h" />
@@ -348,6 +346,7 @@
     <ClInclude Include="Engine\Maths\MathsHelpers.h" />
     <ClInclude Include="Engine\Maths\MathsTypes.h" />
     <ClInclude Include="Engine\Collisions\CollisionDetection.h" />
+    <ClInclude Include="Engine\Physics\Collisions\ColliderGeometry.h" />
     <ClInclude Include="Engine\Physics\Collisions\CollisionComponents.h" />
     <ClInclude Include="Engine\Physics\Collisions\CollisionEvent.h" />
     <ClInclude Include="Engine\Collisions\CollisionResult.h" />

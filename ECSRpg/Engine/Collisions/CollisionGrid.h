@@ -10,29 +10,22 @@
 #include <algorithm>
 #include <set>
 
-struct  CompressedCollection
-{
-	unsigned int index : 24;
-	unsigned int length : 8;
-};
-
 #pragma pack(push, 1)
 template<typename T>
 struct CollisionGridCellCollection
 {
 public:
 	CollisionGridCellCollection();
-	~CollisionGridCellCollection();
 
-	void Add(const T& toInsert);
+	void Add(const T& toInsert, T* inPtr);
 	void Clear();
 	T* GetDataPtr(T* inPtr)const;
 
-	std::vector<T> ToVector()const;
-
+	std::vector<T> ToVector(T* inPtr)const;
 public:
-	T* data = nullptr;
-	unsigned short size;
+	unsigned int index : 24 ;
+	unsigned int length : 7;
+	unsigned int indexSet : 1 ;
 };
 #pragma pack(pop)
 
@@ -49,7 +42,6 @@ public:
 	void SetGridDimensions(Vector3 origin, Vector3 gridSize, Vector3 cellSize = Vector3::One);
 	void SetDataArrayLength(const int& length);
 	void BuildGridCells();
-
 
 	void Query(const CollisionAABB& QueryAABB, std::vector<T>& results) const;
 	void GetAABBClampIndices(const CollisionAABB& queryAABB, Vector3Int& bottomLeft, Vector3Int& topRight) const;
@@ -78,10 +70,10 @@ private:
 private:
 
 	//3D data stored in a 1-D array (the data is an array of T)
-	std::vector<CollisionGridCellCollection<int>> gridData;
+	std::vector<CollisionGridCellCollection<uint32>> gridData;
 	std::vector<T> dataArray;
 
-	uint32* indicesBuffer;
+	uint32* indicesBuffer = nullptr;
 	uint32 indicesBufferSize = 0;
 	uint32 currentIndicesBufferIndex = 0;
 };
@@ -89,13 +81,12 @@ private:
 template<typename T>
 inline void CollisionGrid<T>::Insert(const T& item)
 {
+	dataArray.push_back(item);
+
 	const CollisionAABB insertAABB = item.GetAABB();
 
 	Vector3Int bottomLeft;
 	Vector3Int topRight;
-
-	dataArray.push_back(item);
-	const int dataIndex = dataArray.size() - 1;
 
 	GetAABBClampIndices(insertAABB, bottomLeft, topRight);
 
@@ -107,7 +98,55 @@ inline void CollisionGrid<T>::Insert(const T& item)
 			{
 				const int arrayIndex = GetIndexFromCoords(Vector3Int(x, y, z));
 
-				gridData[arrayIndex].Add(dataIndex);
+				++gridData[arrayIndex].length;
+				++indicesBufferSize;
+			}
+		}
+	}
+}
+
+template<typename T>
+inline void CollisionGrid<T>::BuildGridCells()
+{
+	dataArray.shrink_to_fit();
+
+	//allocateBiffer
+	if (indicesBuffer == nullptr && indicesBufferSize > 0)
+		indicesBuffer = (uint32*)malloc(indicesBufferSize * sizeof(uint32));
+
+	//TODO: Go through every item and insert index into grid buffer
+	currentIndicesBufferIndex = 0;
+
+	for (int i = 0; i < dataArray.size(); ++i)
+	{
+		const T& item = dataArray[i];
+		const CollisionAABB insertAABB = item.GetAABB();
+
+		Vector3Int bottomLeft;
+		Vector3Int topRight;
+
+		GetAABBClampIndices(insertAABB, bottomLeft, topRight);
+
+		for (int z = bottomLeft.z; z <= topRight.z; ++z)
+		{
+			for (int y = bottomLeft.y; y <= topRight.y; ++y)
+			{
+				for (int x = bottomLeft.x; x <= topRight.x; ++x)
+				{
+					const int arrayIndex = GetIndexFromCoords(Vector3Int(x, y, z));
+
+					CollisionGridCellCollection<uint32>& gridCell = gridData[arrayIndex];
+					
+					if (!gridCell.indexSet)
+					{
+						gridCell.index = currentIndicesBufferIndex;
+						currentIndicesBufferIndex += gridCell.length;
+						gridCell.length = 0;
+						gridCell.indexSet = true;
+					}
+
+					gridCell.Add(i, indicesBuffer);
+				}
 			}
 		}
 	}
@@ -130,16 +169,14 @@ inline void CollisionGrid<T>::Query(const CollisionAABB& queryAABB, std::vector<
 			for (int x = bottomLeft.x; x <= topRight.x; ++x)
 			{
 				const int arrayIndex = GetIndexFromCoords(Vector3Int(x, y, z));
-				const CollisionGridCellCollection<int>& cell = gridData[arrayIndex];
+				const CollisionGridCellCollection<uint32>& cell = gridData[arrayIndex];
 
-				if (cell.size > 0)
+				if (cell.length > 0)
 				{
-					std::vector<int> cellVector = cell.ToVector();
-					tempResults.reserve(tempResults.size() + cell.size);
+					std::vector<uint32> cellVector = cell.ToVector(indicesBuffer);
+					tempResults.reserve(tempResults.size() + cell.length);
 					std::move(cellVector.begin(), cellVector.end(), std::inserter(tempResults, tempResults.end()));
 				}
-
-
 			}
 		}
 	}
@@ -179,12 +216,19 @@ inline void CollisionGrid<T>::GetAABBClampIndices(const CollisionAABB& queryAABB
 template<typename T>
 inline void CollisionGrid<T>::Clear()
 {
-	for (CollisionGridCellCollection<int>& cell : gridData)
+	for (CollisionGridCellCollection<uint32>& cell : gridData)
 	{
 		cell.Clear();
 	}
 
 	dataArray.clear();
+
+	if (indicesBuffer != nullptr)
+		free(indicesBuffer);
+
+	indicesBuffer = nullptr;
+
+	indicesBufferSize = 0;
 }
 
 template<typename T>
@@ -207,12 +251,7 @@ inline void CollisionGrid<T>::SetGridDimensions(Vector3 origin, Vector3 gridSize
 template<typename T>
 inline void CollisionGrid<T>::SetDataArrayLength(const int& length)
 {
-	dataArray.resize(length);
-}
-
-template<typename T>
-inline void CollisionGrid<T>::BuildGridCells()
-{
+	dataArray.reserve(length);
 }
 
 template<typename T>
@@ -269,7 +308,7 @@ inline RaycastingResult CollisionGrid<T>::CastRay(const Ray ray, const unsigned 
 
 		if (gridResult.hasHit)
 		{
-			const Vector3 newStartPosition = ray.Start + (ray.Direction * (gridResult.Distance + 0.05f));
+			const Vector3 newStartPosition = ray.Start + (ray.Direction * (gridResult.Distance + 0.0001f));
 			worldIndex = GetCoordinatesFromPosition(newStartPosition);
 		}
 		else
@@ -357,12 +396,13 @@ inline RaycastingResult CollisionGrid<T>::CastRay(const Ray ray, const unsigned 
 		else
 		{
 			const int worldIndexInt = GetIndexFromCoords(worldIndex);
-			const CollisionGridCellCollection<int>& hitData = gridData[worldIndexInt];
+			const CollisionGridCellCollection<uint32>& hitData = gridData[worldIndexInt];
 
+			const uint32* hitDataPtr = hitData.GetDataPtr(indicesBuffer);
 			//if grid box has objects then do raycasting
-			for (int i = 0; i<hitData.size; ++i)
+			for (int i = 0; i<hitData.length; ++i)
 			{
-				const int& itemIndex = hitData.data[i];
+				const int& itemIndex = hitDataPtr[i];
 
 				if (testedItems.find(itemIndex) == testedItems.end())
 				{
@@ -382,16 +422,12 @@ inline RaycastingResult CollisionGrid<T>::CastRay(const Ray ray, const unsigned 
 								result = callbackResult;
 							}
 						}
-
 						testedItems.insert(itemIndex);
 					}
-
 				}
-
 			}
 		}
 	}
-
 
 	return result;
 }
@@ -427,43 +463,35 @@ inline int CollisionGrid<T>::GetIndexFromCoords(const Vector3Int& coords) const
 template<typename T>
 inline CollisionGridCellCollection<T>::CollisionGridCellCollection()
 {
-	data = (T*)malloc(0);
-	size = 0;
+	length = 0;
+	indexSet = false;
 }
 
 template<typename T>
-inline CollisionGridCellCollection<T>::~CollisionGridCellCollection()
-{
-	free(data);
-}
-
-template<typename T>
-inline void CollisionGridCellCollection<T>::Add(const T& toInsert)
-{
-	data = (T*)realloc(data, sizeof(T) * (size + 1));
-	data[size] = toInsert;
-	++size;
+inline void CollisionGridCellCollection<T>::Add(const T& toInsert, T* inPtr)
+{	
+	T* data = GetDataPtr(inPtr);
+	data[length] = toInsert;
+	++length;
 }
 
 template<typename T>
 inline void CollisionGridCellCollection<T>::Clear()
 {
-	if (data != nullptr)
-	{
-		data = (T*)realloc(data, 0);
-		size = 0;
-	}
-
+	length = 0;
+	indexSet = false;
 }
 
 template<typename T>
 inline T* CollisionGridCellCollection<T>::GetDataPtr(T* inPtr) const
 {
-	return NULL;
+	return &(inPtr[index]);
 }
 
 template<typename T>
-inline std::vector<T> CollisionGridCellCollection<T>::ToVector() const
+inline std::vector<T> CollisionGridCellCollection<T>::ToVector(T* inPtr) const
 {
-	return std::vector<T>(data, data+size);
+	const T* data = GetDataPtr(inPtr);
+
+	return std::vector<T>(data, data+length);
 }

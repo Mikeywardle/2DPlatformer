@@ -2,30 +2,6 @@
 
 #include <math.h>
 
-#pragma region 2D Collisions
-bool TestAABB2DvsAABB2DSimple(const CollisionAABB2D& A, const CollisionAABB2D& B)
-{
-	const Vector2 CollisionDepths = Vector2(
-		(A.HalfLimits.x + B.HalfLimits.x) - fabsf(A.Position.x - B.Position.x),
-		(A.HalfLimits.y + B.HalfLimits.y) - fabsf(A.Position.y - B.Position.y)
-	);
-
-	return CollisionDepths.x >= 0 && CollisionDepths.y >= 0;
-}
-
-bool TestAABB2DContainsAABB2D(const CollisionAABB2D& Container, const CollisionAABB2D& Containee)
-{
-	const Vector2 PositionDiff = Containee.Position - Container.Position;
-
-	const float LongestXDistance = fmaxf(fabsf(PositionDiff.x + Containee.HalfLimits.x), fabsf(PositionDiff.x - Containee.HalfLimits.x));
-	const float LongestYDistance = fmaxf(fabsf(PositionDiff.y + Containee.HalfLimits.y), fabsf(PositionDiff.y - Containee.HalfLimits.y));
-
-	return LongestXDistance <= Container.HalfLimits.x
-		&& LongestYDistance <= Container.HalfLimits.y;
-}
-
-#pragma endregion
-
 #pragma region 3D Collision
 CollisionResult TestABBvAABB(const CollisionAABB& A, const CollisionAABB& B)
 {

@@ -1,28 +1,33 @@
 #include "CollisionComponents.h"
 #include <Maths/Transform.h>
-#include <Maths/Vector2.h>
 
-AABBColliderComponent::AABBColliderComponent(Vector3 halfLimits)
+
+ICollisionGeometry* ColliderGeometryComponent::GetCollisionGeometry() const
 {
-	this->HalfLimits = halfLimits;
+	return geometry.get();
 }
 
-CollisionAABB AABBColliderComponent::GetAABBLimits(Transform* transform) const
+void ColliderGeometryComponent::SetCollisionGeometry(ICollisionGeometry* inGeometry)
 {
-	return CollisionAABB(transform->GetPosition(), HalfLimits);
+	geometry = std::shared_ptr<ICollisionGeometry>(inGeometry);
 }
 
-SphereColliderComponent::SphereColliderComponent(float radius)
+ColliderType ColliderGeometryComponent::GetColliderType() const
 {
-	this->radius = radius;
+	return geometry->GetColliderType();
 }
 
-CollisionAABB SphereColliderComponent::GetAABBLimits(Transform* transform) const
+CollisionAABB ColliderGeometryComponent::GetAABBLimits(const Transform* transform) const
 {
-	return CollisionAABB(transform->GetPosition(), Vector3(radius, radius, radius));
+	return geometry->GetAABBLimits(transform);
 }
 
-CollisionSphere SphereColliderComponent::GetCollisionSphere(Transform* transform) const
+AABBCollisionGeometry* ColliderGeometryComponent::GetAABBGeometry() const
 {
-	return CollisionSphere(radius, transform->GetPosition());
+	return dynamic_cast<AABBCollisionGeometry*>(geometry.get());
+}
+
+SphereCollisionGeometry* ColliderGeometryComponent::GetSphereGeometry() const
+{
+	return dynamic_cast<SphereCollisionGeometry*>(geometry.get());
 }

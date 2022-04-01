@@ -9,8 +9,6 @@ class World;
 class PhysicsWorld;
 struct PhysicsCollisionResult;
 
-struct ColliderMetaComponent;
-struct IColliderComponent;
 struct RigidBodyComponent;
 struct Vector3;
 
@@ -28,7 +26,6 @@ public:
 private:
 
 	void FindDynamicCollisions(std::vector<PhysicsCollisionResult>& colliderResults, std::vector<PhysicsCollisionResult>& triggerResults, PhysicsWorld* physWorld);
-	IColliderComponent* GetEntityCollider(const Entity entity, const ColliderMetaComponent* metaData);
 
 	void ResolveCollisions(std::vector<PhysicsCollisionResult>& results);
 

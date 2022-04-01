@@ -32,7 +32,7 @@ void PhysicsTestlevel::LoadLevel()
 {
 	CreatePlayerCamera();
 
-	CreateDirectionalLight(Vector3(80, -10, 30));
+	CreateDirectionalLight(Vector3(40, -10, 30));
 
 	const int worldSize = 50;
 	const float worldSpacing = 3.0f;
@@ -153,12 +153,14 @@ void PhysicsTestlevel::CreateTile(Vector3 Position, Vector3 Scale, std::string m
 	//rb->isInfiniteMass = true;
 	//rb->Friction = 3.f;
 
-	AABBColliderComponent* sc = world->AddComponent<AABBColliderComponent>(platform);
-	new(sc) AABBColliderComponent(Scale);
+	AABBCollisionGeometry* geometry = new AABBCollisionGeometry();
+	geometry->HalfLimits = Scale;
 
-	ColliderMetaComponent* colliderMeta = world->AddComponent< ColliderMetaComponent>(platform);
-	colliderMeta->type = ColliderType::AABB;
-	colliderMeta->collisionLayer = NeOniCollisionLayers::Environment;
+	ColliderGeometryComponent* collider = world->AddComponent<ColliderGeometryComponent>(platform);
+
+	collider->collisionLayer = NeOniCollisionLayers::Environment;
+
+	collider->SetCollisionGeometry(geometry);
 
 	world->AddComponent<StaticCollider>(platform);
 }

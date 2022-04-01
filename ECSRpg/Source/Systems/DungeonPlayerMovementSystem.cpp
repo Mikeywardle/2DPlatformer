@@ -11,6 +11,7 @@
 #include <Maths/Transform.h>
 
 #include <Physics/PhysicsSystem.h>
+#include <Physics/Collisions/PhysicsCollisionResult.h>
 
 #include <Data/NeOniCollisionLayers.h>
 
@@ -67,23 +68,18 @@ void DungeonPlayerMovementSystem::OnInput(const float deltaTime, const InputData
 				const Vector3 PlayerForward = transform->GetForward();
 				const Vector3 TargetCellLocation = PlayerPosition + (PlayerForward * 2);
 
-				Ray ray = Ray(PlayerPosition, TargetCellLocation);
+				CollisionAABB aabb = CollisionAABB(TargetCellLocation + (Vector3::Down), Vector3(2, 3, 2));
 				std::vector<uint8> environmentLayers = {NeOniCollisionLayers::Environment};
 
-				const RaycastingResult result = physicsSystem->CastRay(ray, entity, environmentLayers);
+				std::vector<PhysicsCollisionCastResult> boxCastResults = physicsSystem->CastBox(aabb, environmentLayers);
 
-				if (!result.hasHit)
+				if (boxCastResults.size() == 0)
 				{
 					dmc->start = PlayerPosition;
 					dmc->target = TargetCellLocation;
 					dmc->isMoving = true;
 					dmc->currentAlpha = 0.0f;
 				}
-				else
-				{
-					dmc->isMoving = true;
-				}
-
 			}
 		}
 	}

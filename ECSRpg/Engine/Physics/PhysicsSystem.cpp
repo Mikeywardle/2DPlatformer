@@ -13,6 +13,7 @@
 
 #include "PhysicsWorld.h"
 #include "PhysicsSystemConfig.h"
+#include "Physics/Collisions/PhysicsCollisionResult.h"
 
 
 PhysicsSystem::PhysicsSystem(World* world, PhysicsSystemConfig physicsConfig)
@@ -57,6 +58,11 @@ void PhysicsSystem::ClearWorld()
 RaycastingResult PhysicsSystem::CastRay(const Ray ray, const Entity ignoreEntity, const std::vector<uint8> layers) const
 {
 	return physicsWorld->CastRay(ray, layers, ignoreEntity);
+}
+
+std::vector<PhysicsCollisionCastResult> PhysicsSystem::CastBox(const CollisionAABB box, const std::vector<uint8> layers) const
+{
+	return physicsWorld->BoxCast(box, layers);
 }
 
 void PhysicsSystem::ProcessForceHandlers(float deltaTime)

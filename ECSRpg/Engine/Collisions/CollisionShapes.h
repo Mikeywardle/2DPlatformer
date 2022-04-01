@@ -12,13 +12,11 @@ struct CollisionAABB
 	Vector3 HalfLimits;
 };
 
-struct CollisionAABB2D
+struct CollisionOBB
 {
-	CollisionAABB2D() = default;
-	CollisionAABB2D(Vector2 Position, Vector2 HalfLimits);
-
-	Vector2 Position;
-	Vector2 HalfLimits;
+	Vector3 Position;
+	Vector3 HalfLimits;
+	Vector3 Orientation;
 };
 
 struct CollisionSphere
@@ -43,5 +41,7 @@ struct CollisionTriangle
 
 struct CollisionCapsule
 {
-
+	Vector3 A;
+	Vector3 B;
+	float radius;
 };

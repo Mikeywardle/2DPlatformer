@@ -2,62 +2,38 @@
 #include <Maths/MathsTypes.h>
 #include <Maths/Transform.h>
 
+#include <memory>
+
 #include <Collisions/CollisionShapes.h>
-#include<vector>
+
+#include "ColliderGeometry.h"
+
+#include <vector>
 
 struct DynamicCollider {};
 struct StaticCollider {};
 
-//TODO: Add OBB, Capsule, Cylinder, Box soup?
-enum class ColliderType : int8
+struct ColliderGeometryComponent
 {
-	None = -1
-	, AABB = 0
-	, Sphere = 1
-	, TotalCollisionComponents = 2
-};
+public:
 
-struct ColliderMetaComponent
-{
-	ColliderType type = ColliderType::None;
 	bool isTrigger = false;
 	uint8 collisionLayer = 0;
 
 	std::vector<uint8> toCollideLayers;
+
+	ICollisionGeometry* GetCollisionGeometry() const;
+	void SetCollisionGeometry(ICollisionGeometry* inGeometry);
+
+	ColliderType GetColliderType() const;
+
+	CollisionAABB GetAABBLimits(const Transform* transform) const;
+
+	AABBCollisionGeometry* GetAABBGeometry() const;
+	SphereCollisionGeometry* GetSphereGeometry() const;
+
+private:
+	std::shared_ptr<ICollisionGeometry> geometry{ nullptr };
 };
 
-struct IColliderComponent 
-{
-	virtual CollisionAABB GetAABBLimits(Transform* transform) const  = 0;
-	virtual ColliderType GetColliderType() const = 0;
-};
 
-struct AABBColliderComponent final : public IColliderComponent
-{
-public:
-	AABBColliderComponent() = default;
-	AABBColliderComponent(Vector3 halfLimits);
-
-	virtual CollisionAABB GetAABBLimits(Transform* transform) const override;
-	virtual ColliderType GetColliderType() const override { return ColliderType::AABB; };
-
-public:
-
-	Vector3 HalfLimits;
-};
-
-struct SphereColliderComponent final : public IColliderComponent
-{
-public:
-	SphereColliderComponent() = default;
-	SphereColliderComponent(float radius);
-
-	virtual CollisionAABB GetAABBLimits(Transform* transform) const override;
-	virtual ColliderType GetColliderType() const override { return ColliderType::Sphere; };
-
-	CollisionSphere GetCollisionSphere(Transform* transform) const;
-
-public:
-
-	float radius;
-};
