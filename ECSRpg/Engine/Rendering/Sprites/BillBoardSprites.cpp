@@ -1,29 +1,27 @@
 #include "BillBoardSprites.h"
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
 #include <Camera/CameraComponent.h>
 #include <math.h>
 #include <Maths/Trigonometry.h>
 #include <Core/World.h>
 
 void BillBoardSpriteSystem::OnFrame(float deltaTime)
-{
-	
-	std::vector<Entity>entities = world->GetEntities<BillBoardComponent,Transform>();
+{	
+	std::vector<Entity>entities = world->GetEntities<BillBoardComponent, SceneTransformComponent>();
 
 	Entity cameraEntity = CameraComponent::GetMainCamera();
-	Transform* cameraTranform = world->GetComponent<Transform>(cameraEntity);
+	SceneTransformComponent* cameraTranform = world->GetComponent<SceneTransformComponent>(cameraEntity);
 	Vector3 cameraposition = cameraTranform->GetPosition();
 
 	for (Entity entity : entities)
 	{
-		Transform* transform = world->GetComponent<Transform>(entity);
+		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
 		Vector3 billboardPosition = transform->GetPosition();
 		Vector3 rotation = transform->GetRotation();
 
 		BillBoardComponent* billboard = world->GetComponent<BillBoardComponent>(entity);
 
 		Vector3 diff = cameraposition - billboardPosition;
-
 
 		//Y-Axis Rotation
 		{

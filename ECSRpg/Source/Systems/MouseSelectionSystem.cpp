@@ -23,7 +23,7 @@ void MouseSelectionSystem::OnInput(const float deltaTime, const InputData* input
 	Entity cameraEntity = CameraComponent::GetMainCamera();
 
 	CameraComponent* cameraComponent = world->GetComponent<CameraComponent>(cameraEntity);
-	Transform* transform = world->GetComponent<Transform>(cameraEntity);
+	SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(cameraEntity);
 
 	const Vector3 MouseRayDirection = cameraComponent->ScreenSpaceLocationToWorldSpaceDirection(MousePostion, transform, world->GetGameWindow());
 
@@ -34,8 +34,8 @@ void MouseSelectionSystem::OnInput(const float deltaTime, const InputData* input
 	const Ray ray = Ray(RayStart, RayStart + (MouseRayDirection * 1000.f));
 	RaycastingResult result = physicsSystem->CastRay(ray, cameraEntity);
 
-	Entity marker = world->GetEntity<MouseSelectionDebugMarker, Transform>();
-	Transform* markerTransform = world->GetComponent<Transform>(marker);
+	Entity marker = world->GetEntity<MouseSelectionDebugMarker, SceneTransformComponent>();
+	SceneTransformComponent* markerTransform = world->GetComponent<SceneTransformComponent>(marker);
 
 	if (result.hasHit)
 	{

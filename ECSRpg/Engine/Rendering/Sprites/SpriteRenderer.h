@@ -6,7 +6,6 @@
 #include <Maths/Color.h>
 #include <glm/mat4x4.hpp>
 
-
 #include <glad/glad.h>
 
 struct SpriteVertex
@@ -36,7 +35,7 @@ public:
 private:
 
 	void GenerateIndices();
-	Quad CreateSpriteVertices(Color color, float textureId, float batchIndex, Transform* transform, float Width, float Height, float PixelsPerUnit);
+	Quad CreateSpriteVertices(Color color, float textureId, float batchIndex, SceneTransformComponent* transform, float Width, float Height, float PixelsPerUnit);
 	void DrawData(int numberOfIndices, int boundTextures);
 
 	void BindTextures(int boundTextures);

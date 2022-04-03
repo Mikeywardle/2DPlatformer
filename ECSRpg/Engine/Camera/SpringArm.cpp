@@ -1,7 +1,7 @@
 #include "SpringArm.h"
 
 #include <Core/World.h>
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
 #include <Physics/PhysicsSystem.h>
 
 SpringArmComponent::SpringArmComponent(float InDistance, float InLerpSpeed, Entity InChild, Entity InParent)
@@ -20,7 +20,7 @@ SpringArmSystem::SpringArmSystem(World* world)
 
 void SpringArmSystem::OnFrame(float deltaTime)
 {
-	std::vector<Entity> entities = world->GetEntities<SpringArmComponent, Transform>();
+	std::vector<Entity> entities = world->GetEntities<SpringArmComponent, SceneTransformComponent>();
 
 	PhysicsSystem* physicsSystem = world->GetPhysicsSystem();
 
@@ -28,13 +28,13 @@ void SpringArmSystem::OnFrame(float deltaTime)
 	{
 		SpringArmComponent* springArm = world->GetComponent<SpringArmComponent>(arm);
 
-		Transform* childTransform = world->GetComponent<Transform>(springArm->child);
-		Transform* parentTransform = world->GetComponent<Transform>(springArm->parent);
+		SceneTransformComponent* childTransform = world->GetComponent<SceneTransformComponent>(springArm->child);
+		SceneTransformComponent* parentTransform = world->GetComponent<SceneTransformComponent>(springArm->parent);
 
 		if (childTransform == nullptr || parentTransform == nullptr)
 			continue;
 
-		Transform* armTransform = world->GetComponent<Transform>(arm);
+		SceneTransformComponent* armTransform = world->GetComponent<SceneTransformComponent>(arm);
 
 		armTransform->SetPosition(parentTransform->GetPosition());
 

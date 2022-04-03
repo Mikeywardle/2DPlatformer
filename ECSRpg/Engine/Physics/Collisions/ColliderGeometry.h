@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Maths/MathsTypes.h>
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
 
 #include <Collisions/CollisionShapes.h>
 
@@ -18,7 +18,7 @@ class ICollisionGeometry
 {
 public:
 
-	virtual CollisionAABB GetAABBLimits(const Transform* transform) const = 0;
+	virtual CollisionAABB GetAABBLimits(const SceneTransformComponent* transform) const = 0;
 	virtual ColliderType GetColliderType() const = 0;
 };
 
@@ -29,7 +29,7 @@ public:
 	AABBCollisionGeometry() = default;
 	AABBCollisionGeometry(Vector3 halfLimits);
 
-	virtual CollisionAABB GetAABBLimits(const Transform * transform) const override;
+	virtual CollisionAABB GetAABBLimits(const SceneTransformComponent* transform) const override;
 	virtual ColliderType GetColliderType() const override { return ColliderType::AABB; };
 
 public:
@@ -42,10 +42,10 @@ public:
 	SphereCollisionGeometry() = default;
 	SphereCollisionGeometry(float radius);
 
-	virtual CollisionAABB GetAABBLimits(const Transform * transform) const override;
+	virtual CollisionAABB GetAABBLimits(const SceneTransformComponent* transform) const override;
 	virtual ColliderType GetColliderType() const override { return ColliderType::Sphere; };
 
-	CollisionSphere GetCollisionSphere(const Transform * transform) const;
+	CollisionSphere GetCollisionSphere(const SceneTransformComponent* transform) const;
 
 public:
 

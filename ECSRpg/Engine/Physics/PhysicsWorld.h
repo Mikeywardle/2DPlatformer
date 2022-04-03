@@ -14,7 +14,7 @@ struct CollisionResult;
 struct CollisionAABB;
 struct PhysicsCollisionCastResult;
 
-struct Transform;
+struct SceneTransformComponent;
 struct Vector2;
 struct Vector3;
 
@@ -23,7 +23,7 @@ struct Ray;
 
 typedef unsigned int Entity;
 
-typedef CollisionResult (*CollisionFunctionCallBack)(const ColliderGeometryComponent* colliderA, const Transform* transformA, const ColliderGeometryComponent* colliderB, const Transform* transformB);
+typedef CollisionResult (*CollisionFunctionCallBack)(const ColliderGeometryComponent* colliderA, const SceneTransformComponent* transformA, const ColliderGeometryComponent* colliderB, const SceneTransformComponent* transformB);
 
 class PhysicsWorld
 {
@@ -46,7 +46,7 @@ public:
 		, std::vector<PhysicsCollisionResult>& triggerResults
 		, const PhysicsCollisionWorldData query
 		, const ColliderGeometryComponent* collider
-		, const Transform* transform
+		, const SceneTransformComponent* transform
 		, const std::vector<uint8>& collisionLayers
 	) const;
 
@@ -77,12 +77,12 @@ private:
 namespace PhysicsWorldCollisionFunctions
 {
 	//AABB vs
-	CollisionResult AABBvsAABB(const ColliderGeometryComponent* colliderA, const Transform* transformA, const ColliderGeometryComponent* colliderB, const Transform* transformB);
-	CollisionResult AABBvsSphere(const ColliderGeometryComponent* colliderA, const Transform* transformA, const ColliderGeometryComponent* colliderB, const Transform* transformB);
+	CollisionResult AABBvsAABB(const ColliderGeometryComponent* colliderA, const SceneTransformComponent* transformA, const ColliderGeometryComponent* colliderB, const SceneTransformComponent* transformB);
+	CollisionResult AABBvsSphere(const ColliderGeometryComponent* colliderA, const SceneTransformComponent* transformA, const ColliderGeometryComponent* colliderB, const SceneTransformComponent* transformB);
 
 	//Sphere vs
-	CollisionResult SpherevsAABB(const ColliderGeometryComponent* colliderA, const Transform* transformA, const ColliderGeometryComponent* colliderB, const Transform* transformB);
-	CollisionResult SpherevsSphere(const ColliderGeometryComponent* colliderA, const Transform* transformA, const ColliderGeometryComponent* colliderB, const Transform* transformB);
+	CollisionResult SpherevsAABB(const ColliderGeometryComponent* colliderA, const SceneTransformComponent* transformA, const ColliderGeometryComponent* colliderB, const SceneTransformComponent* transformB);
+	CollisionResult SpherevsSphere(const ColliderGeometryComponent* colliderA, const SceneTransformComponent* transformA, const ColliderGeometryComponent* colliderB, const SceneTransformComponent* transformB);
 
 	//Raycast Callback
 	RaycastingResult RaycastingCallback(const Ray ray, const PhysicsCollisionWorldData item, const unsigned int IgnoreEntity, const void* userData);

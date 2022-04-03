@@ -1,5 +1,5 @@
 #pragma once
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
 #include <glm/mat4x4.hpp>
 #include <Maths/Vector3.h>
 #include <Maths/Vector2.h>
@@ -27,10 +27,10 @@ public:
 	float farPlane;
 
 	glm::mat4 GetProjection(const GameWindow* window) const;
-	glm::mat4 GetView(Transform* transform) const;
+	glm::mat4 GetView(SceneTransformComponent* transform) const;
 
 	float GetHorizontalFOV(const float aspectRatio) const;
-	Vector3 ScreenSpaceLocationToWorldSpaceDirection(Vector2 ScreenPosition, Transform* transform, GameWindow* gameWindow) const;
+	Vector3 ScreenSpaceLocationToWorldSpaceDirection(Vector2 ScreenPosition, SceneTransformComponent* transform, GameWindow* gameWindow) const;
 
 private:
 	static Entity mainCamera ;

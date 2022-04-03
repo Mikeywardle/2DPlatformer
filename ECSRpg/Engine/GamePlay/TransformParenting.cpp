@@ -1,6 +1,6 @@
 #include "TransformParenting.h"
 #include <Core/World.h>
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
 
 PositionAttatchmentComponent::PositionAttatchmentComponent(Entity Parent, Vector3 LocalOffset, bool DestroyOnNoParent)
 {
@@ -11,14 +11,14 @@ PositionAttatchmentComponent::PositionAttatchmentComponent(Entity Parent, Vector
 
 void PositionAttachmentSystem::OnFrame(float deltaTime)
 {
-	ForEntities(world, PositionAttatchmentComponent, Transform)
+	ForEntities(world, PositionAttatchmentComponent, SceneTransformComponent)
 	{
 		PositionAttatchmentComponent* pac = world->GetComponent<PositionAttatchmentComponent>(entity);
-		Transform* parentTransform = world->GetComponent<Transform>(pac->Parent);
+		SceneTransformComponent* parentTransform = world->GetComponent<SceneTransformComponent>(pac->Parent);
 
 		if (parentTransform != nullptr)
 		{
-			Transform* transform = world->GetComponent<Transform>(entity);
+			SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
 
 			transform->SetPosition(parentTransform->TransformPoint(pac->LocalOffset));
 			transform->SetRotation(parentTransform->GetRotation());

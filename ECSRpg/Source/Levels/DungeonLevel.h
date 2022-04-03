@@ -13,6 +13,7 @@ public:
 	virtual void OnStart() override;
 
 	virtual void OnInput(float deltaTime, const InputData* inputData) override;
+	virtual void OnFrame(float deltaTime) override;
 
 private:
 
@@ -23,6 +24,9 @@ private:
 	void CreateTile(Vector3 Position, Vector3 Scale, std::string materialName, bool isFloor);
 	void CreateDirectionalLight(Vector3 rotation);
 
+	void CreateAtom(Vector3 position);
+
 	Entity CreateMesh(Vector3 position, std::string mesh, std::string material);
 
+private:
 };

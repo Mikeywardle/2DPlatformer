@@ -10,7 +10,7 @@
 #include <Maths/Vector3.h>
 
 #include <Camera/CameraComponent.h>
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
 #include <Rendering/UniformBufferLocations.h>
 
 CameraUniformBufferHandler::CameraUniformBufferHandler()
@@ -43,7 +43,7 @@ void CameraUniformBufferHandler::BindCameraBuffers(World* world)
 
 
 	CameraComponent* camera = world->GetComponent<CameraComponent>(mainCamera);
-	Transform* transform = world->GetComponent<Transform>(mainCamera);
+	SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(mainCamera);
 
 	//Matrices
 	glm::mat4 projection = camera->GetProjection(world->GetGameWindow());

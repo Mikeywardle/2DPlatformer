@@ -104,10 +104,10 @@ public:
 		return &componentPackedArray;
 	}
 
-	Entity GetEntity(T* pointer) const
+	Entity GetComponentOwner(const T* pointer) const
 	{
 		const T* componentsStartPtr = &componentPackedArray[0];
-		const int pointerindex = (pointer - componentsStartPtr) / sizeof(T);
+		const int pointerindex = (pointer - componentsStartPtr);
 
 		return indexToEntityArray.at(pointerindex);
 	}

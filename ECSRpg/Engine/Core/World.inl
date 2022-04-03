@@ -6,6 +6,7 @@
 #include <ecs/Entity.h>
 #include <Events/EventsContext.h>
 #include <thread>
+#include "World.h"
 
 
 #pragma region Levels
@@ -91,9 +92,14 @@ inline std::vector<T>* World::GetComponents()
 }
 
 template<typename ...Args>
-inline Entity World::GetEntity()
+inline Entity World::GetEntity() const
 {
 	return ecsContext->GetEntity<Args...>();
+}
+template<typename T>
+inline Entity World::GetComponentOwner(const T* pointer) const
+{
+	return ecsContext->GetComponentOwner<T>(pointer);
 }
 #pragma endregion
 

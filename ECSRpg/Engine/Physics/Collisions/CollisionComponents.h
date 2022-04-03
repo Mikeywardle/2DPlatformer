@@ -1,6 +1,6 @@
 #pragma once
 #include <Maths/MathsTypes.h>
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
 
 #include <memory>
 
@@ -27,7 +27,7 @@ public:
 
 	ColliderType GetColliderType() const;
 
-	CollisionAABB GetAABBLimits(const Transform* transform) const;
+	CollisionAABB GetAABBLimits(const SceneTransformComponent* transform) const;
 
 	AABBCollisionGeometry* GetAABBGeometry() const;
 	SphereCollisionGeometry* GetSphereGeometry() const;

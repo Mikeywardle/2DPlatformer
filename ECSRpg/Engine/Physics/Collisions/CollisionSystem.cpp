@@ -1,7 +1,7 @@
 #include "CollisionSystem.h"
 #include "CollisionEvent.h"
 
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
 
 #include <Physics/PhysicsWorld.h>
 #include <Physics/RigidBody.h>
@@ -60,7 +60,7 @@ void CollisionSystem::FindDynamicCollisions(std::vector<PhysicsCollisionResult>&
 
 	for (Entity entity : entities)
 	{
-		Transform* transform = world->GetComponent<Transform>(entity);
+		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
 		const ColliderGeometryComponent* collider = world->GetComponent<ColliderGeometryComponent>(entity);
 
 		const CollisionAABB ColliderLimits = collider->GetAABBLimits(transform);
@@ -156,7 +156,7 @@ void CollisionSystem::FindDynamicCollisions(std::vector<PhysicsCollisionResult>&
 		for (const PhysicsCollisionWorldData& data : sortedColliderEntities[i])
 		{
 			const ColliderGeometryComponent* collider = world->GetComponent<ColliderGeometryComponent>(data.entity);
-			Transform* transform = world->GetComponent<Transform>(data.entity);
+			SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(data.entity);
 
 			physWorld->QueryCollider(colliderResults, triggerResults, data, collider, transform, collider->toCollideLayers);
 		}
@@ -164,7 +164,7 @@ void CollisionSystem::FindDynamicCollisions(std::vector<PhysicsCollisionResult>&
 		for (const PhysicsCollisionWorldData& data : sortedTriggerEntities[i])
 		{
 			const ColliderGeometryComponent* collider = world->GetComponent<ColliderGeometryComponent>(data.entity);
-			Transform* transform = world->GetComponent<Transform>(data.entity);
+			SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(data.entity);
 
 			physWorld->QueryCollider(colliderResults, triggerResults, data, collider, transform, collider->toCollideLayers);
 		}
@@ -199,7 +199,7 @@ void CollisionSystem::GenerateStaticColiisions(PhysicsWorld* physWorld)
 
 	for (Entity entity : entities)
 	{
-		const Transform* transform = world->GetComponent<Transform>(entity);
+		const SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
 		const ColliderGeometryComponent* collider = world->GetComponent<ColliderGeometryComponent>(entity);
 
 		const CollisionAABB ColliderLimits = collider->GetAABBLimits(transform);
@@ -298,8 +298,8 @@ void CollisionSystem::ResolveCollisions(std::vector<PhysicsCollisionResult>& res
 	{
 		const CollisionResult resultInfo = result.collisionInfo;
 
-		Transform* ta = world->GetComponent<Transform>(result.entityA);
-		Transform* tb = world->GetComponent<Transform>(result.entityB);
+		SceneTransformComponent* ta = world->GetComponent<SceneTransformComponent>(result.entityA);
+		SceneTransformComponent* tb = world->GetComponent<SceneTransformComponent>(result.entityB);
 
 		RigidBodyComponent* rba = world->GetComponent<RigidBodyComponent>(result.entityA);
 		RigidBodyComponent* rbb = world->GetComponent<RigidBodyComponent>(result.entityB);

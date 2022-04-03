@@ -8,7 +8,7 @@
 
 #include <Components/PlayerMovementComponent.h>
 
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
 
 #include <Physics/PhysicsSystem.h>
 #include <Physics/Collisions/PhysicsCollisionResult.h>
@@ -28,10 +28,10 @@ void DungeonPlayerMovementSystem::OnInput(const float deltaTime, const InputData
 	bool aPressed = inputData->GetInputValue(TestConfigInputId::Left, InputTypes::BUTTON_IS_DOWN);
 	bool dPressed = inputData->GetInputValue(TestConfigInputId::Right, InputTypes::BUTTON_IS_DOWN);
 
-	ForEntities(world, DungeonPlayerMovementComponent, Transform)
+	ForEntities(world, DungeonPlayerMovementComponent, SceneTransformComponent)
 	{
 		DungeonPlayerMovementComponent* dmc = world->GetComponent<DungeonPlayerMovementComponent>(entity);
-		Transform* transform = world->GetComponent<Transform>(entity);
+		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
 
 		//If not turning or moving receive inputs
 		if (!dmc->isTurning && !dmc->isMoving)
@@ -88,10 +88,10 @@ void DungeonPlayerMovementSystem::OnInput(const float deltaTime, const InputData
 void DungeonPlayerMovementSystem::OnFrame(float deltaTime)
 {
 
-	ForEntities(world, DungeonPlayerMovementComponent, Transform)
+	ForEntities(world, DungeonPlayerMovementComponent, SceneTransformComponent)
 	{
 		DungeonPlayerMovementComponent* dmc = world->GetComponent<DungeonPlayerMovementComponent>(entity);
-		Transform* transform = world->GetComponent<Transform>(entity);
+		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
 
 		//If not turning or moving receive inputs
 		if (dmc->isTurning)

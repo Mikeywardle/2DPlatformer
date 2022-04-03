@@ -238,6 +238,8 @@
     <ClCompile Include="Engine\Camera\CameraComponent.cpp" />
     <ClCompile Include="Engine\Camera\CameraUniformBufferHandler.cpp" />
     <ClCompile Include="Engine\Camera\SpringArm.cpp" />
+    <ClCompile Include="Engine\Core\SceneTransformComponents.cpp" />
+    <ClCompile Include="Engine\Core\SceneTransformSystem.cpp" />
     <ClCompile Include="Engine\Debugging\CollisionDebugSystem.cpp" />
     <ClCompile Include="Engine\Debugging\DebugDraws.cpp" />
     <ClCompile Include="Engine\Debugging\DebugSystem.cpp" />
@@ -251,7 +253,7 @@
     <ClCompile Include="Engine\Lighting\UniformBufferHandlers\DirectionalLightBufferHandler.cpp" />
     <ClCompile Include="Engine\Core\GameTime.cpp" />
     <ClCompile Include="Engine\Core\Level.cpp" />
-    <ClCompile Include="Engine\Maths\Transform.cpp" />
+    <ClCompile Include="Engine\Maths\Transform_Deprecated.cpp" />
     <ClCompile Include="Engine\Core\World.cpp" />
     <ClCompile Include="Engine\ecs\EcsContext.cpp" />
     <ClCompile Include="Engine\ecs\EntitiesManager.cpp" />
@@ -329,7 +331,8 @@
     <ClInclude Include="Engine\Collisions\CollisionGrid.h" />
     <ClInclude Include="Engine\Config\GameConfig.h" />
     <ClInclude Include="Engine\Core\GameState.h" />
-    <ClInclude Include="Engine\Core\SceneTransform.h" />
+    <ClInclude Include="Engine\Core\SceneTransformComponents.h" />
+    <ClInclude Include="Engine\Core\SceneTransformSystem.h" />
     <ClInclude Include="Engine\Debugging\CollisionDebugSystem.h" />
     <ClInclude Include="Engine\Debugging\DebugDraws.h" />
     <ClInclude Include="Engine\Debugging\DebugSystem.h" />
@@ -353,7 +356,7 @@
     <ClInclude Include="Engine\Events\Event.h" />
     <ClInclude Include="Engine\Core\GameTime.h" />
     <ClInclude Include="Engine\Core\Level.h" />
-    <ClInclude Include="Engine\Maths\Transform.h" />
+    <ClInclude Include="Engine\Maths\Transform_Deprecated.h" />
     <ClInclude Include="Engine\Core\World.h" />
     <ClInclude Include="Engine\ecs\ComponentBatch.h" />
     <ClInclude Include="Engine\ecs\EcsContext.h" />
@@ -384,6 +387,7 @@
     <ClInclude Include="Engine\Rendering\Meshes\MeshComponent.h" />
     <ClInclude Include="Engine\Rendering\IRenderer.h" />
     <ClInclude Include="Engine\Rendering\PostProcessing\Quad.h" />
+    <ClInclude Include="Engine\Rendering\RenderDataComponents.h" />
     <ClInclude Include="Engine\Rendering\Skybox\SkyBox.h" />
     <ClInclude Include="Engine\Rendering\Sprites\BillBoardSprites.h" />
     <ClInclude Include="Engine\Rendering\UniformBufferLocations.h" />

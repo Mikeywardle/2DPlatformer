@@ -36,7 +36,7 @@ glm::mat4 CameraComponent::GetProjection(const GameWindow* window) const
 
 }
 
-glm::mat4 CameraComponent::GetView(Transform* transform) const
+glm::mat4 CameraComponent::GetView(SceneTransformComponent* transform) const
 {
 	Vector3 eye = transform->GetPosition();
 	Vector3 center = transform->GetPosition() + transform->GetForward();
@@ -51,7 +51,7 @@ float CameraComponent::GetHorizontalFOV(const float aspectRatio) const
 	return  2.f * atan(tan(radAngle / 2.f) * aspectRatio);
 }
 
-Vector3 CameraComponent::ScreenSpaceLocationToWorldSpaceDirection(Vector2 ScreenPosition, Transform* transform, GameWindow* gameWindow) const
+Vector3 CameraComponent::ScreenSpaceLocationToWorldSpaceDirection(Vector2 ScreenPosition, SceneTransformComponent* transform, GameWindow* gameWindow) const
 {
 
 	glm::vec4 rayClip = glm::vec4(ScreenPosition.x, ScreenPosition.y, -1.0f, 1.0f);

@@ -2,7 +2,7 @@
 
 #include <Inputs/InputData.h>
 #include <Core/World.h>
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
 
 #include <Physics/RigidBody.h>
 #include <Physics/PhysicsSystem.h>
@@ -41,9 +41,9 @@ void PlayerMovementSystem::OnInput(const float deltaTime, const InputData* input
 
 	const Vector2 Delta = inputData->MouseDelta;
 
-	ForEntities(world, PlayerMovementComponent, Transform)
+	ForEntities(world, PlayerMovementComponent, SceneTransformComponent)
 	{
-		Transform* transform = world->GetComponent<Transform>(entity);
+		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
 		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
 
 		const Vector3 currentRotation = transform->GetRotation();
@@ -66,11 +66,11 @@ void PlayerMovementSystem::CheckPlayersOnGround()
 {
 	PhysicsSystem* physicsSystem = world->GetPhysicsSystem();
 
-	std::vector<Entity> entities = world->GetEntities<PlayerMovementComponent, Transform, RigidBodyComponent>();
+	std::vector<Entity> entities = world->GetEntities<PlayerMovementComponent, SceneTransformComponent, RigidBodyComponent>();
 
 	for (Entity entity : entities)
 	{
-		Transform* transform = world->GetComponent<Transform>(entity);
+		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
 		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
 		RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
 
@@ -118,9 +118,9 @@ void PlayerMovementSystem::ProcessMovementInputs(const InputData* inputData)
 	bool RightPressed = inputData->GetInputValue(TestConfigInputId::Right, InputTypes::BUTTON_IS_DOWN);
 
 
-	ForEntities(world, CurrentPossesedPlayer, PlayerMovementComponent, RigidBodyComponent, Transform)
+	ForEntities(world, CurrentPossesedPlayer, PlayerMovementComponent, RigidBodyComponent, SceneTransformComponent)
 	{
-		Transform* t = world->GetComponent<Transform>(entity);
+		SceneTransformComponent* t = world->GetComponent<SceneTransformComponent>(entity);
 		RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
 		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
 

@@ -1,5 +1,5 @@
 #include "CollisionComponents.h"
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
 
 
 ICollisionGeometry* ColliderGeometryComponent::GetCollisionGeometry() const
@@ -17,7 +17,7 @@ ColliderType ColliderGeometryComponent::GetColliderType() const
 	return geometry->GetColliderType();
 }
 
-CollisionAABB ColliderGeometryComponent::GetAABBLimits(const Transform* transform) const
+CollisionAABB ColliderGeometryComponent::GetAABBLimits(const SceneTransformComponent* transform) const
 {
 	return geometry->GetAABBLimits(transform);
 }

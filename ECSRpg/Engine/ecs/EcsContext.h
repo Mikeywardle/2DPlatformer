@@ -89,7 +89,7 @@ public:
 	}
 
 	template<typename T, typename... Args>
-	std::vector<Entity> GetEntities()
+	std::vector<Entity> GetEntities() const
 	{
 		//Get hashes of first type args
 		const char* Type0 = typeid(T).raw_name();	
@@ -131,7 +131,7 @@ public:
 	}
 
 	template<typename... Args>
-	Entity GetEntity()
+	Entity GetEntity() const
 	{
 		std::vector<Entity> entities = GetEntities<Args...>();
 
@@ -139,6 +139,17 @@ public:
 			return NO_ENTITY;
 		else
 			return entities[0];
+	}
+
+	template<typename T>
+	Entity GetComponentOwner(const T* pointer) const
+	{
+		const ComponentBatch<T>* batch = GetComponentBatch<T>();
+
+		if (batch == nullptr)
+			return NO_ENTITY;
+		else
+			return batch->GetComponentOwner(pointer);
 	}
 
 

@@ -1,7 +1,7 @@
 #include "CollisionDebugSystem.h"
 #include <ImGui/imgui.h>
 
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
 #include <Physics/Collisions/CollisionComponents.h>
 
 #include "DebugDraws.h"

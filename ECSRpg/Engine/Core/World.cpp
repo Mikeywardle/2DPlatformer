@@ -2,6 +2,8 @@
 
 #include <Game.h>
 
+#include <Core/SceneTransformSystem.h>
+
 #include <Rendering/RenderingSystem.h>
 #include <ecs/EcsContext.h>
 #include <ecs/System.h>
@@ -32,6 +34,8 @@ World::World(GameContext* InGame, PhysicsSystemConfig physicsConfig)
 
 	resourceManager = new ResourceManager(this);
 
+	transformSystem = new SceneTransformSystem(this);
+
 #if NOT_RELEASE_BUILD
 	debugSystem = new DebugSystem(this);
 #endif
@@ -44,6 +48,7 @@ World::~World()
 	delete(physicsSystem);
 	delete(renderingSystem);
 	delete(resourceManager);
+	delete (transformSystem);
 
 #if NOT_RELEASE_BUILD
 	delete(debugSystem);
@@ -83,6 +88,7 @@ void World::RunFrame(const float deltaTime, const InputData* inputData)
 	currentlyLoadedLevel->OnInput(deltaTime, inputData);
 	currentlyLoadedLevel->OnFrame(deltaTime);
 
+	transformSystem->Update(deltaTime);
 	timer.StartTimer();
 	//Draw World
 	renderingSystem->DrawWorld();

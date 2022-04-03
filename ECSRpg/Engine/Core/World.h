@@ -19,6 +19,7 @@ class DebugSystem;
 class EventsContext;
 class Level;
 class PhysicsSystem;
+class SceneTransformSystem;
 
 struct InputData;
 struct PhysicsSystemConfig;
@@ -71,7 +72,10 @@ public:
 	std::vector<T>* GetComponents();
 
 	template<typename ...Args>
-	Entity GetEntity();
+	Entity GetEntity() const;
+
+	template<typename T>
+	Entity GetComponentOwner(const T* pointer) const;
 #pragma endregion
 
 #pragma region Events
@@ -113,6 +117,7 @@ private:
 	GameContext* game;
 
 	RenderingSystem* renderingSystem;
+	SceneTransformSystem* transformSystem;
 	AudioEngine* audioEngine;
 	PhysicsSystem* physicsSystem;
 

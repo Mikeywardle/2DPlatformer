@@ -1,7 +1,7 @@
 #include "PhysicsSystem.h"
 
 #include "RigidBody.h"
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
 #include <Maths/Vector3.h>
 #include "Collisions/CollisionSystem.h"
 #include "Collisions/CollisionEvent.h"
@@ -79,9 +79,9 @@ void PhysicsSystem::IntegrateForces(float deltaTime)
 
 	deltaTime = fminf(deltaTime, MaxPhysicsFrameTime);
 
-	ForEntities(world, RigidBodyComponent, Transform)
+	ForEntities(world, RigidBodyComponent, SceneTransformComponent)
 	{
-		Transform* transform = world->GetComponent<Transform>(entity);
+		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
 		RigidBodyComponent* rigidBody = world->GetComponent<RigidBodyComponent>(entity);
 
 		if (!transform->IsStatic())

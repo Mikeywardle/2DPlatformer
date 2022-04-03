@@ -30,13 +30,13 @@ void DirectionalLightBufferHandler::BindDirectionalLightData(World* world)
 {
 	DirectionalLightData light = DirectionalLightData();
 
-	std::vector<Entity> directionalLights = world->GetEntities<DirectionalLightComponent, Transform>();
+	std::vector<Entity> directionalLights = world->GetEntities<DirectionalLightComponent, SceneTransformComponent>();
 
 	if (directionalLights.size() != 0)
 	{
 		Entity directionalLight = directionalLights[0];
 		DirectionalLightComponent* lightComponent = world->GetComponent<DirectionalLightComponent>(directionalLight);
-		Transform* t = world->GetComponent<Transform>(directionalLight);
+		SceneTransformComponent* t = world->GetComponent<SceneTransformComponent>(directionalLight);
 
 		Color lightColor = lightComponent->color;
 		//light.strength = lightComponent->strength;

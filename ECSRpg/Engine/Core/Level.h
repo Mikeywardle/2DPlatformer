@@ -2,7 +2,7 @@
 
 #include <Events/Event.h>
 #include <ecs/Entity.h>
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
 #include <vector>
 
 struct InputData;
@@ -28,9 +28,6 @@ public:
 	}
 
 	void RemoveFrameCallback(EventDelegate<float>* toRemove);
-
-public:
-	Transform transform;
 
 protected:
 

@@ -2,7 +2,7 @@
 
 
 #include <Core/World.h>
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
 
 #include <Camera/CameraComponent.h>
 
@@ -11,6 +11,7 @@
 #include <Resources/ResourceManager.h>
 
 #include <Rendering/Meshes/MeshComponent.h>
+#include <Rendering/RenderDataComponents.h>
 
 #include <Lighting/LightSources/DirectionalLight.h>
 
@@ -67,7 +68,7 @@ void PhysicsTestlevel::CreatePlayerCamera()
 {
 	Entity entity = world->CreateEntity();
 
-	Transform* transform = world->AddComponent<Transform>(entity);
+	SceneTransformComponent* transform = world->AddComponent<SceneTransformComponent>(entity);
 
 	transform->SetPosition(Vector3(0, 5, -6));
 	transform->SetRotation(Vector3(0, 0, -30));
@@ -91,8 +92,10 @@ void PhysicsTestlevel::CreateMouseSelectionMarker()
 {
 	Entity marker = CreateMesh(Vector3(0, 2, 0), "Sphere", "MarkerMaterial");
 
-	Transform* transform = world->GetComponent<Transform>(marker);
-	transform->SetScale(Vector3(0.1f, 0.1f, 0.1f));
+	SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(marker);
+
+	RenderScale* renderScale = world->AddComponent<RenderScale>(marker);
+	renderScale->scale = Vector3(0.1f, 0.1f, 0.1f);
 
 	world->AddComponent<MouseSelectionDebugMarker>(marker);
 }
@@ -111,10 +114,9 @@ Entity PhysicsTestlevel::CreateMesh(Vector3 position, std::string mesh, std::str
 	m->SetMesh(meshAsset);
 	m->SetMaterial(testMaterial);
 
-	Transform* t = world->AddComponent<Transform>(platform);
+	SceneTransformComponent* t = world->AddComponent<SceneTransformComponent>(platform);
 	t->SetPosition(position);
 	t->SetStatic(false);
-	t->SetScale(Vector3::One);
 
 	return platform;
 }
@@ -126,7 +128,7 @@ void PhysicsTestlevel::CreateDirectionalLight(Vector3 rotation)
 	DirectionalLightComponent* dl = world->AddComponent<DirectionalLightComponent>(light);
 	*dl = DirectionalLightComponent(COLOR_WHITE, .05);
 
-	Transform* t = world->AddComponent<Transform>(light);
+	SceneTransformComponent* t = world->AddComponent<SceneTransformComponent>(light);
 	t->SetRotation(rotation);
 }
 
@@ -144,10 +146,12 @@ void PhysicsTestlevel::CreateTile(Vector3 Position, Vector3 Scale, std::string m
 	m->SetMesh(cubeMeshAsset);
 	m->SetMaterial(testMaterial);
 
-	Transform* t4 = world->AddComponent<Transform>(platform);
+	SceneTransformComponent* t4 = world->AddComponent<SceneTransformComponent>(platform);
 	t4->SetPosition(Position);
-	t4->SetScale(Scale);
 	t4->SetStatic(true);
+
+	RenderScale* renderScale = world->AddComponent<RenderScale>(platform);
+	renderScale->scale = Scale;
 
 	//RigidBodyComponent* rb = world->AddComponent<RigidBodyComponent>(platform);
 	//rb->isInfiniteMass = true;

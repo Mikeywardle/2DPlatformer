@@ -62,13 +62,13 @@ void SpriteRenderer::Draw(World* world)
 	int boundTextures = 0;
 	int textureIndex;
 
-	std::vector<Entity> entities = world->GetEntities<SpriteComponent, Transform>();
+	std::vector<Entity> entities = world->GetEntities<SpriteComponent, SceneTransformComponent>();
 
 	int batches = 0;
 	for (Entity entity : entities)
 	{
 		SpriteComponent* s = world->GetComponent<SpriteComponent>(entity);
-		Transform* t = world->GetComponent<Transform>(entity);
+		SceneTransformComponent* t = world->GetComponent<SceneTransformComponent>(entity);
 
 		const int SpriteTexture = s->GetTextureID();
 
@@ -140,7 +140,7 @@ void SpriteRenderer::GenerateIndices()
 	}
 }
 
-Quad SpriteRenderer::CreateSpriteVertices(Color color, float textureId, float batchIndex, Transform* transform, float Width, float Height, float PixelsPerUnit)
+Quad SpriteRenderer::CreateSpriteVertices(Color color, float textureId, float batchIndex, SceneTransformComponent* transform, float Width, float Height, float PixelsPerUnit)
 {
 	float HalfQuadHeight = Height / (PixelsPerUnit * 2);
 	float HalfQuadWidth = Width / (PixelsPerUnit * 2);

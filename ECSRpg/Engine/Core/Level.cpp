@@ -1,15 +1,7 @@
 #include "Level.h"
 #include "World.h"
 
-#include <Maths/Transform.h>
-
 #include <ecs/EcsContext.h>
-
-#include <Resources/TextureLibrary.h>
-#include <Resources/MeshLibrary.h>
-#include <Resources/ShaderLibrary.h>
-
-#include <Rendering/RenderingSystem.h>
 
 #include <Utils/STLUtils.h>
 

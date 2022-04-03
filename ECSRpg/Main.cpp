@@ -10,9 +10,20 @@
 
 #include <Debug/DebugSystemsSetup.h>
 
-#include <Collisions/CollisionGrid.h>
-#include <Physics/PhysicsCollisionWorldData.h>
+int i = 0;
+struct foobar
+{
+	foobar()
+	{
+		printf("Construct %i", i);
+		++i;
+	};
 
+	float a;
+	int b;
+	bool c;
+	bool d;
+};
 
 int main()
 {

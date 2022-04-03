@@ -7,6 +7,7 @@
 #include <Resources/ResourceManager.h>
 
 #include <Rendering/Meshes/MeshComponent.h>
+#include <Rendering/RenderDataComponents.h>
 
 #include <Physics/Forces/AirResistance.h>
 #include <Physics/Forces/Gravity.h>
@@ -29,10 +30,12 @@ namespace PlayerCreation
 		//Create Player
 		Entity player = world->CreateEntity();
 
-		Transform* t = world->AddComponent<Transform>(player);
+		SceneTransformComponent* t = world->AddComponent<SceneTransformComponent>(player);
 		t->SetPosition(Vector3(0, 2, 5));
 		t->SetRotation(Vector3(0, 0, 0));
-		t->SetScale(Vector3(0.5f, 0.5f, 0.5f));
+
+		RenderScale* renderScale = world->AddComponent<RenderScale>(player);
+		renderScale->scale = Vector3(0.5f, 0.5f, 0.5f);
 
 		SphereCollisionGeometry* geometry = new SphereCollisionGeometry();
 		geometry->radius = 0.5f;
@@ -82,7 +85,7 @@ namespace PlayerCreation
 		c->nearPlane = 0.1f;
 		c->projectionType = ProjectionType::PERSPECTIVE;
 
-		world->AddComponent<Transform>(camera);
+		world->AddComponent<SceneTransformComponent>(camera);
 
 		CameraComponent::SetMainCamera(camera);
 
@@ -95,10 +98,12 @@ namespace PlayerCreation
 		//Create Player
 		Entity player = world->CreateEntity();
 
-		Transform* t = world->AddComponent<Transform>(player);
+		SceneTransformComponent* t = world->AddComponent<SceneTransformComponent>(player);
 		t->SetPosition(position);
 		t->SetRotation(Vector3(0, 0, 0));
-		t->SetScale(Vector3(0.5f, 0.5f, 0.5f));
+
+		RenderScale* renderScale = world->AddComponent<RenderScale>(player);
+		renderScale->scale = Vector3(0.5f, 0.5f, 0.5f);
 
 		AABBCollisionGeometry* geometry = new AABBCollisionGeometry();
 		geometry->HalfLimits = Vector3(0.5f, 1.0f, 0.5f);
@@ -138,7 +143,7 @@ namespace PlayerCreation
 		c->nearPlane = 0.1f;
 		c->projectionType = ProjectionType::PERSPECTIVE;
 
-		world->AddComponent<Transform>(camera);
+		world->AddComponent<SceneTransformComponent>(camera);
 
 		CameraComponent::SetMainCamera(camera);
 

@@ -30,9 +30,9 @@ void BattleCameraSystem::OnInput(const float deltaTime, const InputData* inputDa
 	bool lPressed = inputData->GetInputValue(TestConfigInputId::Left_click, InputTypes::BUTTON_IS_DOWN);
 	bool rPressed = inputData->GetInputValue(TestConfigInputId::Right_click, InputTypes::BUTTON_IS_DOWN);
 
-	ForEntities(world, BattleCameraComponent, CameraComponent, Transform )
+	ForEntities(world, BattleCameraComponent, CameraComponent, SceneTransformComponent)
 	{
-		Transform* transform = world->GetComponent<Transform>(entity);
+		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
 		BattleCameraComponent* camera = world->GetComponent<BattleCameraComponent>(entity);
 		
 		transform->AddRotation(Vector3(0,(ePressed - qPressed)*2.0f, (lPressed - rPressed) * 2.0f));
@@ -46,10 +46,5 @@ void BattleCameraSystem::OnInput(const float deltaTime, const InputData* inputDa
 		const Vector3 CameraMove = Vector3::Normalize(CameraMoveForwards + CameraMoveRight);
 
 		transform->AddTranslation(CameraMove * camera->MovementSpeed * deltaTime);
-
-
-
-
-
 	}
 }

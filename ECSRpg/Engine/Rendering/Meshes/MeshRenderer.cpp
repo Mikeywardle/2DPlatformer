@@ -1,6 +1,7 @@
 #include "MeshRenderer.h"
 #include "MeshComponent.h"
-#include <Maths/Transform.h>
+#include <Core/SceneTransformComponents.h>
+#include <Rendering/RenderDataComponents.h>
 #include <Camera/CameraComponent.h>
 #include <Resources/Shader.h>
 
@@ -10,10 +11,10 @@ void MeshRenderer::Draw(World* world)
 	int currentProgram = -1;
 	int currentNumberOfIndices = 0;
 
-	ForEntities(world, MeshComponent, Transform)
+	ForEntities(world, MeshComponent, SceneTransformComponent)
 	{
 		const MeshComponent* mesh = world->GetComponent<MeshComponent>(entity);
-		Transform* transform = world->GetComponent<Transform>(entity);
+		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
 
 		const int mat = mesh->GetMaterialIndex();
 		const int vao = mesh->GetMeshVAO();
@@ -31,7 +32,12 @@ void MeshRenderer::Draw(World* world)
 			currentNumberOfIndices = mesh->GetNumberOfIndices();
 		}
 
-		const glm::mat4 model = transform->GetModel();
+		glm::mat4 model = transform->GetTransformMatrix();
+
+		if (RenderScale* scale = world->GetComponent<RenderScale>(entity))
+		{
+			model = glm::scale(model, glm::vec3(scale->scale.x, scale->scale.y, scale->scale.z));
+		}
 		SetShaderMatrix4(mat, "model", model);
 
 		glDrawElements(GL_TRIANGLES, currentNumberOfIndices, GL_UNSIGNED_INT, 0);
