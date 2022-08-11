@@ -70,8 +70,11 @@ public:
 	template<typename Clazz, typename Function>
 	EventDelegate<Args...>* AddListener(Clazz* object, Function function)
 	{
+		typedef void(*InFunction)(void*, Args...);
+
 		Delegate<Clazz, Args...>* delegate = new Delegate<Clazz, Args...>(object, function);
 		delegates.push_back(delegate);
+
 		return (EventDelegate<Args...>*)delegate;
 	}
 
@@ -92,6 +95,8 @@ public:
 				return;
 			}
 		}
+
+
 	}
 
 	///<summary>

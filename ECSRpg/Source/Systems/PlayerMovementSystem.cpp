@@ -7,8 +7,12 @@
 #include <Physics/RigidBody.h>
 #include <Physics/PhysicsSystem.h>
 
+#include <Physics/Collisions/CollisionEvent.h>
+
 #include <Components/PlayerMovementComponent.h>
 #include <Components/PlayerTags.h>
+
+#include <Maths/Trigonometry.h>
 
 #include <Camera/CameraComponent.h>
 
@@ -17,7 +21,7 @@
 PlayerMovementSystem::PlayerMovementSystem(World* world)
 	:System(world)
 {
-
+	world->AddListener<CollisionEvent&>(this, &PlayerMovementSystem::OnPlayerCollided);
 }
 
 PlayerMovementSystem::~PlayerMovementSystem()
@@ -34,7 +38,7 @@ void PlayerMovementSystem::OnInput(const float deltaTime, const InputData* input
 	if (inputData->GetInputValue(TestConfigInputId::Jump, InputTypes::BUTTON_RELEASED))
 		Jump();
 
-	CheckPlayersOnGround();
+	//CheckPlayersOnGround();
 	ProcessMovementInputs(inputData);
 	ProcessJumps();
 
@@ -66,9 +70,7 @@ void PlayerMovementSystem::CheckPlayersOnGround()
 {
 	PhysicsSystem* physicsSystem = world->GetPhysicsSystem();
 
-	std::vector<Entity> entities = world->GetEntities<PlayerMovementComponent, SceneTransformComponent, RigidBodyComponent>();
-
-	for (Entity entity : entities)
+	ForEntities(world, PlayerMovementComponent, SceneTransformComponent, RigidBodyComponent)
 	{
 		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
 		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
@@ -85,16 +87,14 @@ void PlayerMovementSystem::CheckPlayersOnGround()
 		if (result.hasHit)
 		{	
 			pmc->NumberOfJumps = 0;
-			rb->frictionAllowed = true;
+			//rb->frictionAllowed = true;
 		}
 	}
 }
 
 void PlayerMovementSystem::ProcessJumps()
 {
-	std::vector<Entity> entities = world->GetEntities<CurrentPossesedPlayer, PlayerMovementComponent, RigidBodyComponent>();
-
-	for (Entity entity : entities)
+	ForEntities(world, CurrentPossesedPlayer, PlayerMovementComponent, RigidBodyComponent)
 	{
 		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
 
@@ -103,7 +103,7 @@ void PlayerMovementSystem::ProcessJumps()
 			RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
 
 			rb->AddImpulse(Vector3::Up * pmc->JumpForce);
-			rb->frictionAllowed = false;
+			//rb->frictionAllowed = false;
 			pmc->NumberOfJumps += 1;
 			pmc->ToJump = false;
 		}
@@ -149,6 +149,51 @@ void PlayerMovementSystem::ProcessMovementInputs(const InputData* inputData)
 		rb->AddImpulse(MovementImpulse);
 	}
 
+}
+
+void PlayerMovementSystem::OnPlayerCollided(CollisionEvent& collisionEvent)
+{
+	//Set On ground to false for all
+	std::vector<PlayerMovementComponent>* components =  world->GetComponents<PlayerMovementComponent>();
+
+	for (PlayerMovementComponent& pmc : *components)
+	{
+		pmc.OnGround = false;
+	}
+
+	for (const PhysicsCollisionResult& result : collisionEvent.results)
+	{
+		Entity playerEntity = NO_ENTITY;
+
+		if (world->HasComponent<PlayerMovementComponent>(result.entityA))
+		{
+			playerEntity = result.entityA;
+		}
+		else if (world->HasComponent<PlayerMovementComponent>(result.entityB))
+		{
+			playerEntity = result.entityB;
+		}
+
+		if (playerEntity != NO_ENTITY)
+		{
+			PlayerMovementComponent* pmc = world->GetComponent< PlayerMovementComponent>(playerEntity);
+			SceneTransformComponent* stc = world->GetComponent< SceneTransformComponent>(playerEntity);
+
+			const Vector3 down = stc->GetUp() * -1.0f;
+			const Vector3 position = stc->GetPosition();
+
+			const Vector3 positionDiff = Vector3::Normalize(result.collisionInfo.collisionLocation - position);
+
+			const float angleDiff = acosf(Vector3::DotProduct(positionDiff, down));
+
+			if (RadiansToDegrees(angleDiff) < pmc->maxWalkAngle)
+			{
+				pmc->OnGround = true;
+				pmc->NumberOfJumps = 0;
+			}
+
+		}
+	}
 }
 
 void PlayerMovementSystem::Jump()

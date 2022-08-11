@@ -8,7 +8,10 @@
 
 #include "ColliderGeometry.h"
 
+#include <ecs/Entity.h>
+
 #include <vector>
+#include <set>
 
 struct DynamicCollider {};
 struct StaticCollider {};
@@ -21,6 +24,9 @@ public:
 	uint8 collisionLayer = 0;
 
 	std::vector<uint8> toCollideLayers;
+
+	std::vector<Entity> currentlyCollidingEntities = std::vector<Entity>();
+	std::vector<Entity> dirtyCollidingEntities = std::vector<Entity>();
 
 	ICollisionGeometry* GetCollisionGeometry() const;
 	void SetCollisionGeometry(ICollisionGeometry* inGeometry);

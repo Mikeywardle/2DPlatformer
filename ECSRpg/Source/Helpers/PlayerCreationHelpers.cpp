@@ -57,7 +57,7 @@ namespace PlayerCreation
 		rb->Friction = 1.f;
 
 		GravityComponent* g = world->AddComponent<GravityComponent>(player);
-		g->GravityScale = 1.f;
+		//g->GravityScale = Vector3::Down;
 
 		AirResistanceComponent* a = world->AddComponent<AirResistanceComponent>(player);
 		a->DragCoefficient = 1.f;
@@ -68,9 +68,11 @@ namespace PlayerCreation
 			10.0f
 			, 2.f
 			, 100.f
-			, 2
+			, 1
 			, 1000.f
 		);
+
+		pmc->maxWalkAngle = 30;
 
 		world->AddComponent<CurrentPossesedPlayer>(player);
 		world->AddComponent<PlayerTag>(player);
@@ -126,7 +128,7 @@ namespace PlayerCreation
 		rb->Friction = 1.f;
 
 		GravityComponent* g = world->AddComponent<GravityComponent>(player);
-		g->GravityScale = 1.f;
+		//g->GravityScale = 1.f;
 
 		world->AddComponent<CurrentPossesedPlayer>(player);
 		world->AddComponent<PlayerTag>(player);

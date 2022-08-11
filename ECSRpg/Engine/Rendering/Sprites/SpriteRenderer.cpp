@@ -195,7 +195,4 @@ void SpriteRenderer::BindTextures(int boundTextures)
 		ss << "F_Textures["<<i<<"]";
 		glUniform1i(glGetUniformLocation(spriteShader,ss.str().c_str()), textureSamplers[i]);
 	}
-
-
-
 }

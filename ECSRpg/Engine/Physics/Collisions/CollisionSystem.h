@@ -11,6 +11,7 @@ struct PhysicsCollisionResult;
 
 struct RigidBodyComponent;
 struct Vector3;
+struct PhysicsCollisionEnd;
 
 typedef unsigned int Entity;
 
@@ -20,6 +21,8 @@ public:
 	CollisionSystem(World* world);
 
 	void ProcessCollisions(PhysicsWorld* physWorld);
+
+	void SetCollidersDirty();
 
 	void GenerateStaticColiisions(PhysicsWorld* physWorld);
 
@@ -35,6 +38,11 @@ private:
 	float GetCollisionRestitution(RigidBodyComponent* rb1, RigidBodyComponent* rb2);
 	float GetTotalInversMass(RigidBodyComponent* rb1, RigidBodyComponent* rb2);
 	float GetTotalFrictionCoefficient(RigidBodyComponent* rb1, RigidBodyComponent* rb2);
+
+	void ProcessBeginCollisionEvents(std::vector<PhysicsCollisionResult>& results, std::vector<PhysicsCollisionResult>& begin	);
+	void ProcessEndCollisionEvents(std::vector<PhysicsCollisionEnd>& colliders, std::vector<PhysicsCollisionEnd>& triggers);
+
+private:
 
 	World* world;
 

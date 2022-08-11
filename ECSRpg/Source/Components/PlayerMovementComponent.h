@@ -18,6 +18,8 @@ struct PlayerMovementComponent
 	float JumpForce;
 	float RotationSpeed;
 
+	float maxWalkAngle;
+
 };
 
 struct DungeonPlayerMovementComponent

@@ -222,7 +222,7 @@ std::vector<PhysicsCollisionCastResult> PhysicsWorld::BoxCast(const CollisionAAB
 
 	for (const PhysicsCollisionWorldData& item : BroadPhaseHits)
 	{
-		switch (item.type)
+		switch ((ColliderType)item.type)
 		{
 		case ColliderType::AABB :
 			{
@@ -339,7 +339,7 @@ namespace PhysicsWorldCollisionFunctions
 
 		const World* world = (World*)userData;
 
-		switch (item.type)
+		switch ((ColliderType)item.type)
 		{
 		case ColliderType::AABB:
 
@@ -366,7 +366,6 @@ namespace PhysicsWorldCollisionFunctions
 			return result;
 			break;
 		}
-
 
 		default:
 			return RaycastingResult();

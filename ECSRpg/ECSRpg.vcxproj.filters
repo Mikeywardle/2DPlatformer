@@ -279,6 +279,18 @@
     <ClCompile Include="Engine\Maths\Transform_Deprecated.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Debug\PlayerMovementDubugSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Helpers\EnviromentCreationHelpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Systems\GravityPanelSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Physics\Collisions\CollisionEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\CameraComponent.h">
@@ -444,9 +456,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Physics\Forces\AirResistance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PhysicsTest\PhysicsTestLevel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\PhysicsTest\PhysicsBallSpawnerSystem.h">
@@ -644,6 +653,24 @@
     <ClInclude Include="Engine\Maths\Transform_Deprecated.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Collisions\CollisionOctree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collisions\ICollisionCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug\PlayerMovementDubugSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Helpers\EnviromentCreationHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Components\GravityPanelComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Systems\GravityPanelSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Resources\Textures\_Textures.xml" />
@@ -652,7 +679,6 @@
     <Xml Include="Resources\Materials\_Materials.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Materials\TestMaterial.mat" />
     <None Include="Engine\Core\World.inl">
       <Filter>Header Files</Filter>
     </None>

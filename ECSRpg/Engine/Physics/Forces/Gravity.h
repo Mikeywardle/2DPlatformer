@@ -1,9 +1,11 @@
 #pragma once
 #include "../ForceHandler.h"
 
+#include <Maths/Vector3.h>
+
 struct GravityComponent
 {
-	float GravityScale = 1;
+	Vector3 GravityScale = Vector3::Down;
 };
 
 class GravityForceHandler final : public IForceHandler

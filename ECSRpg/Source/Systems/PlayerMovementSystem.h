@@ -4,6 +4,7 @@
 
 #include <Maths/MathsTypes.h>
 
+class CollisionEvent;
 
 class PlayerMovementSystem : public System
 {
@@ -20,6 +21,7 @@ private:
 	void CheckPlayersOnGround();
 	void ProcessMovementInputs(const InputData* inputData);
 	void ProcessJumps();
+	void OnPlayerCollided(CollisionEvent& collisionEvent);
 	
 	void Jump();
 

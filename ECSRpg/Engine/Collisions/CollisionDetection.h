@@ -7,6 +7,7 @@
 //Test Shapes against self
 CollisionResult TestABBvAABB(const CollisionAABB& A, const CollisionAABB& B);
 bool TestAABBvsAABBSimple(const CollisionAABB& A, const CollisionAABB& B);
+bool TestAABBContainsAABB(const CollisionAABB& Container, const CollisionAABB& Containee);
 CollisionResult TestSpherevsSphere(const CollisionSphere& A, const CollisionSphere& B);
 
 //Test Shapes against each other

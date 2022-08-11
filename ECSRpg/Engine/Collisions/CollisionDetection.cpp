@@ -52,6 +52,19 @@ bool TestAABBvsAABBSimple(const CollisionAABB& A, const CollisionAABB& B)
 	return CollisionDepths.x >= 0 && CollisionDepths.y >= 0 && CollisionDepths.z >= 0;
 }
 
+bool TestAABBContainsAABB(const CollisionAABB& Container, const CollisionAABB& Containee)
+{
+	const Vector3 PositionDiff = Containee.Position - Container.Position;
+
+	const float LongestXDistance = fmaxf(fabsf(PositionDiff.x + Containee.HalfLimits.x), fabsf(PositionDiff.x - Containee.HalfLimits.x));
+	const float LongestYDistance = fmaxf(fabsf(PositionDiff.y + Containee.HalfLimits.y), fabsf(PositionDiff.y - Containee.HalfLimits.y));
+	const float LongestZDistance = fmaxf(fabsf(PositionDiff.z + Containee.HalfLimits.z), fabsf(PositionDiff.z - Containee.HalfLimits.z));
+
+	return LongestXDistance <= Container.HalfLimits.x
+		&& LongestYDistance <= Container.HalfLimits.y
+		&& LongestZDistance <= Container.HalfLimits.z;
+}
+
 CollisionResult TestSpherevsSphere(const CollisionSphere& A, const CollisionSphere& B)
 {
 	CollisionResult result = CollisionResult();
@@ -62,6 +75,7 @@ CollisionResult TestSpherevsSphere(const CollisionSphere& A, const CollisionSphe
 	result.hasCollision = CollisionDepth >= 0;
 	result.collisionDepth = CollisionDepth;
 	result.normal = Vector3::Normalize(PositionsDiff);
+	//result.collisionLocation = ;
 
 	return result;
 }
@@ -75,19 +89,22 @@ CollisionResult TestSphereVsAABB(const CollisionSphere& sphere, const CollisionA
 
 	const Vector3 closestPosition = sphere.Position.Clamp(boxMax, boxMin);
 
-	const Vector3 vectorFromClosestPoint = sphere.Position - closestPosition;
+	const Vector3 vectorFromClosestPoint = closestPosition - sphere.Position;
 
 	const float distanceFromClosestPoint = Vector3::Magnitude(vectorFromClosestPoint);
 
-	result.hasCollision = distanceFromClosestPoint <= sphere.Radius;
+	const float radiusDiff = sphere.Radius - distanceFromClosestPoint;
+	result.hasCollision = radiusDiff >= 0;
 
 	if (!result.hasCollision)
 	{
 		return result;
 	}
 
-	result.normal = Vector3::Normalize(vectorFromClosestPoint);
-	result.collisionDepth = sphere.Radius - distanceFromClosestPoint;
+	result.normal = Vector3::Normalize(vectorFromClosestPoint) * -1.f;
+	result.collisionDepth = radiusDiff;
+
+	result.collisionLocation = sphere.Position + ((Vector3::Normalize(vectorFromClosestPoint) *(distanceFromClosestPoint + (radiusDiff /2.0f))));
 
 	return result;
 }

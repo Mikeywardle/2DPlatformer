@@ -41,11 +41,12 @@ public:
 	void Clear();
 	void SetGridDimensions(Vector3 origin, Vector3 gridSize, Vector3 cellSize = Vector3::One);
 	void SetDataArrayLength(const int& length);
-	void BuildGridCells();
+	void Build();
 
 	void Query(const CollisionAABB& QueryAABB, std::vector<T>& results) const;
-	void GetAABBClampIndices(const CollisionAABB& queryAABB, Vector3Int& bottomLeft, Vector3Int& topRight) const;
 	RaycastingResult CastRay(const Ray ray, const unsigned int IgnoreEntity, RaycastingNarrowPhaseCallback callback, const void* userData) const;
+
+	void GetAABBClampIndices(const CollisionAABB& queryAABB, Vector3Int& bottomLeft, Vector3Int& topRight) const;
 
 public:
 
@@ -106,7 +107,7 @@ inline void CollisionGrid<T>::Insert(const T& item)
 }
 
 template<typename T>
-inline void CollisionGrid<T>::BuildGridCells()
+inline void CollisionGrid<T>::Build()
 {
 	dataArray.shrink_to_fit();
 
@@ -200,8 +201,8 @@ inline void CollisionGrid<T>::Query(const CollisionAABB& queryAABB, std::vector<
 template<typename T>
 inline void CollisionGrid<T>::GetAABBClampIndices(const CollisionAABB& queryAABB, Vector3Int& bottomLeft,  Vector3Int& topRight) const
 {
-	bottomLeft = GetCoordinatesFromPosition(queryAABB.Position - queryAABB.HalfLimits) - Vector3Int(1, 1, 1);
-	topRight = GetCoordinatesFromPosition(queryAABB.Position + queryAABB.HalfLimits) + Vector3Int(1, 1, 1);
+	bottomLeft = GetCoordinatesFromPosition(queryAABB.Position - queryAABB.HalfLimits);
+	topRight = GetCoordinatesFromPosition(queryAABB.Position + queryAABB.HalfLimits);
 
 	//Clamp box to available indices
 	bottomLeft.x = fmaxf(bottomLeft.x, 0);
@@ -236,9 +237,8 @@ inline void CollisionGrid<T>::SetGridDimensions(Vector3 origin, Vector3 gridSize
 {
 	const Vector3 fdimensions = gridSize/cellSize;
 	this->origin = origin;
-	this->dimensions = Vector3Int((int)fdimensions.x, (int)fdimensions.y, (int)fdimensions.z);
+	this->dimensions = Vector3Int((int)fdimensions.x, (int)fdimensions.y, (int)fdimensions.z) + Vector3Int(1,1,1);
 	this->cellSize = cellSize;
-
 
 	this->halfLimits = gridSize / 2.0f;
 	this->centre = origin + halfLimits;
@@ -298,6 +298,7 @@ inline RaycastingResult CollisionGrid<T>::CastRay(const Ray ray, const unsigned 
 		, sqrtf((dxdz * dxdz) + (dydz * dydz) + 1.0f)
 	);
 
+	const Vector3 stepSize = unitStepSize * cellSize;
 	Vector3Int worldIndex = GetCoordinatesFromPosition(ray.Start);
 
 	//If raystart isn't in grid, handle this
@@ -321,42 +322,46 @@ inline RaycastingResult CollisionGrid<T>::CastRay(const Ray ray, const unsigned 
 	Vector3 rayLength1D;
 	Vector3Int stepVector;
 
-	const Vector3 currentCellPosition = GetCellPositionFromCoordinates(worldIndex);
+	const Vector3 halfcellSize = cellSize / 2.0f;
+
+	const Vector3 currentCellPosition = GetCellPositionFromCoordinates(worldIndex) - halfcellSize;
 	const Vector3 nextCellPosition = currentCellPosition + cellSize;
+
+
 
 	//Initialise vectors
 	{
 		if (ray.Direction.x < 0)
 		{
 			stepVector.x = -1;
-			rayLength1D.x = (ray.Start.x - currentCellPosition.x) * unitStepSize.x;
+			rayLength1D.x = (ray.Start.x - currentCellPosition.x) * stepSize.x;
 		}
 		else
 		{
 			stepVector.x = 1;
-			rayLength1D.x = (nextCellPosition.x + 1 - ray.Start.x) * unitStepSize.x;
+			rayLength1D.x = (nextCellPosition.x - ray.Start.x) * stepSize.x;
 		}
 
 		if (ray.Direction.y < 0)
 		{
 			stepVector.y = -1;
-			rayLength1D.y = (ray.Start.y - currentCellPosition.y) * unitStepSize.y;
+			rayLength1D.y = (ray.Start.y - currentCellPosition.y) * stepSize.y;
 		}
 		else
 		{
 			stepVector.y = 1;
-			rayLength1D.y = (nextCellPosition.y + 1 - ray.Start.y) * unitStepSize.y;
+			rayLength1D.y = (nextCellPosition.y - ray.Start.y) * stepSize.y;
 		}
 
 		if (ray.Direction.z < 0)
 		{
 			stepVector.z = -1;
-			rayLength1D.z = (ray.Start.z - currentCellPosition.z) * unitStepSize.z;
+			rayLength1D.z = (ray.Start.z - currentCellPosition.z) * stepSize.z;
 		}
 		else
 		{
 			stepVector.z = 1;
-			rayLength1D.z = (nextCellPosition.z + 1 - ray.Start.z) * unitStepSize.z;
+			rayLength1D.z = (nextCellPosition.z - ray.Start.z) * stepSize.z;
 		}
 	}
 
@@ -372,19 +377,19 @@ inline RaycastingResult CollisionGrid<T>::CastRay(const Ray ray, const unsigned 
 		{
 			worldIndex.x += stepVector.x;
 			rayDistance += fabsf(rayLength1D.x);
-			rayLength1D.x += unitStepSize.x;
+			rayLength1D.x += stepSize.x;
 		}
 		else if (rayLength1D.y < rayLength1D.z)
 		{
 			worldIndex.y += stepVector.y;
 			rayDistance += fabsf(rayLength1D.y);
-			rayLength1D.y += unitStepSize.y;
+			rayLength1D.y += stepSize.y;
 		}
 		else
 		{
 			worldIndex.z += stepVector.z;
 			rayDistance += fabsf(rayLength1D.z);
-			rayLength1D.z += unitStepSize.z;
+			rayLength1D.z += stepSize.z;
 		}
 
 		//If outside of grid or longer than query ray return 

@@ -112,5 +112,4 @@ public:
 
 private:
 	std::shared_ptr<SceneTransformNode> ownedNode { nullptr };
-
 };

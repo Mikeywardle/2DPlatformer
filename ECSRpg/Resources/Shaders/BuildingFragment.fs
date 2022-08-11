@@ -23,8 +23,8 @@ in vec2 VTexCoord;
 in vec3 VNormal;
 in vec3 FragPosition;
 
-float near = 0.1; 
-float far  = 10.0; 
+float near = .1; 
+float far  = 5.0; 
 
 uniform vec4 localColor;
 
@@ -34,8 +34,8 @@ vec3 ambientColor = vec3(.3,.15,.4);
 
 float LinearizeDepth(float depth) 
 {
-    float z = depth * 2.0 - 1.0; // back to NDC 
-    return (2.0 * near * far) / (far + near - z * (far - near));	
+    float ndc  = depth * 2.0 - 1.0; // back to NDC 
+    return (2.0 * near * far) / (far + near - ndc  * (far - near));	
 }
 
 void main()
@@ -64,10 +64,19 @@ void main()
     vec3 color = ambient + diffuse + specular;
 
     //Add fog
-    float depth = LinearizeDepth(gl_FragCoord.z) / far; // divide by far for demonstration
+    float lindepth = (LinearizeDepth(gl_FragCoord.z));
+    float depth = lindepth/ far;
+
+    float depthAlpha = 0.0;
+
+    if( lindepth * far > 5.f)
+    {
+        depthAlpha = depth;
+    }
 
     vec3 black = vec3(0,0,0);
-//    color = mix(color, black, depth);
+   color = mix(color, black, depthAlpha);
 
     FragColor = vec4(color, 1.0);
+   //FragColor = vec4(vec3(depth) , 1.0);
 }

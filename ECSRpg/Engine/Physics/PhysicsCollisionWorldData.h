@@ -15,12 +15,11 @@ public:
 	PhysicsCollisionWorldData(Entity Entity, Vector3 InPosition, Vector3 HalfLimits, ColliderType InType, bool isTrigger);
 
 public:
-	Entity entity;
+	Entity entity : 27;
+	Entity IsTrigger : 1;
+	Entity type : 4;
 
 	CollisionAABB BoundingBox;
-
-	bool IsTrigger = false;
-	ColliderType type;
 
 public:
 
@@ -28,5 +27,4 @@ public:
 
 	bool operator < (const PhysicsCollisionWorldData& in) const { return entity < in.entity; };
 };
-
 #pragma pack(pop)

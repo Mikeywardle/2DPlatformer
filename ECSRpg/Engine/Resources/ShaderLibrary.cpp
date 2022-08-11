@@ -23,8 +23,6 @@ GLuint ShaderLibrary::GetShader(std::string name)
 	if (resourceTable.find(name) == resourceTable.end())
 		LoadShader(name, FileLookup[name].path, FileLookup[name].type);
 
-
-
     return resourceTable[name];
 }
 

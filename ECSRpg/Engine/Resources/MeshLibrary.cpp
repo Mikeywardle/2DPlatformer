@@ -72,13 +72,13 @@ void MeshLibrary::LoadMesh(aiMesh* mesh, const aiScene* scene)
 
 		Vector3 vector;
 		vector.x = mesh->mVertices[i].x;
-		vector.y = mesh->mVertices[i].y;
-		vector.z = mesh->mVertices[i].z;
+		vector.y = mesh->mVertices[i].z;
+		vector.z = -mesh->mVertices[i].y;
 		vertex.Position = vector;
 
 		vector.x = mesh->mNormals[i].x;
-		vector.y = mesh->mNormals[i].y;
-		vector.z = mesh->mNormals[i].z;
+		vector.y = mesh->mNormals[i].z;
+		vector.z = -mesh->mNormals[i].y;
 		vertex.Normal = vector;
 
 		if (mesh->mTextureCoords[0])

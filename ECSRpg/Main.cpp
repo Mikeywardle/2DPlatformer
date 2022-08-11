@@ -10,21 +10,6 @@
 
 #include <Debug/DebugSystemsSetup.h>
 
-int i = 0;
-struct foobar
-{
-	foobar()
-	{
-		printf("Construct %i", i);
-		++i;
-	};
-
-	float a;
-	int b;
-	bool c;
-	bool d;
-};
-
 int main()
 {
 	GameContext game = GameContext(TestInputConfig, NeOniPhysicsConfig);
@@ -35,4 +20,6 @@ int main()
 	SetupDebugSystems(world);
 
 	return game.StartGame();
+
+	return 0;
 }

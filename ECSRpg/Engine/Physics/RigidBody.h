@@ -5,7 +5,7 @@ struct RigidBodyComponent
 {
 	bool isInfiniteMass;
 	bool isAwake;
-	bool frictionAllowed = true;
+	//bool frictionAllowed = true;
 
 	float mass = 0.0f;
 	float Restitution = 0;
@@ -27,5 +27,6 @@ private:
 	Vector3 resultantForce = Vector3::Zero;
 	Vector3 frameForce = Vector3::Zero;
 
-
+	
+	static const float sleepThreshold;
 };

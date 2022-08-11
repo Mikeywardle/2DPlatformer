@@ -15,4 +15,8 @@
     <name>SmoothSphere</name>
     <file>SmoothSphere.fbx</file>
   </Mesh>
+  <Mesh>
+    <name>GravityPanel</name>
+    <file>Switch.fbx</file>
+  </Mesh>
 </Meshes>

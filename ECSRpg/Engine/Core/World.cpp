@@ -95,7 +95,7 @@ void World::RunFrame(const float deltaTime, const InputData* inputData)
 
 	const double drawTime = timer.StopTimer();
 
-	printf("Phys- %.3fms, Sys- %.3fms, Draw- %.3fms\n", physTime, sysTime, drawTime);
+	//printf("Phys- %.3fms, Sys- %.3fms, Draw- %.3fms\n", physTime, sysTime, drawTime);
 
 #if NOT_RELEASE_BUILD
 	ProcessDebug(deltaTime, inputData);

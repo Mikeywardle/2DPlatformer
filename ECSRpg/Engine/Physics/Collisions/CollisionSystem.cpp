@@ -19,17 +19,69 @@ void CollisionSystem::ProcessCollisions(PhysicsWorld* physWorld)
 	CollisionEvent collisionResults;
 	TriggerOverlapEvent triggerOverlapResults;
 
-	FindDynamicCollisions(collisionResults.results, triggerOverlapResults.results,physWorld);
+	FindDynamicCollisions(collisionResults.results, triggerOverlapResults.results, physWorld);
 	ResolveCollisions(collisionResults.results);
 
-	if (collisionResults.results.size() > 0)
+	CollisionBeginEvent collisionsBegin;
+	CollisionEndEvent collisionsEnd;
+
+	TriggerOverlapBeginEvent overlapsBegin;
+	TriggerOverlapEndEvent overlapsEnd;
+
+
+	SetCollidersDirty();
+
+	ProcessBeginCollisionEvents
+	(
+		collisionResults.results
+		, collisionsBegin.results
+	);
+
+	ProcessBeginCollisionEvents
+	(
+		triggerOverlapResults.results
+		, overlapsBegin.results
+	);
+
+	ProcessEndCollisionEvents(collisionsEnd.results, overlapsEnd.results);
+
+
+	if (collisionsBegin.results.size() > 0)
 	{
-		world->DispatchMessage<CollisionEvent&>(collisionResults);
+		world->DispatchMessage<CollisionBeginEvent&>(collisionsBegin);
+	}
+	if (overlapsBegin.results.size() > 0)
+	{
+		world->DispatchMessage<TriggerOverlapBeginEvent&>(overlapsBegin);
 	}
 
-	if (triggerOverlapResults.results.size() > 0)
+	world->DispatchMessage<CollisionEvent&>(collisionResults);
+	world->DispatchMessage<TriggerOverlapEvent&>(triggerOverlapResults);
+
+	if (collisionsEnd.results.size() > 0)
 	{
-		world->DispatchMessage<TriggerOverlapEvent&>(triggerOverlapResults);
+		world->DispatchMessage<CollisionEndEvent&>(collisionsEnd);
+	}
+	if (overlapsEnd.results.size() > 0)
+	{
+		world->DispatchMessage<TriggerOverlapEndEvent&>(overlapsEnd);
+	}
+}
+
+void CollisionSystem::SetCollidersDirty()
+{
+	std::vector<ColliderGeometryComponent>* Colliders = world->GetComponents<ColliderGeometryComponent>();
+
+	if(Colliders == nullptr)
+	{
+		return;
+	}
+
+	//Set All collider geometries to dirty
+	for (ColliderGeometryComponent& collider : *Colliders)
+	{
+		collider.dirtyCollidingEntities = collider.currentlyCollidingEntities;
+		collider.currentlyCollidingEntities.clear();
 	}
 }
 
@@ -352,28 +404,24 @@ void CollisionSystem::ResolveCollisions(std::vector<PhysicsCollisionResult>& res
 		AddImpulseIfNotNull(rbb, ImpulserPerIMass * -1);
 
 		//Add Friction
-		if (rba->frictionAllowed && rbb->frictionAllowed)
+		const float TotalFrictionCoefficient = GetTotalFrictionCoefficient(rba, rbb);
+		const Vector3 tangent = Vector3::Normalize(relativeVelocity - (collisionNormal * Vector3::DotProduct(relativeVelocity, collisionNormal)));
+
+		const float frictionMagnitude = -(Vector3::DotProduct(relativeVelocity, tangent) / TotalInverseMass);
+		const float normalImpulseMagnitude = Vector3::Magnitude(ImpulserPerIMass);
+
+		Vector3 frictionImpulse;
+		if (fabsf(frictionMagnitude) < normalImpulseMagnitude * TotalFrictionCoefficient)
 		{
-			const float TotalFrictionCoefficient = GetTotalFrictionCoefficient(rba, rbb);
-			const Vector3 tangent = Vector3::Normalize(relativeVelocity - (collisionNormal * Vector3::DotProduct(relativeVelocity, collisionNormal)));
-
-			const float frictionMagnitude = -(Vector3::DotProduct(relativeVelocity, tangent) / TotalInverseMass);
-			const float normalImpulseMagnitude = Vector3::Magnitude(ImpulserPerIMass);
-
-			Vector3 frictionImpulse;
-			if (fabsf(frictionMagnitude) < normalImpulseMagnitude * TotalFrictionCoefficient)
-			{
-				frictionImpulse = tangent * frictionMagnitude;
-			}
-			else
-			{
-				frictionImpulse = tangent * -normalImpulseMagnitude * TotalFrictionCoefficient;
-			}
-
-			AddImpulseIfNotNull(rba, frictionImpulse);
-			AddImpulseIfNotNull(rbb, frictionImpulse * -1);
+			frictionImpulse = tangent * frictionMagnitude;
+		}
+		else
+		{
+			frictionImpulse = tangent * -normalImpulseMagnitude * TotalFrictionCoefficient;
 		}
 
+		AddImpulseIfNotNull(rba, frictionImpulse);
+		AddImpulseIfNotNull(rbb, frictionImpulse * -1);
 	}
 
 }
@@ -436,5 +484,66 @@ float CollisionSystem::GetTotalFrictionCoefficient(RigidBodyComponent* rb1, Rigi
 
 		return sqrtf((fric1 * fric1) * (fric2 * fric2));
 	}
+}
+
+void CollisionSystem::ProcessBeginCollisionEvents(std::vector<PhysicsCollisionResult>& results, std::vector<PhysicsCollisionResult>& begin )
+{
+	//For each result check if already colliding
+	for (const PhysicsCollisionResult& result : results)
+	{
+		ColliderGeometryComponent* colliderA = world->GetComponent<ColliderGeometryComponent>(result.entityA);
+		ColliderGeometryComponent* colliderB = world->GetComponent<ColliderGeometryComponent>(result.entityB);
+
+		std::vector<Entity>::iterator itResult = std::find(colliderA->dirtyCollidingEntities.begin(), colliderA->dirtyCollidingEntities.end(), result.entityB);
+
+		if (itResult == colliderA->dirtyCollidingEntities.end())
+		{
+			begin.push_back(result);
+		}
+		else
+		{
+			colliderA->dirtyCollidingEntities.erase(itResult);
+			colliderB->dirtyCollidingEntities.erase(std::find(colliderB->dirtyCollidingEntities.begin(), colliderB->dirtyCollidingEntities.end(), result.entityA));
+		}
+
+		colliderA->currentlyCollidingEntities.push_back(result.entityB);
+		colliderB->currentlyCollidingEntities.push_back(result.entityA);
+	}
+}
+
+void CollisionSystem::ProcessEndCollisionEvents(std::vector<PhysicsCollisionEnd>& colliders, std::vector<PhysicsCollisionEnd>& triggers)
+{
+	std::vector<ColliderGeometryComponent>* ColliderComponents = world->GetComponents<ColliderGeometryComponent>();
+
+	if (ColliderComponents == nullptr)
+	{
+		return;
+	}
+
+	for (ColliderGeometryComponent& colliderA : *ColliderComponents)
+	{
+		const bool isATrigger = colliderA.isTrigger;
+		const Entity entityA = world->GetComponentOwner<ColliderGeometryComponent>(&colliderA);
+
+		for (const Entity entityB : colliderA.dirtyCollidingEntities)
+		{
+			ColliderGeometryComponent* colliderB = world->GetComponent<ColliderGeometryComponent>(entityB);
+
+			const bool isBTrigger = colliderB->isTrigger;
+
+			if (isATrigger || isBTrigger)
+			{
+				triggers.push_back(PhysicsCollisionEnd(entityA, entityB));
+			}
+			else
+			{
+				colliders.push_back(PhysicsCollisionEnd(entityA, entityB));
+			}
+
+			colliderB->dirtyCollidingEntities.erase(std::find(colliderB->dirtyCollidingEntities.begin(), colliderB->dirtyCollidingEntities.end(), entityA));
+		}
+		colliderA.dirtyCollidingEntities.clear();
+	}
+
 }
 

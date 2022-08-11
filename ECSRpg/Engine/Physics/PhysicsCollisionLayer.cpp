@@ -9,7 +9,7 @@
 
 
 const float PhysicsCollisionLayer::BorderWidth = 2.f;
-const Vector3 PhysicsCollisionLayer::CellSize = Vector3(2.0f, 2.0f, 2.0f);
+const Vector3 PhysicsCollisionLayer::CellSize = Vector3(5.0f, 5.0f, 5.0f);
 
 PhysicsCollisionLayer::PhysicsCollisionLayer()
 {
@@ -67,37 +67,33 @@ void PhysicsCollisionLayer::AddStaticBody(const PhysicsCollisionWorldData& toAdd
 
 void PhysicsCollisionLayer::SetDynamicLimits(const Vector3& position, const Vector3& limits)
 {
-	const Vector3 borderWidthVector = Vector3(BorderWidth, BorderWidth, BorderWidth);
-
-	dynamicColliders->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), CellSize);
-	dynamicTriggers->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), CellSize);
+	dynamicColliders->SetGridDimensions(position, limits, CellSize);
+	dynamicTriggers->SetGridDimensions(position , limits, CellSize);
 }
 
 void PhysicsCollisionLayer::SetStaticLimits(const Vector3& position, const Vector3& limits)
 {
-	const Vector3 borderWidthVector = Vector3(BorderWidth, BorderWidth, BorderWidth);
 
-	staticColliders->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), CellSize);
-	staticTriggers->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), CellSize);
+	staticColliders->SetGridDimensions(position, limits, CellSize);
+	staticTriggers->SetGridDimensions(position, limits, CellSize);
 }
 
 void PhysicsCollisionLayer::SetLimits(const int& layerType, const Vector3& position, const Vector3& limits)
 {
-	const Vector3 borderWidthVector = Vector3(BorderWidth, BorderWidth, BorderWidth);
 
 	switch (layerType)
 	{
 	case 0:
-		dynamicColliders->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), CellSize);
+		dynamicColliders->SetGridDimensions(position, limits, CellSize);
 		break;
 	case 1:
-		dynamicTriggers->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), CellSize);
+		dynamicTriggers->SetGridDimensions(position, limits, CellSize);
 		break;
 	case 2:
-		staticColliders->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), CellSize);
+		staticColliders->SetGridDimensions(position, limits, CellSize);
 		break;
 	case 3:
-		staticTriggers->SetGridDimensions(position - borderWidthVector, limits + (borderWidthVector * 2.0f), CellSize);
+		staticTriggers->SetGridDimensions(position, limits, CellSize);
 		break;
 	}
 }
@@ -126,16 +122,16 @@ void PhysicsCollisionLayer::BuildGridCells(const int& layerType)
 	switch (layerType)
 	{
 	case 0:
-		dynamicColliders->BuildGridCells();
+		dynamicColliders->Build();
 		break;
 	case 1:
-		dynamicTriggers->BuildGridCells();
+		dynamicTriggers->Build();
 		break;
 	case 2:
-		staticColliders->BuildGridCells();
+		staticColliders->Build();
 		break;
 	case 3:
-		staticTriggers->BuildGridCells();
+		staticTriggers->Build();
 		break;
 	}
 }

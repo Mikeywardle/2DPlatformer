@@ -21,7 +21,8 @@
 #include <Systems/BattleCameraSystem.h>
 #include <Systems/MouseSelectionSystem.h>
 
-#include <Systems/DungeonPlayerMovementSystem.h>
+#include <Systems/PlayerMovementSystem.h>
+#include <Systems/GravityPanelSystem.h>
 
 #include <GamePlay/TransformParenting.h>
 #include <GamePlay/Lifetime.h>
@@ -32,6 +33,7 @@
 #include <Components/UnitComponents.h>
 
 #include <Helpers/PlayerCreationHelpers.h>
+#include <Helpers/EnviromentCreationHelpers.h>
 
 #include <Inputs/InputData.h>
 #include <Inputs/InputValues.h>
@@ -46,6 +48,11 @@ void DungeonLevel::LoadLevel()
 
 	//Floor
 	CreateTile(Vector3(5, -.2f, 5), Vector3(10, .2, 10), "TestFloor", true);
+	CreateTile(Vector3(5, -.2f, 85), Vector3(10, .2, 10), "TestFloor", true);
+
+	//Ceiling
+	CreateTile(Vector3(-3, 16.0f, 45), Vector3(3, .2, 60), "TestFloor", true);
+	//CreateTile(Vector3(5, 2.2f, 5), Vector3(10, .2, 10), "TestFloor", true);
 
 	//Blocks
 	CreateTile(Vector3(9, .5, 2), Vector3(.5, .5, 1), "TestMaterial", false);
@@ -53,29 +60,31 @@ void DungeonLevel::LoadLevel()
 
 	//Wall
 	CreateTile(Vector3(5, 2, -5), Vector3(10, 2, .2), "TestWall", false);
-	CreateTile(Vector3(5, 2, 15), Vector3(10, 2, .2), "TestWall", false);
+	//CreateTile(Vector3(5, 2, 15), Vector3(10, 2, .2), "TestWall", false);
 
 	CreateTile(Vector3(-5, 2, 5), Vector3(.2, 2, 10), "TestWall", false);
 	CreateTile(Vector3(15, 2, 5), Vector3(.2, 2, 10), "TestWall", false);
 
-	//Mouse marker
-	CreateMouseSelectionMarker();
+	EnvironmentCreationHelpers::CreateGravityPanel(world, Vector3(-3, 0, 10), Vector3::Zero);
 
-	for (int i = -2; i < 8; ++i)
-	{
-		for (int j = -2; j < 8; ++j)
-		{
-			CreateFloorSectionMarker(Vector3(i * 2, 0, j * 2));
-		}
-	}
+	//Mouse marker
+	//CreateMouseSelectionMarker();
+
+	//for (int i = -2; i < 8; ++i)
+	//{
+	//	for (int j = -2; j < 8; ++j)
+	//	{
+	//		CreateFloorSectionMarker(Vector3(i * 2, 0, j * 2));
+	//	}
+	//}
 
 	//Units
-	CreateUnit(Vector3(0, 5, 0));
+	//CreateUnit(Vector3(0, 5, 0));
 
 	//Spawn Player
-	//PlayerCreation::SpawnDungeonPlayer(world, Vector3(0,0,0));
+	PlayerCreation::SpawnPlayer(world, Vector3(0,0,0));
 
-	CreatePlayerCamera();
+	//CreatePlayerCamera();
 
 	CreateAtom(Vector3(15, 15, 15));
 }
@@ -83,16 +92,15 @@ void DungeonLevel::LoadLevel()
 void DungeonLevel::OnStart()
 {
 	world->RegisterSystem<BattleCameraSystem>();
-	world->RegisterSystem<MouseSelectionSystem>();
+	//world->RegisterSystem<MouseSelectionSystem>();
 
 	//PlayerSystems
-	world->RegisterSystem<DungeonPlayerMovementSystem>();
+	world->RegisterSystem<PlayerMovementSystem>();
+	world->RegisterSystem<GravityPanelSystem>();
 
 	//Gameplay Utils
 	world->RegisterSystem<PositionAttachmentSystem>();
 	world->RegisterSystem<LifeTimeDecaySystem>();
-
-
 }
 
 void DungeonLevel::OnInput(float deltaTime, const InputData* inputData)
@@ -216,14 +224,16 @@ void DungeonLevel::CreateTile(Vector3 Position, Vector3 Scale, std::string mater
 
 	ColliderGeometryComponent* collider = world->AddComponent<ColliderGeometryComponent>(platform);
 
-	if (isFloor)
-	{
-		collider->collisionLayer = NeOniCollisionLayers::Floors;
-	}
-	else
-	{
-		collider->collisionLayer = NeOniCollisionLayers::Environment;
-	}
+	//if (isFloor)
+	//{
+	//	collider->collisionLayer = NeOniCollisionLayers::Floors;
+	//}
+	//else
+	//{
+	//	collider->collisionLayer = NeOniCollisionLayers::Environment;
+	//}
+
+	collider->collisionLayer = NeOniCollisionLayers::Environment;
 
 	collider->SetCollisionGeometry(geometry);
 	world->AddComponent<StaticCollider>(platform);

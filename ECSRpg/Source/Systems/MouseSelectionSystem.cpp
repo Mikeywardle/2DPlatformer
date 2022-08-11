@@ -42,6 +42,8 @@ void MouseSelectionSystem::OnInput(const float deltaTime, const InputData* input
 		markerTransform->SetPosition(result.Position);
 
 		const bool selectable = world->HasComponent<SelectableUnitComponent>(result.HitEntity);
+
+		printf("Hit Entity: %u \n", result.HitEntity);
 	}
 	else
 	{
