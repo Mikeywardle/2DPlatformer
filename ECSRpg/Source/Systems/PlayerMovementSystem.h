@@ -18,7 +18,6 @@ public:
 
 private:
 
-	void CheckPlayersOnGround();
 	void ProcessMovementInputs(const InputData* inputData);
 	void ProcessJumps();
 	void OnPlayerCollided(CollisionEvent& collisionEvent);

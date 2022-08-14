@@ -62,6 +62,13 @@ namespace PlayerCreation
 		AirResistanceComponent* a = world->AddComponent<AirResistanceComponent>(player);
 		a->DragCoefficient = 1.f;
 
+
+		world->AddComponent<CurrentPossesedPlayer>(player);
+		world->AddComponent<PlayerTag>(player);
+
+		//Create Camera
+		Entity camera = world->CreateEntity();
+
 		PlayerMovementComponent* pmc = world->AddComponent<PlayerMovementComponent>(player);
 		*pmc = PlayerMovementComponent
 		(
@@ -69,16 +76,9 @@ namespace PlayerCreation
 			, 2.f
 			, 100.f
 			, 1
-			, 1000.f
 		);
 
 		pmc->maxWalkAngle = 30;
-
-		world->AddComponent<CurrentPossesedPlayer>(player);
-		world->AddComponent<PlayerTag>(player);
-
-		//Create Camera
-		Entity camera = world->CreateEntity();
 
 		CameraComponent* c = world->AddComponent<CameraComponent>(camera);
 
@@ -87,12 +87,22 @@ namespace PlayerCreation
 		c->nearPlane = 0.1f;
 		c->projectionType = ProjectionType::PERSPECTIVE;
 
-		world->AddComponent<SceneTransformComponent>(camera);
+		SceneTransformComponent* cameraTransform = world->AddComponent<SceneTransformComponent>(camera);
+		cameraTransform->SetLocalPosition(Vector3(0, 0.5, 0));
+
+		SceneTransformComponent* playerTransform = world->GetComponent<SceneTransformComponent>(player);
+		cameraTransform = world->GetComponent<SceneTransformComponent>(camera);
+
+		playerTransform->AttachChild(cameraTransform);
+
+		PlayerMovementCamera* cameramovement = world->AddComponent<PlayerMovementCamera>(camera);
+		cameramovement->RotationSpeed = 1000.f;
+
+		pmc->cameraEntity = camera;
 
 		CameraComponent::SetMainCamera(camera);
 
-		PositionAttatchmentComponent* pac = world->AddComponent<PositionAttatchmentComponent>(camera);
-		*pac = PositionAttatchmentComponent(player, Vector3(0,1,0));
+
 	}
 
 	void SpawnDungeonPlayer(World* world, const Vector3& position)

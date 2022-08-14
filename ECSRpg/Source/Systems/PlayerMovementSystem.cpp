@@ -42,67 +42,55 @@ void PlayerMovementSystem::OnInput(const float deltaTime, const InputData* input
 	ProcessMovementInputs(inputData);
 	ProcessJumps();
 
+	Vector2 Delta = inputData->MouseDelta;
 
-	const Vector2 Delta = inputData->MouseDelta;
-
-	ForEntities(world, PlayerMovementComponent, SceneTransformComponent)
+	ForEntities(world, PlayerMovementComponent)
 	{
-		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
-		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
+		const PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
+		SceneTransformComponent* playerTransform = world->GetComponent<SceneTransformComponent>(entity);
 
-		const Vector3 currentRotation = transform->GetRotation();
+		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(pmc->cameraEntity);
+		const PlayerMovementCamera* moveCamera = world->GetComponent<PlayerMovementCamera>(pmc->cameraEntity);
+
+		const Vector3 currentRotation = transform->GetLocalRotation();
+		const Vector3 currentPlayerRotation = playerTransform->GetRotation();
 
 		Vector3 NewRotation = currentRotation;
+		Vector3 NewPlayerRotation = currentPlayerRotation;
 
-		NewRotation.y += Delta.x * pmc->RotationSpeed * deltaTime;
-		NewRotation.z -= -Delta.y * pmc->RotationSpeed * deltaTime;
+		const Vector3 PlayerUp = playerTransform->GetUp();
 
-		if (NewRotation.z > 89.0f)
-			NewRotation.z = 89.0f;
-		if (NewRotation.z < -89.0f)
-			NewRotation.z = -89.0f;
-
-		transform->SetRotation(NewRotation);
-	}
-}
-
-void PlayerMovementSystem::CheckPlayersOnGround()
-{
-	PhysicsSystem* physicsSystem = world->GetPhysicsSystem();
-
-	ForEntities(world, PlayerMovementComponent, SceneTransformComponent, RigidBodyComponent)
-	{
-		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
-		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
-		RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
-
-		const Vector3 RayStart = transform->GetPosition();
-		const Vector3 RayEnd = RayStart + Vector3::Down;
-
-		Ray ray = Ray(RayStart, RayEnd);
-		RaycastingResult result = physicsSystem->CastRay(ray, entity);
-
-		pmc->OnGround = result.hasHit;
-
-		if (result.hasHit)
-		{	
-			pmc->NumberOfJumps = 0;
-			//rb->frictionAllowed = true;
+		if (Vector3::DotProduct(PlayerUp, Vector3::Up) < 0)
+		{
+			Delta.x *= -1.0f;
+			Delta.y *= -1.0f;
 		}
+
+		NewPlayerRotation.y += Delta.x * moveCamera->RotationSpeed * deltaTime;
+		NewPlayerRotation.z -= -Delta.y * moveCamera->RotationSpeed * deltaTime;
+
+		if (NewPlayerRotation.z > 89.0f)
+			NewPlayerRotation.z = 89.0f;
+		if (NewPlayerRotation.z < -89.0f)
+			NewPlayerRotation.z = -89.0f;
+
+		transform->SetLocalRotation(NewRotation);
+		playerTransform->SetRotation(NewPlayerRotation);
 	}
 }
 
 void PlayerMovementSystem::ProcessJumps()
 {
-	ForEntities(world, CurrentPossesedPlayer, PlayerMovementComponent, RigidBodyComponent)
+	ForEntities(world, CurrentPossesedPlayer, PlayerMovementComponent, RigidBodyComponent, SceneTransformComponent)
 	{
 		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
+		const SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
 
 		if (pmc->ToJump)
 		{
 			RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
 
-			rb->AddImpulse(Vector3::Up * pmc->JumpForce);
+			rb->AddImpulse(transform->GetUp() * pmc->JumpForce);
 			//rb->frictionAllowed = false;
 			pmc->NumberOfJumps += 1;
 			pmc->ToJump = false;
@@ -118,11 +106,12 @@ void PlayerMovementSystem::ProcessMovementInputs(const InputData* inputData)
 	bool RightPressed = inputData->GetInputValue(TestConfigInputId::Right, InputTypes::BUTTON_IS_DOWN);
 
 
-	ForEntities(world, CurrentPossesedPlayer, PlayerMovementComponent, RigidBodyComponent, SceneTransformComponent)
+	ForEntities(world, CurrentPossesedPlayer, PlayerMovementComponent, RigidBodyComponent)
 	{
-		SceneTransformComponent* t = world->GetComponent<SceneTransformComponent>(entity);
 		RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
 		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
+
+		SceneTransformComponent* t = world->GetComponent<SceneTransformComponent>(pmc->cameraEntity);
 
 		Vector3 PlayerForward = t->GetForward();
 		Vector3 PlayerRight= t->GetRight();
@@ -156,42 +145,45 @@ void PlayerMovementSystem::OnPlayerCollided(CollisionEvent& collisionEvent)
 	//Set On ground to false for all
 	std::vector<PlayerMovementComponent>* components =  world->GetComponents<PlayerMovementComponent>();
 
-	for (PlayerMovementComponent& pmc : *components)
+	if (components)
 	{
-		pmc.OnGround = false;
-	}
-
-	for (const PhysicsCollisionResult& result : collisionEvent.results)
-	{
-		Entity playerEntity = NO_ENTITY;
-
-		if (world->HasComponent<PlayerMovementComponent>(result.entityA))
+		for (PlayerMovementComponent& pmc : *components)
 		{
-			playerEntity = result.entityA;
-		}
-		else if (world->HasComponent<PlayerMovementComponent>(result.entityB))
-		{
-			playerEntity = result.entityB;
+			pmc.OnGround = false;
 		}
 
-		if (playerEntity != NO_ENTITY)
+		for (const PhysicsCollisionResult& result : collisionEvent.results)
 		{
-			PlayerMovementComponent* pmc = world->GetComponent< PlayerMovementComponent>(playerEntity);
-			SceneTransformComponent* stc = world->GetComponent< SceneTransformComponent>(playerEntity);
+			Entity playerEntity = NO_ENTITY;
 
-			const Vector3 down = stc->GetUp() * -1.0f;
-			const Vector3 position = stc->GetPosition();
-
-			const Vector3 positionDiff = Vector3::Normalize(result.collisionInfo.collisionLocation - position);
-
-			const float angleDiff = acosf(Vector3::DotProduct(positionDiff, down));
-
-			if (RadiansToDegrees(angleDiff) < pmc->maxWalkAngle)
+			if (world->HasComponent<PlayerMovementComponent>(result.entityA))
 			{
-				pmc->OnGround = true;
-				pmc->NumberOfJumps = 0;
+				playerEntity = result.entityA;
+			}
+			else if (world->HasComponent<PlayerMovementComponent>(result.entityB))
+			{
+				playerEntity = result.entityB;
 			}
 
+			if (playerEntity != NO_ENTITY)
+			{
+				PlayerMovementComponent* pmc = world->GetComponent< PlayerMovementComponent>(playerEntity);
+				SceneTransformComponent* stc = world->GetComponent< SceneTransformComponent>(playerEntity);
+
+				const Vector3 down = stc->GetUp() * -1.0f;
+				const Vector3 position = stc->GetPosition();
+
+				const Vector3 positionDiff = Vector3::Normalize(result.collisionInfo.collisionLocation - position);
+
+				const float angleDiff = acosf(Vector3::DotProduct(positionDiff, down));
+
+				if (RadiansToDegrees(angleDiff) < pmc->maxWalkAngle)
+				{
+					pmc->OnGround = true;
+					pmc->NumberOfJumps = 0;
+				}
+
+			}
 		}
 	}
 }

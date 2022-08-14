@@ -53,4 +53,9 @@ namespace EnvironmentCreationHelpers
 
 		return PanelEntity;
 	}
+
+	Entity CreateFloatingPlatform(World* world, Vector3 Position, Vector3 rotation)
+	{
+
+	}
 }

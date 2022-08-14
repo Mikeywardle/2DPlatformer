@@ -14,25 +14,57 @@
 
 Vector3 SceneTransformNode::GetForward() const
 {
-    float yRads = DegreesToRadians(rotation.y);
-    float zRads = DegreesToRadians(rotation.z);
+    const Vector3 rot = GetRotation();
+
+    const float yRads = DegreesToRadians(rot.y);
+    const float zRads = DegreesToRadians(rot.z);
+
+    const float cosZ = cos(zRads);
 
     Vector3 forward;
-    forward.x = cos(yRads) * cos(zRads);
+    forward.x = cos(yRads) * cosZ;
     forward.y = sin(zRads);
-    forward.z = sin(yRads) * cos(zRads);
+    forward.z = sin(yRads) * cosZ;
 
     return Vector3::Normalize(forward);
 }
 
 Vector3 SceneTransformNode::GetRight() const
 {
-    return Vector3::Normalize(Vector3::CrossProduct(GetForward(), Vector3::Up));
+    //const Vector3 rot = GetRotation();
+
+    //const float yRads = DegreesToRadians(rot.y);
+    //const float xRads = DegreesToRadians(rot.x);
+
+    //Vector3 right;
+    //right.x = cos(yRads);
+    //right.y = cos(xRads);
+    //right.z = sin(xRads) * sin(yRads);
+
+    //return Vector3::Normalize(right);
+
+    return Vector3::Normalize(Vector3::CrossProduct(GetForward(), GetUp()));
 }
 
 Vector3 SceneTransformNode::GetUp() const
 {
-    return Vector3::Normalize(Vector3::CrossProduct(GetRight(), GetForward()));
+    const Vector3 rot = GetRotation();
+
+    const float xRads = DegreesToRadians(rot.x);
+    const float yRads = DegreesToRadians(rot.y);
+    const float zRads = DegreesToRadians(rot.z);
+
+    const float sinX = sin(xRads);
+    const float sinZ = sin(zRads);
+    const float sinY = sin(yRads);
+    const float cosY = cos(yRads);
+    Vector3 up;
+
+    up.x = (sinX * cosY) * (sinZ * sinY);
+    up.y = cos(xRads) * cos(zRads);
+    up.z = (sinX * sinY) * (sinZ * cosY);
+
+    return Vector3::Normalize(up);
 }
 
 bool SceneTransformNode::IsStatic() const
@@ -241,7 +273,7 @@ void SceneTransformNode::SetRotation(Vector3 inRotation)
     }
     else
     {
-        SetLocalPosition(inRotation - parent->GetRotation());
+        SetLocalRotation(inRotation - parent->GetRotation());
     }
 }
 

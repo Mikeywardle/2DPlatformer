@@ -2,11 +2,12 @@
 
 #include <Maths/MathsTypes.h>
 #include <Maths/Vector3.h>
+#include <ecs/Entity.h>
 
 struct PlayerMovementComponent
 {
 	PlayerMovementComponent() = default;
-	PlayerMovementComponent(float InMovementSpeed, float InAirMovementSpeed, float InJumpForce, uint8 MaxNumberOfJumps, float InRotationSpeed);
+	PlayerMovementComponent(float InMovementSpeed, float InAirMovementSpeed, float InJumpForce, uint8 MaxNumberOfJumps);
 
 	uint8 NumberOfJumps = 0;
 	uint8 MaxNumberOfJumps;
@@ -16,10 +17,16 @@ struct PlayerMovementComponent
 	float MovementSpeed;
 	float AirMovementSpeed;
 	float JumpForce;
-	float RotationSpeed;
 
 	float maxWalkAngle;
 
+	Entity cameraEntity;
+
+};
+
+struct PlayerMovementCamera
+{
+	float RotationSpeed = 0;
 };
 
 struct DungeonPlayerMovementComponent

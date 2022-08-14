@@ -66,6 +66,7 @@ void DungeonLevel::LoadLevel()
 	CreateTile(Vector3(15, 2, 5), Vector3(.2, 2, 10), "TestWall", false);
 
 	EnvironmentCreationHelpers::CreateGravityPanel(world, Vector3(-3, 0, 10), Vector3::Zero);
+	EnvironmentCreationHelpers::CreateGravityPanel(world, Vector3(-3, 15.8f, 80), Vector3(180,0,0));
 
 	//Mouse marker
 	//CreateMouseSelectionMarker();
@@ -99,7 +100,7 @@ void DungeonLevel::OnStart()
 	world->RegisterSystem<GravityPanelSystem>();
 
 	//Gameplay Utils
-	world->RegisterSystem<PositionAttachmentSystem>();
+	//world->RegisterSystem<PositionAttachmentSystem>();
 	world->RegisterSystem<LifeTimeDecaySystem>();
 }
 

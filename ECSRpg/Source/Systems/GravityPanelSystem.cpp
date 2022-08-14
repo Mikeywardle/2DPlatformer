@@ -44,7 +44,6 @@ void GravityPanelSystem::OnTriggerOverlap(TriggerOverlapBeginEvent& event)
 
 		if (panelEntity != NO_ENTITY)
 		{
-			printf("Overlap!!!");
 			const SceneTransformComponent* panelTransform = world->GetComponent<SceneTransformComponent>(panelEntity);
 			const Vector3 panelUp = panelTransform->GetUp();
 
