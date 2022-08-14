@@ -23,6 +23,7 @@
 
 #include <Systems/PlayerMovementSystem.h>
 #include <Systems/GravityPanelSystem.h>
+#include <Systems/FloatingPlatformSystem.h>
 
 #include <GamePlay/TransformParenting.h>
 #include <GamePlay/Lifetime.h>
@@ -48,10 +49,11 @@ void DungeonLevel::LoadLevel()
 
 	//Floor
 	CreateTile(Vector3(5, -.2f, 5), Vector3(10, .2, 10), "TestFloor", true);
-	CreateTile(Vector3(5, -.2f, 85), Vector3(10, .2, 10), "TestFloor", true);
+	CreateTile(Vector3(7.5, -.2f, 85), Vector3(15, .2, 10), "TestFloor", true);
 
 	//Ceiling
-	CreateTile(Vector3(-3, 16.0f, 45), Vector3(3, .2, 60), "TestFloor", true);
+	CreateTile(Vector3(-3, 16.0f, 10), Vector3(2, .2, 20), "TestFloor", true);
+	CreateTile(Vector3(14, 16.0f, 60), Vector3(2, .2, 30), "TestFloor", true);
 	//CreateTile(Vector3(5, 2.2f, 5), Vector3(10, .2, 10), "TestFloor", true);
 
 	//Blocks
@@ -66,21 +68,12 @@ void DungeonLevel::LoadLevel()
 	CreateTile(Vector3(15, 2, 5), Vector3(.2, 2, 10), "TestWall", false);
 
 	EnvironmentCreationHelpers::CreateGravityPanel(world, Vector3(-3, 0, 10), Vector3::Zero);
-	EnvironmentCreationHelpers::CreateGravityPanel(world, Vector3(-3, 15.8f, 80), Vector3(180,0,0));
+	EnvironmentCreationHelpers::CreateGravityPanel(world, Vector3(14, 15.8f, 80), Vector3(180,0,0));
+
+	EnvironmentCreationHelpers::CreateFloatingPlatform(world, Vector3(-3, 16.0f, 32), Vector3::Zero, Vector3(2, .2f, 2), Vector3(10, 16.0f, 30));
 
 	//Mouse marker
 	//CreateMouseSelectionMarker();
-
-	//for (int i = -2; i < 8; ++i)
-	//{
-	//	for (int j = -2; j < 8; ++j)
-	//	{
-	//		CreateFloorSectionMarker(Vector3(i * 2, 0, j * 2));
-	//	}
-	//}
-
-	//Units
-	//CreateUnit(Vector3(0, 5, 0));
 
 	//Spawn Player
 	PlayerCreation::SpawnPlayer(world, Vector3(0,0,0));
@@ -98,9 +91,9 @@ void DungeonLevel::OnStart()
 	//PlayerSystems
 	world->RegisterSystem<PlayerMovementSystem>();
 	world->RegisterSystem<GravityPanelSystem>();
+	world->RegisterSystem<FloatingPlatformSystem>();
 
 	//Gameplay Utils
-	//world->RegisterSystem<PositionAttachmentSystem>();
 	world->RegisterSystem<LifeTimeDecaySystem>();
 }
 
@@ -110,11 +103,6 @@ void DungeonLevel::OnInput(float deltaTime, const InputData* inputData)
 	//{
 	//	printf("Reload level");
 	//	world->SwitchLevel<DungeonLevel>();
-	//}
-
-	//if (inputData->GetInputValue(TestConfigInputId::Jump, InputTypes::BUTTON_PRESSED))
-	//{
-	//	world->DestroyEntity(AtomEntity);
 	//}
 }
 

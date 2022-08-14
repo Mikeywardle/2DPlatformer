@@ -315,6 +315,7 @@
     <ClCompile Include="Source\Levels\PhysicsTestLevel.cpp" />
     <ClCompile Include="Source\Systems\BattleCameraSystem.cpp" />
     <ClCompile Include="Source\Systems\DungeonPlayerMovementSystem.cpp" />
+    <ClCompile Include="Source\Systems\FloatingPlatformSystem.cpp" />
     <ClCompile Include="Source\Systems\GravityPanelSystem.cpp" />
     <ClCompile Include="Source\Systems\MouseSelectionSystem.cpp" />
     <ClCompile Include="Source\Systems\PlayerMovementSystem.cpp" />
@@ -423,6 +424,7 @@
     <ClInclude Include="Engine\Utils\STLUtils.h" />
     <ClInclude Include="Engine\Utils\XMLReader.h" />
     <ClInclude Include="Source\Components\BattleCameraComponent.h" />
+    <ClInclude Include="Source\Components\FloatingPlatformComponent.h" />
     <ClInclude Include="Source\Components\GravityPanelComponent.h" />
     <ClInclude Include="Source\Components\PlayerMovementComponent.h" />
     <ClInclude Include="Source\Components\PlayerTags.h" />
@@ -442,6 +444,7 @@
     <ClInclude Include="Source\PhysicsTest\PhysicsBallSpawnerSystem.h" />
     <ClInclude Include="Source\Systems\BattleCameraSystem.h" />
     <ClInclude Include="Source\Systems\DungeonPlayerMovementSystem.h" />
+    <ClInclude Include="Source\Systems\FloatingPlatformSystem.h" />
     <ClInclude Include="Source\Systems\GravityPanelSystem.h" />
     <ClInclude Include="Source\Systems\MouseSelectionSystem.h" />
     <ClInclude Include="Source\Systems\PlayerMovementSystem.h" />

@@ -291,6 +291,9 @@
     <ClCompile Include="Engine\Physics\Collisions\CollisionEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Systems\FloatingPlatformSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\CameraComponent.h">
@@ -669,6 +672,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Systems\GravityPanelSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Components\FloatingPlatformComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Systems\FloatingPlatformSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
