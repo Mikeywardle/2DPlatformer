@@ -4,12 +4,13 @@
 
 void GravityForceHandler::ApplyForceForFrame(World* world, float deltaTime) const
 {
-	ForEntities(world, GravityComponent, RigidBodyComponent)
-	{
-		RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
-		GravityComponent* gravComponent = world->GetComponent<GravityComponent>(entity);
+	world->ForEntities<GravityComponent, RigidBodyComponent>
+		(
+			[&](const Entity entity, GravityComponent* gravComponent, RigidBodyComponent* rb)
+			{
+				Vector3 GravityForce = gravComponent->GravityScale * GravityValue * rb->mass;
+				rb->AddForce(GravityForce);
+			}
 
-		Vector3 GravityForce = gravComponent->GravityScale * GravityValue * rb->mass;
-		rb->AddForce(GravityForce);
-	}
+		);
 }

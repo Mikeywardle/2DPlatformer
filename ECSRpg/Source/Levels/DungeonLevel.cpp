@@ -70,7 +70,12 @@ void DungeonLevel::LoadLevel()
 	EnvironmentCreationHelpers::CreateGravityPanel(world, Vector3(-3, 0, 10), Vector3::Zero);
 	EnvironmentCreationHelpers::CreateGravityPanel(world, Vector3(14, 15.8f, 80), Vector3(180,0,0));
 
-	EnvironmentCreationHelpers::CreateFloatingPlatform(world, Vector3(-3, 16.0f, 32), Vector3::Zero, Vector3(2, .2f, 2), Vector3(10, 16.0f, 30));
+	EnvironmentCreationHelpers::CreateFloatingPlatform(world, Vector3(-3, 16.0f, 32), Vector3::Zero, Vector3(2, .2f, 2), Vector3(10, 16.0f, 32));
+
+	//Part 2
+	EnvironmentCreationHelpers::CreateFloatingPlatform(world, Vector3(35, .5, 85), Vector3::Zero, Vector3(2, .2f, 2), Vector3(35, 4, 85));
+
+	CreateTile(Vector3(150, -.2f, 85), Vector3(8, .2, 20), "TestFloor", true);
 
 	//Mouse marker
 	//CreateMouseSelectionMarker();

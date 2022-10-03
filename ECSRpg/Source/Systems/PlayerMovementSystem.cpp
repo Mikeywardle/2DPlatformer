@@ -44,58 +44,55 @@ void PlayerMovementSystem::OnInput(const float deltaTime, const InputData* input
 
 	Vector2 Delta = inputData->MouseDelta;
 
-	ForEntities(world, PlayerMovementComponent)
-	{
-		const PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
-		SceneTransformComponent* playerTransform = world->GetComponent<SceneTransformComponent>(entity);
+	world->ForEntities<PlayerMovementComponent, SceneTransformComponent>
+		(
+			[&](const Entity entity, PlayerMovementComponent* pmc, SceneTransformComponent* playerTransform)
+			{
+				SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(pmc->cameraEntity);
+				const PlayerMovementCamera* moveCamera = world->GetComponent<PlayerMovementCamera>(pmc->cameraEntity);
 
-		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(pmc->cameraEntity);
-		const PlayerMovementCamera* moveCamera = world->GetComponent<PlayerMovementCamera>(pmc->cameraEntity);
+				const Vector3 currentRotation = transform->GetLocalRotation();
+				const Vector3 currentPlayerRotation = playerTransform->GetRotation();
 
-		const Vector3 currentRotation = transform->GetLocalRotation();
-		const Vector3 currentPlayerRotation = playerTransform->GetRotation();
+				Vector3 NewRotation = currentRotation;
+				Vector3 NewPlayerRotation = currentPlayerRotation;
 
-		Vector3 NewRotation = currentRotation;
-		Vector3 NewPlayerRotation = currentPlayerRotation;
+				const Vector3 PlayerUp = playerTransform->GetUp();
 
-		const Vector3 PlayerUp = playerTransform->GetUp();
+				if (Vector3::DotProduct(PlayerUp, Vector3::Up) < 0)
+				{
+					Delta.x *= -1.0f;
+					Delta.y *= -1.0f;
+				}
 
-		if (Vector3::DotProduct(PlayerUp, Vector3::Up) < 0)
-		{
-			Delta.x *= -1.0f;
-			Delta.y *= -1.0f;
-		}
+				NewPlayerRotation.y += Delta.x * moveCamera->RotationSpeed * deltaTime;
+				NewPlayerRotation.z -= -Delta.y * moveCamera->RotationSpeed * deltaTime;
 
-		NewPlayerRotation.y += Delta.x * moveCamera->RotationSpeed * deltaTime;
-		NewPlayerRotation.z -= -Delta.y * moveCamera->RotationSpeed * deltaTime;
+				if (NewPlayerRotation.z > 89.0f)
+					NewPlayerRotation.z = 89.0f;
+				if (NewPlayerRotation.z < -89.0f)
+					NewPlayerRotation.z = -89.0f;
 
-		if (NewPlayerRotation.z > 89.0f)
-			NewPlayerRotation.z = 89.0f;
-		if (NewPlayerRotation.z < -89.0f)
-			NewPlayerRotation.z = -89.0f;
-
-		transform->SetLocalRotation(NewRotation);
-		playerTransform->SetRotation(NewPlayerRotation);
-	}
+				transform->SetLocalRotation(NewRotation);
+				playerTransform->SetRotation(NewPlayerRotation);
+			}
+	);
 }
 
 void PlayerMovementSystem::ProcessJumps()
 {
-	ForEntities(world, CurrentPossesedPlayer, PlayerMovementComponent, RigidBodyComponent, SceneTransformComponent)
-	{
-		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
-		const SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
-
-		if (pmc->ToJump)
-		{
-			RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
-
-			rb->AddImpulse(transform->GetUp() * pmc->JumpForce);
-			//rb->frictionAllowed = false;
-			pmc->NumberOfJumps += 1;
-			pmc->ToJump = false;
-		}
-	}
+	world->ForEntities<CurrentPossesedPlayer, PlayerMovementComponent, RigidBodyComponent, SceneTransformComponent>
+		(
+			[&](const Entity entity, CurrentPossesedPlayer* player, PlayerMovementComponent* pmc, RigidBodyComponent* rb, SceneTransformComponent* transform)
+			{
+				if (pmc->ToJump)
+				{
+					rb->AddImpulse(transform->GetUp() * pmc->JumpForce);
+					pmc->NumberOfJumps += 1;
+					pmc->ToJump = false;
+				}
+			}
+		);
 }
 
 void PlayerMovementSystem::ProcessMovementInputs(const InputData* inputData)
@@ -106,38 +103,37 @@ void PlayerMovementSystem::ProcessMovementInputs(const InputData* inputData)
 	bool RightPressed = inputData->GetInputValue(TestConfigInputId::Right, InputTypes::BUTTON_IS_DOWN);
 
 
-	ForEntities(world, CurrentPossesedPlayer, PlayerMovementComponent, RigidBodyComponent)
-	{
-		RigidBodyComponent* rb = world->GetComponent<RigidBodyComponent>(entity);
-		PlayerMovementComponent* pmc = world->GetComponent<PlayerMovementComponent>(entity);
+	world->ForEntities<CurrentPossesedPlayer, PlayerMovementComponent, RigidBodyComponent, SceneTransformComponent>
+		(
+			[&](const Entity entity, CurrentPossesedPlayer* player, PlayerMovementComponent* pmc, RigidBodyComponent* rb, SceneTransformComponent* transform)
+			{
+				SceneTransformComponent* t = world->GetComponent<SceneTransformComponent>(pmc->cameraEntity);
 
-		SceneTransformComponent* t = world->GetComponent<SceneTransformComponent>(pmc->cameraEntity);
+				Vector3 PlayerForward = t->GetForward();
+				Vector3 PlayerRight = t->GetRight();
 
-		Vector3 PlayerForward = t->GetForward();
-		Vector3 PlayerRight= t->GetRight();
+				PlayerForward.y = 0;
+				PlayerRight.y = 0;
 
-		PlayerForward.y = 0;
-		PlayerRight.y = 0;
+				PlayerForward = Vector3::Normalize(PlayerForward);
+				PlayerRight = Vector3::Normalize(PlayerRight);
 
-		PlayerForward = Vector3::Normalize(PlayerForward);
-		PlayerRight = Vector3::Normalize(PlayerRight);
+				const Vector3 MovementUnitVector = Vector3::Normalize((PlayerForward * (ForwardPressed - BackPressed)) + (PlayerRight * (RightPressed - LeftPressed)));
 
-		const Vector3 MovementUnitVector = Vector3::Normalize((PlayerForward * (ForwardPressed - BackPressed)) + (PlayerRight * (RightPressed - LeftPressed)));
+				Vector3 MovementImpulse;
 
-		Vector3 MovementImpulse;
+				if (pmc->OnGround)
+				{
+					MovementImpulse = MovementUnitVector * pmc->MovementSpeed;
+				}
+				else
+				{
+					MovementImpulse = MovementUnitVector * pmc->AirMovementSpeed;
+				}
 
-		if (pmc->OnGround)
-		{
-			MovementImpulse = MovementUnitVector * pmc->MovementSpeed;
-		}
-		else
-		{
-			MovementImpulse = MovementUnitVector * pmc->AirMovementSpeed;
-		}
-
-		rb->AddImpulse(MovementImpulse);
-	}
-
+				rb->AddImpulse(MovementImpulse);
+			}
+	);
 }
 
 void PlayerMovementSystem::OnPlayerCollided(CollisionEvent& collisionEvent)

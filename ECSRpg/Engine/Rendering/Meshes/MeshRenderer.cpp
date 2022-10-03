@@ -11,36 +11,35 @@ void MeshRenderer::Draw(World* world)
 	int currentProgram = -1;
 	int currentNumberOfIndices = 0;
 
-	ForEntities(world, MeshComponent, SceneTransformComponent)
-	{
-		const MeshComponent* mesh = world->GetComponent<MeshComponent>(entity);
-		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
+	world->ForEntities<MeshComponent, SceneTransformComponent>
+		(
+			[&](const Entity entity, MeshComponent* mesh, SceneTransformComponent* transform)
+			{
+				const int mat = mesh->GetMaterialIndex();
+				const int vao = mesh->GetMeshVAO();
 
-		const int mat = mesh->GetMaterialIndex();
-		const int vao = mesh->GetMeshVAO();
+				if (currentProgram != mat)
+				{
+					glUseProgram(mat);
+					currentProgram = mat;
+				}
 
-		if (currentProgram != mat)
-		{
-			glUseProgram(mat);
-			currentProgram = mat;
-		}
+				if (currentVAO != vao)
+				{
+					glBindVertexArray(vao);
+					currentVAO = vao;
+					currentNumberOfIndices = mesh->GetNumberOfIndices();
+				}
 
-		if (currentVAO != vao)
-		{
-			glBindVertexArray(vao);
-			currentVAO = vao;
-			currentNumberOfIndices = mesh->GetNumberOfIndices();
-		}
+				glm::mat4 model = transform->GetTransformMatrix();
 
-		glm::mat4 model = transform->GetTransformMatrix();
+				if (RenderScale* scale = world->GetComponent<RenderScale>(entity))
+				{
+					model = glm::scale(model, glm::vec3(scale->scale.x, scale->scale.y, scale->scale.z));
+				}
+				SetShaderMatrix4(mat, "model", model);
 
-		if (RenderScale* scale = world->GetComponent<RenderScale>(entity))
-		{
-			model = glm::scale(model, glm::vec3(scale->scale.x, scale->scale.y, scale->scale.z));
-		}
-		SetShaderMatrix4(mat, "model", model);
-
-		glDrawElements(GL_TRIANGLES, currentNumberOfIndices, GL_UNSIGNED_INT, 0);
-	}
-
+				glDrawElements(GL_TRIANGLES, currentNumberOfIndices, GL_UNSIGNED_INT, 0);
+			}
+		);
 }

@@ -70,6 +70,12 @@ inline std::vector<Entity> World::GetEntities() const
 	return ecsContext->GetEntities<Args...>();
 }
 
+template<typename ...Args>
+inline void World::ForEntities(const std::function<void(const Entity, Args*...)> f) const
+{
+	ecsContext->ForEntitiesLambda<Args...>(f);
+}
+
 template<typename T>
 inline bool World::HasComponent(const Entity entity) const
 {

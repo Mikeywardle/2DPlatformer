@@ -11,22 +11,22 @@ PositionAttatchmentComponent::PositionAttatchmentComponent(Entity Parent, Vector
 
 void PositionAttachmentSystem::OnFrame(float deltaTime)
 {
-	ForEntities(world, PositionAttatchmentComponent, SceneTransformComponent)
-	{
-		PositionAttatchmentComponent* pac = world->GetComponent<PositionAttatchmentComponent>(entity);
-		SceneTransformComponent* parentTransform = world->GetComponent<SceneTransformComponent>(pac->Parent);
+	world->ForEntities<PositionAttatchmentComponent, SceneTransformComponent>
+		(
+			[&](const Entity entity, PositionAttatchmentComponent* pac, SceneTransformComponent* transform)
+			{		
+				SceneTransformComponent* parentTransform = world->GetComponent<SceneTransformComponent>(pac->Parent);
 
-		if (parentTransform != nullptr)
-		{
-			SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
+				if (parentTransform != nullptr)
+				{
+					transform->SetPosition(parentTransform->TransformPoint(pac->LocalOffset));
+					transform->SetRotation(parentTransform->GetRotation());
+				}
+				else if (pac->DestroyOnNoParent)
+				{
+					world->DestroyEntity(entity);
+				}
 
-			transform->SetPosition(parentTransform->TransformPoint(pac->LocalOffset));
-			transform->SetRotation(parentTransform->GetRotation());
-		}
-		else if (pac->DestroyOnNoParent)
-		{
-			world->DestroyEntity(entity);
-		}
-
-	}
+			}
+		);
 }

@@ -79,19 +79,19 @@ void PhysicsSystem::IntegrateForces(float deltaTime)
 
 	deltaTime = fminf(deltaTime, MaxPhysicsFrameTime);
 
-	ForEntities(world, RigidBodyComponent, SceneTransformComponent)
-	{
-		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
-		RigidBodyComponent* rigidBody = world->GetComponent<RigidBodyComponent>(entity);
+	world->ForEntities<RigidBodyComponent, SceneTransformComponent>
+		(
+			[&](const Entity entity, RigidBodyComponent* rigidBody, SceneTransformComponent* transform)
+			{
+				if (!transform->IsStatic())
+				{
+					Vector3 frameResultant = rigidBody->GetResultantForce();
 
-		if (!transform->IsStatic())
-		{
-			Vector3 frameResultant = rigidBody->GetResultantForce();
+					rigidBody->velocity += frameResultant * rigidBody->GetInverseMass() * deltaTime;
+					transform->AddTranslation(rigidBody->velocity * deltaTime);
+					rigidBody->ClearResultantForce();
+				}
 
-			rigidBody->velocity += frameResultant * rigidBody->GetInverseMass() * deltaTime;
-			transform->AddTranslation(rigidBody->velocity * deltaTime);
-			rigidBody->ClearResultantForce();
-		}
-
-	}
+			}
+		);
 }

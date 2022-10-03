@@ -4,6 +4,7 @@
 
 #include <Utils/EngineDefines.h>
 #include <Events/Event.h>
+#include <functional>
 
 class GameContext;
 
@@ -25,8 +26,6 @@ struct InputData;
 struct PhysicsSystemConfig;
 
 typedef unsigned int Entity;
-
-#define ForEntities(World, ...) std::vector<Entity> entities = World->GetEntities<##__VA_ARGS__>(); for(Entity entity : entities)
 
 class World
 {
@@ -61,6 +60,9 @@ public:
 
 	template<typename... Args>
 	std::vector<Entity> GetEntities() const;
+
+	template<typename... Args>
+	void ForEntities(const std::function<void(const Entity, Args*...)> f) const;
 
 	template<typename T>
 	bool HasComponent(Entity entity) const;

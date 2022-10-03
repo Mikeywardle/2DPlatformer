@@ -6,7 +6,104 @@
 #include "Entity.h"
 #include "ComponentBatch.h"
 #include "EntitiesManager.h"
+#include <functional>
 
+#pragma region N-TypeFunctions
+template<typename T1>
+void ForEntities_NType(const std::function<void(const Entity, T1*)> f, const std::vector<const IComponentBatch*>& componentBatches, const std::vector<Entity>& entities)
+{
+	ComponentBatch<T1>* componentBatch = (ComponentBatch<T1>*) componentBatches[0];
+
+	for (const Entity entity : entities)
+	{
+		f(
+			entity
+			, componentBatch->GetComponent(entity)
+		);
+	}
+
+}
+
+template<typename T1, typename T2>
+void ForEntities_NType(const std::function<void(const Entity, T1*, T2*)> f, const std::vector<const IComponentBatch*>& componentBatches, const std::vector<Entity>& entities)
+{
+	ComponentBatch<T1>* componentBatch = (ComponentBatch<T1>*) componentBatches[0];
+	ComponentBatch<T2>* componentBatch2 = (ComponentBatch<T2>*) componentBatches[1];
+
+	for (const Entity entity : entities)
+	{
+		f(
+			entity
+			, componentBatch->GetComponent(entity)
+			, componentBatch2->GetComponent(entity)
+		);
+	}
+
+}
+
+template<typename T1, typename T2, typename T3>
+void ForEntities_NType(const std::function<void(const Entity, T1*, T2*, T3*)> f, const std::vector<const IComponentBatch*>& componentBatches, const std::vector<Entity>& entities)
+{
+	ComponentBatch<T1>* componentBatch = (ComponentBatch<T1>*) componentBatches[0];
+	ComponentBatch<T2>* componentBatch2 = (ComponentBatch<T2>*) componentBatches[1];
+	ComponentBatch<T3>* componentBatch3 = (ComponentBatch<T3>*) componentBatches[2];
+
+	for (const Entity entity : entities)
+	{
+		f(
+			entity
+			, componentBatch->GetComponent(entity)
+			, componentBatch2->GetComponent(entity)
+			, componentBatch3->GetComponent(entity)
+		);
+	}
+
+}
+
+template<typename T1, typename T2, typename T3, typename T4>
+void ForEntities_NType(const std::function<void(const Entity, T1*, T2*, T3*, T4*)> f, const std::vector<const IComponentBatch*>& componentBatches, const std::vector<Entity>& entities)
+{
+	ComponentBatch<T1>* componentBatch = (ComponentBatch<T1>*) componentBatches[0];
+	ComponentBatch<T2>* componentBatch2 = (ComponentBatch<T2>*) componentBatches[1];
+	ComponentBatch<T3>* componentBatch3 = (ComponentBatch<T3>*) componentBatches[2];
+	ComponentBatch<T4>* componentBatch4 = (ComponentBatch<T4>*) componentBatches[3];
+
+	for (const Entity entity : entities)
+	{
+		f(
+			entity
+			, componentBatch->GetComponent(entity)
+			, componentBatch2->GetComponent(entity)
+			, componentBatch3->GetComponent(entity)
+			, componentBatch4->GetComponent(entity)
+		);
+	}
+
+}
+
+template<typename T1, typename T2, typename T3, typename T4, typename T5>
+void ForEntities_NType(const std::function<void(const Entity, T1*, T2*, T3*, T4*, T5*)> f, const std::vector<const IComponentBatch*>& componentBatches, const std::vector<Entity>& entities)
+{
+	ComponentBatch<T1>* componentBatch = (ComponentBatch<T1>*) componentBatches[0];
+	ComponentBatch<T2>* componentBatch2 = (ComponentBatch<T2>*) componentBatches[1];
+	ComponentBatch<T3>* componentBatch3 = (ComponentBatch<T3>*) componentBatches[2];
+	ComponentBatch<T4>* componentBatch4 = (ComponentBatch<T4>*) componentBatches[3];
+	ComponentBatch<T5>* componentBatch5 = (ComponentBatch<T5>*) componentBatches[4];
+
+	for (const Entity entity : entities)
+	{
+		f(
+			entity
+			, componentBatch->GetComponent(entity)
+			, componentBatch2->GetComponent(entity)
+			, componentBatch3->GetComponent(entity)
+			, componentBatch4->GetComponent(entity)
+			, componentBatch5->GetComponent(entity)
+		);
+	}
+
+}
+#pragma endregion
 
 class ECSContext
 {
@@ -152,6 +249,32 @@ public:
 			return batch->GetComponentOwner(pointer);
 	}
 
+
+	template<typename... Args>
+	void ForEntitiesLambda(const std::function<void(const Entity, Args*...)> f) const
+	{
+		//Get All Entities
+		const std::vector<Entity> entities = GetEntities<Args...>();
+
+		//Get Component Batches
+		const std::vector<const char*> types = { (typeid(Args).raw_name())... };
+		std::vector<const IComponentBatch*> componentBatches;
+		componentBatches.resize(types.size());
+
+		for (int i = 0; i < types.size(); ++i)
+		{
+			const IComponentBatch* currentTypeBatch = GetComponentBatchFromHash(types[i]);
+			if (currentTypeBatch == nullptr)
+			{
+				return;
+			}
+
+			componentBatches[i] = currentTypeBatch;
+		}
+
+		//Call Function for
+		ForEntities_NType<Args...>(f, componentBatches, entities);
+	}
 
 private:
 

@@ -28,97 +28,97 @@ void DungeonPlayerMovementSystem::OnInput(const float deltaTime, const InputData
 	bool aPressed = inputData->GetInputValue(TestConfigInputId::Left, InputTypes::BUTTON_IS_DOWN);
 	bool dPressed = inputData->GetInputValue(TestConfigInputId::Right, InputTypes::BUTTON_IS_DOWN);
 
-	ForEntities(world, DungeonPlayerMovementComponent, SceneTransformComponent)
-	{
-		DungeonPlayerMovementComponent* dmc = world->GetComponent<DungeonPlayerMovementComponent>(entity);
-		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
-
-		//If not turning or moving receive inputs
-		if (!dmc->isTurning && !dmc->isMoving)
-		{
-			if (aPressed || dPressed)
+	world->ForEntities<DungeonPlayerMovementComponent, SceneTransformComponent>
+		(
+			[&](const Entity entity, DungeonPlayerMovementComponent* dmc, SceneTransformComponent* transform)
 			{
-				//Turn left/Right
-				const Vector3 currentRotation = transform->GetRotation();;
-				const Vector3 targetRotation = currentRotation + Vector3(0, 90 * (dPressed - aPressed), 0);
-
-				dmc->start = currentRotation;
-				dmc->target = targetRotation;
-				dmc->isTurning = true;
-				dmc->currentAlpha = 0.0f;
-			}
-			else if (sPressed)
-			{
-				//Turn 180
-				const Vector3 currentRotation = transform->GetRotation();;
-				const Vector3 targetRotation = currentRotation + Vector3(0, 180, 0);
-
-				dmc->start = currentRotation;
-				dmc->target = targetRotation;
-				dmc->isTurning = true;
-				dmc->currentAlpha = 0.0f;
-
-			}
-			else if (wPressed)
-			{
-				//Move Forward
-				PhysicsSystem* physicsSystem = world->GetPhysicsSystem();
-
-				const Vector3 PlayerPosition = transform->GetPosition();
-				const Vector3 PlayerForward = transform->GetForward();
-				const Vector3 TargetCellLocation = PlayerPosition + (PlayerForward * 2);
-
-				CollisionAABB aabb = CollisionAABB(TargetCellLocation + (Vector3::Down), Vector3(2, 3, 2));
-				std::vector<uint8> environmentLayers = {NeOniCollisionLayers::Environment};
-
-				std::vector<PhysicsCollisionCastResult> boxCastResults = physicsSystem->CastBox(aabb, environmentLayers);
-
-				if (boxCastResults.size() == 0)
+				//If not turning or moving receive inputs
+				if (!dmc->isTurning && !dmc->isMoving)
 				{
-					dmc->start = PlayerPosition;
-					dmc->target = TargetCellLocation;
-					dmc->isMoving = true;
-					dmc->currentAlpha = 0.0f;
+					if (aPressed || dPressed)
+					{
+						//Turn left/Right
+						const Vector3 currentRotation = transform->GetRotation();;
+						const Vector3 targetRotation = currentRotation + Vector3(0, 90 * (dPressed - aPressed), 0);
+
+						dmc->start = currentRotation;
+						dmc->target = targetRotation;
+						dmc->isTurning = true;
+						dmc->currentAlpha = 0.0f;
+					}
+					else if (sPressed)
+					{
+						//Turn 180
+						const Vector3 currentRotation = transform->GetRotation();;
+						const Vector3 targetRotation = currentRotation + Vector3(0, 180, 0);
+
+						dmc->start = currentRotation;
+						dmc->target = targetRotation;
+						dmc->isTurning = true;
+						dmc->currentAlpha = 0.0f;
+
+					}
+					else if (wPressed)
+					{
+						//Move Forward
+						PhysicsSystem* physicsSystem = world->GetPhysicsSystem();
+
+						const Vector3 PlayerPosition = transform->GetPosition();
+						const Vector3 PlayerForward = transform->GetForward();
+						const Vector3 TargetCellLocation = PlayerPosition + (PlayerForward * 2);
+
+						CollisionAABB aabb = CollisionAABB(TargetCellLocation + (Vector3::Down), Vector3(2, 3, 2));
+						std::vector<uint8> environmentLayers = { NeOniCollisionLayers::Environment };
+
+						std::vector<PhysicsCollisionCastResult> boxCastResults = physicsSystem->CastBox(aabb, environmentLayers);
+
+						if (boxCastResults.size() == 0)
+						{
+							dmc->start = PlayerPosition;
+							dmc->target = TargetCellLocation;
+							dmc->isMoving = true;
+							dmc->currentAlpha = 0.0f;
+						}
+					}
 				}
 			}
-		}
-	}
+	);
 }
 
 void DungeonPlayerMovementSystem::OnFrame(float deltaTime)
 {
 
-	ForEntities(world, DungeonPlayerMovementComponent, SceneTransformComponent)
-	{
-		DungeonPlayerMovementComponent* dmc = world->GetComponent<DungeonPlayerMovementComponent>(entity);
-		SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(entity);
-
-		//If not turning or moving receive inputs
-		if (dmc->isTurning)
-		{
-			dmc->currentAlpha = fminf(1.0f, dmc->currentAlpha + (dmc->MoveSpeed * deltaTime));
-			const Vector3 currentRotation = transform->GetRotation();
-			const Vector3 newRotation = Vector3::Lerp(dmc->start, dmc->target, dmc->currentAlpha);
-			transform->SetRotation(newRotation);
-
-			if (dmc->currentAlpha == 1.0f)
+	world->ForEntities<DungeonPlayerMovementComponent, SceneTransformComponent>
+		(
+			[&](const Entity entity, DungeonPlayerMovementComponent* dmc, SceneTransformComponent* transform)
 			{
-				dmc->isTurning = false;
-			}
-		}
-		else if (dmc->isMoving)
-		{
-			dmc->currentAlpha = fminf(1.0f, dmc->currentAlpha + (dmc->MoveSpeed * deltaTime));
-			const Vector3 currentPosition = transform->GetPosition();
-			const Vector3 newPosition = Vector3::Lerp(dmc->start, dmc->target, dmc->currentAlpha);
-			transform->SetPosition(newPosition);		
+				//If not turning or moving receive inputs
+				if (dmc->isTurning)
+				{
+					dmc->currentAlpha = fminf(1.0f, dmc->currentAlpha + (dmc->MoveSpeed * deltaTime));
+					const Vector3 currentRotation = transform->GetRotation();
+					const Vector3 newRotation = Vector3::Lerp(dmc->start, dmc->target, dmc->currentAlpha);
+					transform->SetRotation(newRotation);
 
-			if (dmc->currentAlpha == 1.0f)
-			{
-				dmc->isMoving = false;
+					if (dmc->currentAlpha == 1.0f)
+					{
+						dmc->isTurning = false;
+					}
+				}
+				else if (dmc->isMoving)
+				{
+					dmc->currentAlpha = fminf(1.0f, dmc->currentAlpha + (dmc->MoveSpeed * deltaTime));
+					const Vector3 currentPosition = transform->GetPosition();
+					const Vector3 newPosition = Vector3::Lerp(dmc->start, dmc->target, dmc->currentAlpha);
+					transform->SetPosition(newPosition);
+
+					if (dmc->currentAlpha == 1.0f)
+					{
+						dmc->isMoving = false;
+					}
+				}
 			}
-		}
-	}
+	);
 }
 
 
