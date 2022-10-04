@@ -72,16 +72,14 @@ void CollisionSystem::SetCollidersDirty()
 {
 	std::vector<ColliderGeometryComponent>* Colliders = world->GetComponents<ColliderGeometryComponent>();
 
-	if(Colliders == nullptr)
+	if (Colliders != nullptr)
 	{
-		return;
-	}
-
-	//Set All collider geometries to dirty
-	for (ColliderGeometryComponent& collider : *Colliders)
-	{
-		collider.dirtyCollidingEntities = collider.currentlyCollidingEntities;
-		collider.currentlyCollidingEntities.clear();
+		//Set All collider geometries to dirty
+		for (ColliderGeometryComponent& collider : *Colliders)
+		{
+			collider.dirtyCollidingEntities = collider.currentlyCollidingEntities;
+			collider.currentlyCollidingEntities.clear();
+		}
 	}
 }
 

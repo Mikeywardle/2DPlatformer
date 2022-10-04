@@ -32,7 +32,7 @@ namespace PlayerCreation
 
 		SceneTransformComponent* t = world->AddComponent<SceneTransformComponent>(player);
 		t->SetPosition(Vector3(0, 2, 5));
-		t->SetRotation(Vector3(0, 0, 0));
+		t->SetRotation(Vector3(0, 90, 0));
 
 		RenderScale* renderScale = world->AddComponent<RenderScale>(player);
 		renderScale->scale = Vector3(0.5f, 0.5f, 0.5f);

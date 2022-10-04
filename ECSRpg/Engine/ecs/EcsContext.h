@@ -155,7 +155,7 @@ public:
 	{
 		std::vector<const char*> types = { (typeid(Args).raw_name())... };
 		std::vector<const IComponentBatch*> componentBatches;
-		std::vector<Entity> entitiesTemp = std::vector<Entity>();
+		componentBatches.resize(types.size());
 
 		//For each type (after type 0) check if current entities also contain those components
 		for (int i = 0; i < types.size(); ++i)
@@ -166,23 +166,23 @@ public:
 				return;
 			}
 
-			componentBatches.push_back(currentTypeBatch);
+			componentBatches[i] = currentTypeBatch;
 		}
 
+		int i = 0;
 		for(const IComponentBatch* currentTypeBatch : componentBatches)
 		{
-			entitiesTemp = std::vector<Entity>();
-			entitiesTemp.reserve(entities.size());
-
+			i = 0;
 			for (const Entity entity : entities)
 			{
 				if (currentTypeBatch->ContainsComponent(entity))
-					entitiesTemp.push_back(entity);
+				{
+					entities[i] = entity;
+					++i;
+				}
 			}
-
-			entitiesTemp.shrink_to_fit();
-			entities = entitiesTemp;
 		}
+		entities.resize(i);
 	}
 
 	template<typename T, typename... Args>

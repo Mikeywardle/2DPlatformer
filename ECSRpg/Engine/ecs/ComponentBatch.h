@@ -8,10 +8,18 @@
 class IComponentBatch
 {
 public:
-	virtual bool ContainsComponent(const Entity entity) const = 0;
+	inline bool ContainsComponent(const Entity entity) const
+	{
+		return entityToIndexArray.size() > entity && entityToIndexArray[entity] != 0;
+	}
+
 	virtual std::vector<Entity> GetEntitiesWithComponent() const = 0;
 	virtual void RemoveComponent(const Entity entity) = 0;
 
+protected:
+	//Sparse Set to map between Entities and indexes
+	std::vector<unsigned int> entityToIndexArray;
+	std::vector<Entity> indexToEntityArray;
 };
 
 template<typename T>
@@ -21,19 +29,6 @@ public:
 
 	ComponentBatch()
 	{}
-
-	virtual bool ContainsComponent(const Entity entity) const override
-	{
-		if (entityToIndexArray.size() <= entity)
-		{
-			return false;
-		}
-		else 
-		{
-			return entityToIndexArray[entity] != 0;
-		}
-
-	}
 
 	virtual std::vector<Entity> GetEntitiesWithComponent() const override
 	{
@@ -116,10 +111,6 @@ private:
 
 	//Dense array of components
 	std::vector<T> componentPackedArray;
-
-	//Sparse Set to map between Entities and indexes
-	std::vector<unsigned int> entityToIndexArray;
-	std::vector<Entity> indexToEntityArray;
 };
 
 
