@@ -22,10 +22,16 @@ struct RigidBodyComponent
 
 	void ClearResultantForce();
 
+	void AccumulateFriction(const Vector3& friction);
+	void AccumulateDisplacement(const Vector3& displacement);
+
 private:
 
 	Vector3 resultantForce = Vector3::Zero;
 	Vector3 frameForce = Vector3::Zero;
+
+	Vector3 accumulatedFriction = Vector3::Zero;
+	Vector3 accumulatedDisplacement = Vector3::Zero;
 
 	
 	static const float sleepThreshold;

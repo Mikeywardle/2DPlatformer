@@ -42,41 +42,41 @@ void PlayerMovementSystem::OnInput(const float deltaTime, const InputData* input
 	ProcessMovementInputs(inputData);
 	ProcessJumps();
 
-	Vector2 Delta = inputData->MouseDelta;
+	//Vector2 Delta = inputData->MouseDelta;
 
-	world->ForEntities<PlayerMovementComponent, SceneTransformComponent>
-		(
-			[&](const Entity entity, PlayerMovementComponent* pmc, SceneTransformComponent* playerTransform)
-			{
-				SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(pmc->cameraEntity);
-				const PlayerMovementCamera* moveCamera = world->GetComponent<PlayerMovementCamera>(pmc->cameraEntity);
+	//world->ForEntities<PlayerMovementComponent, SceneTransformComponent>
+	//	(
+	//		[&](const Entity entity, PlayerMovementComponent* pmc, SceneTransformComponent* playerTransform)
+	//		{
+	//			SceneTransformComponent* transform = world->GetComponent<SceneTransformComponent>(CameraComponent::GetMainCamera());
+	//			const PlayerMovementCamera* moveCamera = world->GetComponent<PlayerMovementCamera>(CameraComponent::GetMainCamera());
 
-				const Vector3 currentRotation = transform->GetLocalRotation();
-				const Vector3 currentPlayerRotation = playerTransform->GetRotation();
+	//			const Vector3 currentRotation = transform->GetLocalRotation();
+	//			const Vector3 currentPlayerRotation = playerTransform->GetRotation();
 
-				Vector3 NewRotation = currentRotation;
-				Vector3 NewPlayerRotation = currentPlayerRotation;
+	//			Vector3 NewRotation = currentRotation;
+	//			Vector3 NewPlayerRotation = currentPlayerRotation;
 
-				const Vector3 PlayerUp = playerTransform->GetUp();
+	//			const Vector3 PlayerUp = playerTransform->GetUp();
 
-				if (Vector3::DotProduct(PlayerUp, Vector3::Up) < 0)
-				{
-					Delta.x *= -1.0f;
-					Delta.y *= -1.0f;
-				}
+	//			if (Vector3::DotProduct(PlayerUp, Vector3::Up) < 0)
+	//			{
+	//				Delta.x *= -1.0f;
+	//				Delta.y *= -1.0f;
+	//			}
 
-				NewPlayerRotation.y += Delta.x * moveCamera->RotationSpeed * deltaTime;
-				NewPlayerRotation.z -= -Delta.y * moveCamera->RotationSpeed * deltaTime;
+	//			NewPlayerRotation.y += Delta.x * moveCamera->RotationSpeed * deltaTime;
+	//			NewPlayerRotation.z -= -Delta.y * moveCamera->RotationSpeed * deltaTime;
 
-				if (NewPlayerRotation.z > 89.0f)
-					NewPlayerRotation.z = 89.0f;
-				if (NewPlayerRotation.z < -89.0f)
-					NewPlayerRotation.z = -89.0f;
+	//			if (NewPlayerRotation.z > 89.0f)
+	//				NewPlayerRotation.z = 89.0f;
+	//			if (NewPlayerRotation.z < -89.0f)
+	//				NewPlayerRotation.z = -89.0f;
 
-				transform->SetLocalRotation(NewRotation);
-				playerTransform->SetRotation(NewPlayerRotation);
-			}
-	);
+	//			transform->SetLocalRotation(NewRotation);
+	//			playerTransform->SetRotation(NewPlayerRotation);
+	//		}
+	//);
 }
 
 void PlayerMovementSystem::ProcessJumps()
@@ -107,7 +107,7 @@ void PlayerMovementSystem::ProcessMovementInputs(const InputData* inputData)
 		(
 			[&](const Entity entity, CurrentPossesedPlayer* player, PlayerMovementComponent* pmc, RigidBodyComponent* rb, SceneTransformComponent* transform)
 			{
-				SceneTransformComponent* t = world->GetComponent<SceneTransformComponent>(pmc->cameraEntity);
+				SceneTransformComponent* t = world->GetComponent<SceneTransformComponent>(CameraComponent::GetMainCamera());
 
 				Vector3 PlayerForward = t->GetForward();
 				Vector3 PlayerRight = t->GetRight();

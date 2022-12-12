@@ -32,4 +32,15 @@ void RigidBodyComponent::ClearResultantForce()
 {
     frameForce = resultantForce;
     resultantForce = Vector3::Zero;
+
+    accumulatedFriction = Vector3::Zero;
+    accumulatedDisplacement = Vector3::Zero;
+}
+
+void RigidBodyComponent::AccumulateFriction(const Vector3& friction)
+{
+}
+
+void RigidBodyComponent::AccumulateDisplacement(const Vector3& displacement)
+{
 }

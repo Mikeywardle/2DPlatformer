@@ -28,11 +28,20 @@ namespace PlayerCreation
 	void SpawnPlayer(World* world, const Vector3& position)
 	{
 		//Create Player
+		ResourceManager* resourceManager = world->GetResourceManager();
+
+		Mesh* meshAsset = resourceManager->GetMesh("SmoothSphere");
+		Material* testMaterial = resourceManager->GetMaterial("UnitTestMaterial");
+
 		Entity player = world->CreateEntity();
 
 		SceneTransformComponent* t = world->AddComponent<SceneTransformComponent>(player);
 		t->SetPosition(Vector3(0, 2, 5));
 		t->SetRotation(Vector3(0, 90, 0));
+
+		MeshComponent* meshComponent = world->AddComponent<MeshComponent>(player);
+		meshComponent->SetMesh(meshAsset);
+		meshComponent->SetMaterial(testMaterial);
 
 		RenderScale* renderScale = world->AddComponent<RenderScale>(player);
 		renderScale->scale = Vector3(0.5f, 0.5f, 0.5f);
@@ -67,7 +76,7 @@ namespace PlayerCreation
 		world->AddComponent<PlayerTag>(player);
 
 		//Create Camera
-		Entity camera = world->CreateEntity();
+		//Entity camera = world->CreateEntity();
 
 		PlayerMovementComponent* pmc = world->AddComponent<PlayerMovementComponent>(player);
 		*pmc = PlayerMovementComponent
@@ -80,27 +89,27 @@ namespace PlayerCreation
 
 		pmc->maxWalkAngle = 30;
 
-		CameraComponent* c = world->AddComponent<CameraComponent>(camera);
+		//CameraComponent* c = world->AddComponent<CameraComponent>(camera);
 
-		c->fov = 45.f;
-		c->farPlane = 1000.f;
-		c->nearPlane = 0.1f;
-		c->projectionType = ProjectionType::PERSPECTIVE;
+		//c->fov = 45.f;
+		//c->farPlane = 1000.f;
+		//c->nearPlane = 0.1f;
+		//c->projectionType = ProjectionType::PERSPECTIVE;
 
-		SceneTransformComponent* cameraTransform = world->AddComponent<SceneTransformComponent>(camera);
-		cameraTransform->SetLocalPosition(Vector3(0, 0.5, 0));
+		//SceneTransformComponent* cameraTransform = world->AddComponent<SceneTransformComponent>(camera);
+		//cameraTransform->SetLocalPosition(Vector3(0, 0.5, 0));
 
-		SceneTransformComponent* playerTransform = world->GetComponent<SceneTransformComponent>(player);
-		cameraTransform = world->GetComponent<SceneTransformComponent>(camera);
+		//SceneTransformComponent* playerTransform = world->GetComponent<SceneTransformComponent>(player);
+		//cameraTransform = world->GetComponent<SceneTransformComponent>(camera);
 
-		playerTransform->AttachChild(cameraTransform);
+		//playerTransform->AttachChild(cameraTransform);
 
-		PlayerMovementCamera* cameramovement = world->AddComponent<PlayerMovementCamera>(camera);
-		cameramovement->RotationSpeed = 1000.f;
+		//PlayerMovementCamera* cameramovement = world->AddComponent<PlayerMovementCamera>(camera);
+		//cameramovement->RotationSpeed = 1000.f;
 
-		pmc->cameraEntity = camera;
+		//pmc->cameraEntity = camera;
 
-		CameraComponent::SetMainCamera(camera);
+		//CameraComponent::SetMainCamera(camera);
 
 
 	}

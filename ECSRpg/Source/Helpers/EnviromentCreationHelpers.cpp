@@ -18,9 +18,32 @@
 
 #include <Config/NeOniPhysicsConfig.h>
 
+#include <Camera/CameraComponent.h>
+
 
 namespace EnvironmentCreationHelpers
 {
+	Entity CreateFixedCamera(World* world, const Vector3& position)
+	{
+		Entity CameraEntity = world->CreateEntity();
+
+		SceneTransformComponent* transform = world->AddComponent<SceneTransformComponent>(CameraEntity);
+
+		transform->SetPosition(Vector3(0, 20, 0));
+		transform->SetRotation(Vector3(0, 0, -90));
+
+		CameraComponent* camera = world->AddComponent<CameraComponent>(CameraEntity);
+
+		camera->fov = 45.f;
+		camera->farPlane = 1000.f;
+		camera->nearPlane = 0.1f;
+		camera->projectionType = ProjectionType::PERSPECTIVE;
+
+		CameraComponent::SetMainCamera(CameraEntity);
+
+		return CameraEntity;
+	}
+
 	Entity CreateGravityPanel(World* world, Vector3 Position, Vector3 rotation)
 	{
 		Entity PanelEntity = world->CreateEntity();

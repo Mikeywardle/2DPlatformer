@@ -51,9 +51,14 @@ void DungeonLevel::LoadLevel()
 	CreateTile(Vector3(5, -.2f, 5), Vector3(10, .2, 10), "TestFloor", true);
 	CreateTile(Vector3(7.5, -.2f, 85), Vector3(15, .2, 10), "TestFloor", true);
 
+	CreateTile(Vector3(5, -.2f, 16), Vector3(1, .2, 1), "UnitTestMaterial", true);
+	CreateTile(Vector3(7, -.2f, 16), Vector3(1, .2, 1), "UnitTestMaterial", true);
+	CreateTile(Vector3(5, -.2f, 18), Vector3(1, .2, 1), "UnitTestMaterial", true);
+	CreateTile(Vector3(7, -.2f, 18), Vector3(1, .2, 1), "UnitTestMaterial", true);
+
 	//Ceiling
-	CreateTile(Vector3(-3, 16.0f, 10), Vector3(2, .2, 20), "TestFloor", true);
-	CreateTile(Vector3(14, 16.0f, 60), Vector3(2, .2, 30), "TestFloor", true);
+	//CreateTile(Vector3(-3, 16.0f, 10), Vector3(2, .2, 20), "TestFloor", true);
+	//CreateTile(Vector3(14, 16.0f, 60), Vector3(2, .2, 30), "TestFloor", true);
 	//CreateTile(Vector3(5, 2.2f, 5), Vector3(10, .2, 10), "TestFloor", true);
 
 	//Blocks
@@ -82,6 +87,9 @@ void DungeonLevel::LoadLevel()
 
 	//Spawn Player
 	PlayerCreation::SpawnPlayer(world, Vector3(0,0,0));
+
+	//Spawn Cameras
+	EnvironmentCreationHelpers::CreateFixedCamera(world, Vector3(0, 20, 0));
 
 	//CreatePlayerCamera();
 

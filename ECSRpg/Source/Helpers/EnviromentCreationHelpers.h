@@ -8,6 +8,7 @@ class World;
 
 namespace EnvironmentCreationHelpers
 {
+	Entity CreateFixedCamera(World* world, const Vector3& position);
 	Entity CreateGravityPanel(World* world, Vector3 Position, Vector3 rotation);
 
 	Entity CreateFloatingPlatform(World* world
