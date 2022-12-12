@@ -38,40 +38,40 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -307,7 +307,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Source\Components\PlayerMovementComponent.cpp" />
     <ClCompile Include="Source\Data\NeOniCollisionLayers.cpp" />
-    <ClCompile Include="Source\Debug\PlayerMovementDubugSystem.cpp" />
+    <ClCompile Include="Source\Debugging\PlayerMovementDubugSystem.cpp" />
     <ClCompile Include="Source\Helpers\EnviromentCreationHelpers.cpp" />
     <ClCompile Include="Source\Helpers\PlayerCreationHelpers.cpp" />
     <ClCompile Include="Source\Levels\DungeonLevel.cpp" />
@@ -434,8 +434,8 @@
     <ClInclude Include="Source\Config\TestInputConfig.h" />
     <ClInclude Include="Source\Data\EntityColour.h" />
     <ClInclude Include="Source\Data\NeOniCollisionLayers.h" />
-    <ClInclude Include="Source\Debug\DebugSystemsSetup.h" />
-    <ClInclude Include="Source\Debug\PlayerMovementDubugSystem.h" />
+    <ClInclude Include="Source\Debugging\DebugSystemsSetup.h" />
+    <ClInclude Include="Source\Debugging\PlayerMovementDubugSystem.h" />
     <ClInclude Include="Source\Helpers\EnviromentCreationHelpers.h" />
     <ClInclude Include="Source\Helpers\PlayerCreationHelpers.h" />
     <ClInclude Include="Source\Levels\DungeonLevel.h" />

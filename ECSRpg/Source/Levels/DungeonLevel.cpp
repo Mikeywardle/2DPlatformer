@@ -78,7 +78,7 @@ void DungeonLevel::LoadLevel()
 	CreateTile(Vector3(150, -.2f, 85), Vector3(8, .2, 20), "TestFloor", true);
 
 	//Mouse marker
-	//CreateMouseSelectionMarker();
+	CreateMouseSelectionMarker();
 
 	//Spawn Player
 	PlayerCreation::SpawnPlayer(world, Vector3(0,0,0));
@@ -91,7 +91,7 @@ void DungeonLevel::LoadLevel()
 void DungeonLevel::OnStart()
 {
 	world->RegisterSystem<BattleCameraSystem>();
-	//world->RegisterSystem<MouseSelectionSystem>();
+	world->RegisterSystem<MouseSelectionSystem>();
 
 	//PlayerSystems
 	world->RegisterSystem<PlayerMovementSystem>();

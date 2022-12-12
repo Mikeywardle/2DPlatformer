@@ -4,6 +4,7 @@
 #include <Core/World.h>
 
 #include <Rendering/UniformBufferLocations.h>
+#include "Texture2D.h"
 
 std::string MaterialsLibrary::MATERIAL_PATH = "Materials";
 
@@ -42,20 +43,28 @@ void MaterialsLibrary::LoadMaterial(std::string name, std::string path)
 	//Colors
 	for (xml_node colorNode = rootNode.child("Colors").child("Color"); colorNode; colorNode = colorNode.next_sibling())
 	{
-		std::string colorname = colorNode.child("name").first_child().value();
+		const std::string colorname = colorNode.child("name").first_child().value();
 
-		float r = atof(colorNode.child("r").first_child().value());
-		float g = atof(colorNode.child("g").first_child().value());
-		float b = atof(colorNode.child("b").first_child().value());
-		float a = atof(colorNode.child("a").first_child().value());
+		const float r = atof(colorNode.child("r").first_child().value());
+		const float g = atof(colorNode.child("g").first_child().value());
+		const float b = atof(colorNode.child("b").first_child().value());
+		const float a = atof(colorNode.child("a").first_child().value());
 
-		Color color = Color(r, g, b, a);
+		const Color color = Color(r, g, b, a);
 
 		toAdd->SetColor(colorname, color);
 	}
 
 	//Textures
+	int i = 0;
+	for (xml_node textureNode = rootNode.child("Textures").child("Texture"); textureNode; textureNode = textureNode.next_sibling())
+	{
+		const std::string textureName = textureNode.first_child().value();
+		const Texture2D* texture = resourceManager->GetTexture(textureName);
+		toAdd->SetTexture(texture->ID, i);
 
+		++i;
+	}
 	//floats
 
 	//BindUniforms

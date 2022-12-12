@@ -55,6 +55,10 @@ void Material::SetTexture(int id, int index)
 	textureIds[index] = id;
 }
 
+void Material::BindAllTextures()
+{
+}
+
 Color Material::GetColor(std::string name)
 {
 	return colors[name];

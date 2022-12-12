@@ -6,7 +6,7 @@
 #include "Source/Config/TestInputConfig.h"
 #include <Config/NeOniPhysicsConfig.h>
 
-#include <Debug/DebugSystemsSetup.h>
+#include <Debugging/DebugSystemsSetup.h>
 
 int main()
 {

@@ -11,7 +11,6 @@
 struct Material
 {
 public:
-	GLuint ID;
 	Material(GLuint vertexShader, GLuint fragmentShader);
 	Material() = default;
 
@@ -27,13 +26,18 @@ public:
 	void SetMatrix4(const GLchar* name, const glm::mat4& matrix);
 
 	void SetTexture(int id, int index);
+	void BindAllTextures();
+
+public:
+	GLuint ID;
 	std::vector<int>textureIds;
+
+private:	
+	void checkCompileErrors(GLuint object);
 
 
 private:
 	std::map<std::string, float> floats;
 	std::map<std::string, glm::vec3> vector3s;
 	std::map<std::string, Color> colors;
-
-	void checkCompileErrors(GLuint object);
 };

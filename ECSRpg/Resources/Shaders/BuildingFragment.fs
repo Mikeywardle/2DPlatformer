@@ -75,7 +75,7 @@ void main()
     }
 
     vec3 black = vec3(0,0,0);
-   color = mix(color, black, depthAlpha);
+   //color = mix(color, black, depthAlpha);
 
     FragColor = vec4(color, 1.0);
    //FragColor = vec4(vec3(depth) , 1.0);

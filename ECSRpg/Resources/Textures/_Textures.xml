@@ -4,4 +4,9 @@
     <file>PlayerShip.png</file>
     <alpha>true</alpha>
   </Texture>
+  <Texture>
+    <name>Tile</name>
+    <file>Tiles.png</file>
+    <alpha>true</alpha>
+  </Texture>
 </Textures>

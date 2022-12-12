@@ -10,5 +10,8 @@
       <a>1.0</a>
     </Color>
   </Colors>
+  <Textures>
+    <Texture>"Brick"</Texture>
+  </Textures>
 </Material>
 

@@ -279,7 +279,7 @@
     <ClCompile Include="Engine\Maths\Transform_Deprecated.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Debug\PlayerMovementDubugSystem.cpp">
+    <ClCompile Include="Source\Debugging\PlayerMovementDubugSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Helpers\EnviromentCreationHelpers.cpp">
@@ -584,7 +584,7 @@
     <ClInclude Include="Engine\Debugging\PerformanceDebugSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Debug\DebugSystemsSetup.h">
+    <ClInclude Include="Source\Debugging\DebugSystemsSetup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Physics\PhysicsCollisionLayer.h">
@@ -662,7 +662,7 @@
     <ClInclude Include="Engine\Collisions\ICollisionCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Debug\PlayerMovementDubugSystem.h">
+    <ClInclude Include="Source\Debugging\PlayerMovementDubugSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Helpers\EnviromentCreationHelpers.h">
